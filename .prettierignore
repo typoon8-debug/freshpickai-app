@@ -2,3 +2,5 @@
 node_modules
 public
 *.md
+docs
+shrimp_data

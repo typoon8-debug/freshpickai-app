@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "public/**",
     "tailwind.config.ts",
+    "docs/**",
+    "shrimp_data/**",
   ]),
 ]);
 

@@ -1,7 +1,7 @@
 // handoff/07-state-store.ts — copy to src/lib/store.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User, CartItem, Card, ChatMessage, KidsPick } from "./types";
+import type { User, CartItem, ChatMessage, KidsPick } from "./types";
 
 // ── Auth ──────────────────────────────────────────────
 type AuthState = {
@@ -25,9 +25,9 @@ export const useAuthStore = create<AuthState>()(
 // ── Cart ──────────────────────────────────────────────
 type CartState = {
   items: CartItem[];
-  addBundle: (cardId: number, items: CartItem[]) => void;
-  setQty: (id: string, qty: number) => void;
-  remove: (id: string) => void;
+  addBundle: (cardId: string, items: CartItem[]) => void;
+  setQty: (cartItemId: string, qty: number) => void;
+  remove: (cartItemId: string) => void;
   clear: () => void;
   total: () => number;
 };
@@ -38,13 +38,16 @@ export const useCartStore = create<CartState>()(
       addBundle: (cardId, items) =>
         set((s) => ({
           items: [
-            ...s.items.filter((i) => !items.some((n) => n.id === i.id)),
+            ...s.items.filter((i) => !items.some((n) => n.cartItemId === i.cartItemId)),
             ...items.map((i) => ({ ...i, cardId })),
           ],
         })),
-      setQty: (id, qty) =>
-        set((s) => ({ items: s.items.map((i) => (i.id === id ? { ...i, qty } : i)) })),
-      remove: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
+      setQty: (cartItemId, qty) =>
+        set((s) => ({
+          items: s.items.map((i) => (i.cartItemId === cartItemId ? { ...i, qty } : i)),
+        })),
+      remove: (cartItemId) =>
+        set((s) => ({ items: s.items.filter((i) => i.cartItemId !== cartItemId) })),
       clear: () => set({ items: [] }),
       total: () => get().items.reduce((s, i) => s + i.price * i.qty, 0),
     }),

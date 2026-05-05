@@ -1,0 +1,15 @@
+-- ============================================================
+-- ⚠️  이 파일은 사용하지 마세요 (DEPRECATED)
+-- ============================================================
+-- 공유 DB 분석 결과 public.customer · public.cart_item ·
+-- public.memo_item 등과 테이블명 충돌이 확인되었습니다.
+--
+-- 대신 아래 파일을 사용하세요:
+--   supabase/migrations/20260505_002_freshpickai_fp_prefix.sql
+--
+-- 변경 이유:
+--   freshpickai-app은 freshpick-app · sellerbox-app ·
+--   manager-app · rideron-app과 Supabase DB를 공유합니다.
+--   기존 86개 테이블(public.customer, public.cart_item 등)과
+--   충돌을 방지하기 위해 fp_ 프리픽스 방식으로 재작성했습니다.
+-- ============================================================
