@@ -1,26 +1,129 @@
+/* @import 순서: Tailwind v4는 @import가 가장 먼저 와야 함 */
 @import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap");
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@plugin "tailwindcss-animate";
+
+/* ── Mocha Mousse 디자인 토큰 ──────────────────────────── */
+@theme {
+  --color-mocha-50: #faf4ec;
+  --color-mocha-100: #f2e7d8;
+  --color-mocha-300: #dbc1a4;
+  --color-mocha-400: #c2a07f;
+  --color-mocha-500: #a47551;
+  --color-mocha-700: #6b4a2e;
+  --color-mocha-900: #3b2a1e;
+
+  --color-olive-100: #e8e5c8;
+  --color-olive-500: #6b7a3b;
+  --color-olive-700: #4a5527;
+
+  --color-paper: #f7f1e6;
+  --color-line: #e8dfcf;
+
+  --color-ink-300: #b8aea2;
+  --color-ink-500: #7a6e64;
+  --color-ink-700: #3a302a;
+  --color-ink-900: #1a1410;
+
+  --color-terracotta: #b8736a;
+  --color-honey: #d4a04a;
+  --color-sage: #5c8a7a;
+
+  --font-display: "Bree Serif", Georgia, serif;
+  --font-sans: Pretendard, ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 2px;
+  --radius: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 100px;
+
+  --shadow-card: 0 1px 0 #e8dfcf;
+  --shadow-hover: 0 12px 28px rgba(107, 74, 46, 0.12);
+  --shadow-cta: 0 4px 14px rgba(107, 74, 46, 0.25);
+  --shadow-phone: 0 30px 80px rgba(59, 42, 30, 0.2);
+
+  --tracking-label: 2px;
+
+  --max-w-phone: 375px;
+
+  /* shadcn/ui CSS 변수 연동 */
+  --color-background: #f7f1e6;
+  --color-foreground: #1a1410;
+  --color-card: #ffffff;
+  --color-card-foreground: #1a1410;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1a1410;
+  --color-primary: #6b4a2e;
+  --color-primary-foreground: #f7f1e6;
+  --color-secondary: #faf4ec;
+  --color-secondary-foreground: #3a302a;
+  --color-muted: #f2e7d8;
+  --color-muted-foreground: #7a6e64;
+  --color-accent: #6b7a3b;
+  --color-accent-foreground: #f7f1e6;
+  --color-destructive: #b8736a;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e8dfcf;
+  --color-input: #e8dfcf;
+  --color-ring: #6b4a2e;
+  --radius-xl: 8px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── 기본 스타일 ─────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    background: #f7f1e6;
+    color: #1a1410;
+    font-family: Pretendard, system-ui, sans-serif;
+    letter-spacing: -0.2px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: "Bree Serif", serif;
+    font-weight: 400;
+    letter-spacing: -0.5px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── 공통 컴포넌트 클래스 ───────────────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply bg-mocha-700 text-paper hover:bg-mocha-900 h-13 rounded px-6 text-sm font-bold transition;
+  }
+  .btn-ghost {
+    @apply bg-paper text-mocha-700 border-mocha-700 hover:bg-mocha-50 h-13 rounded border px-6 text-sm font-bold transition;
+  }
+  .card-paper {
+    @apply border-line shadow-card hover:shadow-hover hover:border-mocha-400 rounded border bg-white transition;
+  }
+  .chip {
+    @apply border-line hover:bg-mocha-50 cursor-pointer border px-4 py-2 text-xs font-semibold;
+  }
+  .chip-on {
+    @apply bg-ink-900 text-paper border-ink-900;
+  }
+  .label-mark {
+    @apply text-[10px] text-olive-500 uppercase;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
