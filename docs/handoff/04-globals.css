@@ -1,0 +1,49 @@
+/* handoff/04-globals.css — copy to src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap');
+
+@layer base {
+  :root {
+    --color-primary:  #6B4A2E;
+    --color-accent:   #6B7A3B;
+    --color-paper:    #F7F1E6;
+    --color-line:     #E8DFCF;
+  }
+  html, body {
+    background: var(--color-paper);
+    color: #1A1410;
+    font-family: Pretendard, system-ui, sans-serif;
+    letter-spacing: -0.2px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .font-display {
+    font-family: 'Bree Serif', serif;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply h-13 px-6 bg-mocha-700 text-paper rounded font-bold text-sm tracking-wider shadow-cta hover:bg-mocha-900 transition;
+  }
+  .btn-ghost {
+    @apply h-13 px-6 bg-paper text-mocha-700 border border-mocha-700 rounded font-bold text-sm tracking-wider hover:bg-mocha-50 transition;
+  }
+  .card-paper {
+    @apply bg-white border border-line rounded shadow-card transition hover:shadow-hover hover:border-mocha-400;
+  }
+  .chip {
+    @apply px-4 py-2 border border-line text-xs font-semibold tracking-wide cursor-pointer hover:bg-mocha-50;
+  }
+  .chip-on {
+    @apply bg-ink-900 text-paper border-ink-900;
+  }
+  .label-mark {
+    @apply font-display text-[10px] text-olive-500 tracking-label uppercase;
+  }
+}
