@@ -22,12 +22,14 @@ const NOTE_RE = new RegExp(
 
 const TOKEN_RE = new RegExp(`^([가-힣a-zA-Z][가-힣a-zA-Z\\s]*?)(\\d+(?:\\.\\d+)?)(${UNITS})?\\s*$`);
 
-/** "단위→한글" 경계에 \u0000 구분자를 삽입해 토큰 분리 */
+/**
+ * "단위 → 한글" 경계에 NULL 구분자를 삽입해 토큰 분리.
+ * 단위와 다음 한글 사이 공백 0~N개 모두 처리 ("2판새우깡" / "2판 새우깡" 모두 분리).
+ */
 function splitAtUnitBoundary(text: string): string[] {
-  const unitAlt = UNITS;
-  // 단위 직후에 한글/알파벳이 오면 구분자 삽입
-  const marked = text.replace(new RegExp(`(${unitAlt})([가-힣a-zA-Z])`, "g"), "$1\u0000$2");
-  return marked.split("\u0000").filter((t) => t.trim().length > 0);
+  // \s* 로 단위 뒤 공백 포함 처리
+  const marked = text.replace(new RegExp(`(${UNITS})\\s*([가-힣a-zA-Z])`, "g"), "$1\x00$2");
+  return marked.split("\x00").filter((t) => t.trim().length > 0);
 }
 
 function parseToken(tok: string): ParsedMemoItem {
