@@ -132,6 +132,102 @@ export async function deleteMemoAction(memoId: string): Promise<{ error?: string
   return {};
 }
 
+/** 기존 메모 업데이트 (항목 전체 교체) */
+export async function updateMemoAction(
+  memoId: string,
+  rawText: string,
+  items: ParsedItem[]
+): Promise<{ error?: string }> {
+  const user = await getAuthUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  const supabase = await createClient();
+
+  const title = rawText.split(/[\n,]/)[0].slice(0, 20) || "메모";
+
+  const { error: memoErr } = await supabase
+    .from("fp_shopping_memo")
+    .update({ title, raw_text: rawText, modified_at: new Date().toISOString() })
+    .eq("memo_id", memoId)
+    .eq("user_id", user.id);
+
+  if (memoErr) return { error: memoErr.message };
+
+  const { error: delErr } = await supabase.from("fp_memo_item").delete().eq("memo_id", memoId);
+
+  if (delErr) return { error: delErr.message };
+
+  if (items.length > 0) {
+    const rows = items.map((item, idx) => ({
+      memo_id: memoId,
+      raw_text: item.name,
+      corrected_text: item.name,
+      qty_value: item.qty,
+      qty_unit: item.unit,
+      category: item.category,
+      done: false,
+      sort_order: idx,
+    }));
+    const { error: itemErr } = await supabase.from("fp_memo_item").insert(rows);
+    if (itemErr) return { error: itemErr.message };
+  }
+
+  updateTag("memos");
+  return {};
+}
+
+/** getMemoDetailAction: 메모 + 항목 함께 조회 */
+export async function getMemoDetailAction(
+  memoId: string
+): Promise<{ memo: ShoppingMemo; items: MemoItem[] } | null> {
+  const user = await getAuthUser();
+  if (!user) return null;
+
+  const supabase = await createClient();
+
+  const [memoRes, itemsRes] = await Promise.all([
+    supabase
+      .from("fp_shopping_memo")
+      .select("*")
+      .eq("memo_id", memoId)
+      .eq("user_id", user.id)
+      .single(),
+    supabase
+      .from("fp_memo_item")
+      .select("*")
+      .eq("memo_id", memoId)
+      .order("sort_order", { ascending: true }),
+  ]);
+
+  if (!memoRes.data) return null;
+
+  const row = memoRes.data as Record<string, unknown>;
+  const memo: ShoppingMemo = {
+    memoId: row.memo_id as string,
+    userId: row.user_id as string,
+    title: row.title as string,
+    rawText: (row.raw_text as string | null) ?? undefined,
+    createdAt: row.created_at as string,
+    modifiedAt: row.modified_at as string,
+  };
+
+  const items: MemoItem[] = ((itemsRes.data ?? []) as Record<string, unknown>[]).map((r) => ({
+    memoItemId: r.memo_item_id as string,
+    memoId: r.memo_id as string,
+    rawText: r.raw_text as string,
+    correctedText: (r.corrected_text as string | null) ?? undefined,
+    qtyValue: (r.qty_value as number | null) ?? undefined,
+    qtyUnit: (r.qty_unit as string | null) ?? undefined,
+    matchedDishIngredientId: (r.matched_dish_ingredient_id as string | null) ?? undefined,
+    refStoreItemId: (r.ref_store_item_id as string | null) ?? undefined,
+    category: (r.category as string | null) ?? undefined,
+    done: r.done as boolean,
+    sortOrder: r.sort_order as number,
+  }));
+
+  return { memo, items };
+}
+
 /** 저장된 메모의 선택 항목을 fp_cart_item에 추가 */
 export async function addMemoToCartAction(
   memoId: string,

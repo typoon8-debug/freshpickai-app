@@ -8,9 +8,11 @@ export type ParsedItem = {
   unit: string;
   category: string;
   matched: boolean;
+  refStoreItemId?: string;
+  price?: number;
+  thumbnailSmall?: string;
 };
 
-// STEP4: 카테고리 키워드 분류 사전
 const SNACK_KW = [
   "과자",
   "스낵",
@@ -40,6 +42,14 @@ function classifyCategory(name: string): string {
   return "식재료";
 }
 
+type StoreItemRow = {
+  store_item_id: string | null;
+  item_name: string | null;
+  item_thumbnail_small: string | null;
+  effective_sale_price: number | null;
+  sale_price: number | null;
+};
+
 export async function POST(req: NextRequest) {
   let text: string;
   try {
@@ -53,14 +63,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "text가 필요합니다" }, { status: 400 });
   }
 
-  // STEP1 오타보정 + STEP2 수량추출 (memo-parser.ts 위임)
   const { items: parsedItems } = parseMemoItemText(text);
-
   if (parsedItems.length === 0) {
     return NextResponse.json([] as ParsedItem[]);
   }
 
-  // STEP3: fp_dish_ingredient ILIKE → 2글자 prefix ILIKE 폴백
   const supabase = await createClient();
 
   const results: ParsedItem[] = await Promise.all(
@@ -68,72 +75,75 @@ export async function POST(req: NextRequest) {
       const itemName = p.item || p.raw_token || "";
       const qty = p.qty_value ?? 1;
       const unit = p.qty_unit ?? "개";
+      const category = classifyCategory(itemName);
 
       if (!itemName) {
         return { name: itemName, qty, unit, category: "기타", matched: false };
       }
 
-      // 1차: 전체 품목명 ILIKE
+      // 1차: fp_dish_ingredient ILIKE
       const { data: exact } = await supabase
         .from("fp_dish_ingredient")
         .select("name")
         .ilike("name", `%${itemName}%`)
         .limit(1);
 
-      if (exact && exact.length > 0) {
-        return {
-          name: itemName,
-          qty,
-          unit,
-          category: classifyCategory(itemName),
-          matched: true,
-        };
-      }
+      // 2차: fp_ingredient_meta ILIKE
+      const { data: meta } = !exact?.length
+        ? await supabase
+            .from("fp_ingredient_meta")
+            .select("name")
+            .ilike("name", `%${itemName}%`)
+            .limit(1)
+        : { data: null };
 
-      // 2차: fp_ingredient_meta ILIKE (더 넓은 재료 지식)
-      const { data: meta } = await supabase
-        .from("fp_ingredient_meta")
-        .select("name")
-        .ilike("name", `%${itemName}%`)
-        .limit(1);
-
-      if (meta && meta.length > 0) {
-        return {
-          name: itemName,
-          qty,
-          unit,
-          category: classifyCategory(itemName),
-          matched: true,
-        };
-      }
-
-      // 3차: 2글자 prefix pg_trgm 폴백
-      const prefix = itemName.slice(0, 2);
-      if (prefix.length >= 2) {
-        const { data: trgm } = await supabase
-          .from("fp_dish_ingredient")
-          .select("name")
-          .ilike("name", `${prefix}%`)
-          .limit(1);
-
-        if (trgm && trgm.length > 0) {
-          return {
-            name: itemName,
-            qty,
-            unit,
-            category: classifyCategory(itemName),
-            matched: true,
-          };
+      // 3차: 2글자 prefix 폴백
+      let trgmMatched = false;
+      if (!exact?.length && !meta?.length) {
+        const prefix = itemName.slice(0, 2);
+        if (prefix.length >= 2) {
+          const { data: trgm } = await supabase
+            .from("fp_dish_ingredient")
+            .select("name")
+            .ilike("name", `${prefix}%`)
+            .limit(1);
+          trgmMatched = !!trgm?.length;
         }
       }
 
-      // 미매칭 — STEP4 카테고리는 키워드 기반으로 그래도 분류
+      const ingredientMatched = !!(exact?.length || meta?.length || trgmMatched);
+
+      // 4차: v_store_inventory_item ILIKE — storeItem 매칭 및 가격/썸네일 획득
+      const { data: storeRows } = await supabase
+        .from("v_store_inventory_item")
+        .select("store_item_id, item_name, item_thumbnail_small, effective_sale_price, sale_price")
+        .ilike("item_name", `%${itemName}%`)
+        .eq("status", "active")
+        .order("effective_sale_price", { ascending: true })
+        .limit(1);
+
+      const storeItem = (storeRows as StoreItemRow[] | null)?.[0];
+
+      if (storeItem?.store_item_id) {
+        const rawPrice = storeItem.effective_sale_price ?? storeItem.sale_price;
+        return {
+          name: itemName,
+          qty,
+          unit,
+          category,
+          matched: true,
+          refStoreItemId: storeItem.store_item_id,
+          price: rawPrice != null && rawPrice > 0 ? rawPrice : undefined,
+          thumbnailSmall: storeItem.item_thumbnail_small ?? undefined,
+        };
+      }
+
       return {
         name: itemName,
         qty,
         unit,
-        category: classifyCategory(itemName),
-        matched: false,
+        category,
+        matched: ingredientMatched,
       };
     })
   );

@@ -22,6 +22,7 @@ export function parsedToMemoItems(parsed: ParsedItem[]): {
       qtyValue: p.qty,
       qtyUnit: p.unit,
       category: p.category,
+      refStoreItemId: p.refStoreItemId,
       done: true,
       sortOrder: idx,
     });

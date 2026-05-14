@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { updateTag } from "next/cache";
 import type { CartItem, StoreItemAiData } from "@/lib/types";
 
@@ -38,7 +38,26 @@ export async function addBundleAction(
   }));
 
   const { error } = await supabase.from("fp_cart_item").insert(rows);
-  if (error) return { error: error.message };
+
+  if (error) {
+    // FK 위반(23503): fp_user_profile 미생성 → upsert 후 재시도
+    if (error.code === "23503") {
+      const admin = createAdminClient();
+      await admin.from("fp_user_profile").upsert(
+        {
+          user_id: user.id,
+          display_name: user.email?.split("@")[0] ?? "사용자",
+          family_role: "parent",
+          level: 1,
+        },
+        { onConflict: "user_id" }
+      );
+      const { error: retryError } = await supabase.from("fp_cart_item").insert(rows);
+      if (retryError) return { error: retryError.message };
+    } else {
+      return { error: error.message };
+    }
+  }
 
   updateTag("cart");
   return {};

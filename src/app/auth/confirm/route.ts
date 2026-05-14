@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
 
-  // 프로덕션에서 x-forwarded-host 로 정확한 URL 구성 (freshpick-app 패턴)
   const forwardedHost = request.headers.get("x-forwarded-host");
   const isLocalEnv = process.env.NODE_ENV === "development";
 
@@ -41,7 +40,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 세션 교환 성공 후 유저 정보 조회
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -49,24 +47,44 @@ export async function GET(request: NextRequest) {
     if (user) {
       const admin = createAdminClient();
 
-      // fp_user_profile 존재 여부 확인 (RLS 우회)
+      // fp_user_profile 조회
       const { data: profile } = await admin
         .from("fp_user_profile")
-        .select("onboarded_at")
+        .select("user_id, onboarded_at")
         .eq("user_id", user.id)
         .maybeSingle();
 
+      // 프로파일 미존재 시 생성 (FK 위반 방지 + 장바구니/메모 정상 동작 보장)
+      if (!profile) {
+        const displayName =
+          (user.user_metadata?.full_name as string | undefined) ??
+          (user.user_metadata?.name as string | undefined) ??
+          user.email?.split("@")[0] ??
+          "사용자";
+
+        await admin.from("fp_user_profile").insert({
+          user_id: user.id,
+          display_name: displayName,
+          avatar_url: (user.user_metadata?.avatar_url as string | undefined) ?? null,
+          family_role: "parent",
+          level: 1,
+        });
+
+        // 신규 유저 → 온보딩으로 이동
+        return NextResponse.redirect(buildRedirectUrl("/onboarding"));
+      }
+
+      // 기존 유저 — 온보딩 완료 여부 확인
       const { data: pref } = await admin
         .from("fp_user_preference")
         .select("onboarding_skipped_at")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      const isOnboarded = !!profile?.onboarded_at;
+      const isOnboarded = !!profile.onboarded_at;
       const isSkipped = !!pref?.onboarding_skipped_at;
 
       if (isOnboarded || isSkipped) {
-        // 온보딩 완료 → 홈으로 이동 + fp_onboarded 쿠키 설정
         const cookieValue = isOnboarded ? "done" : "skipped";
         const response = NextResponse.redirect(buildRedirectUrl("/"));
         response.cookies.set("fp_onboarded", cookieValue, {
@@ -76,10 +94,10 @@ export async function GET(request: NextRequest) {
           sameSite: "lax",
         });
         return response;
-      } else {
-        // 온보딩 미완료 → /onboarding 으로 이동
-        return NextResponse.redirect(buildRedirectUrl("/onboarding"));
       }
+
+      // 온보딩 미완료 → /onboarding
+      return NextResponse.redirect(buildRedirectUrl("/onboarding"));
     }
 
     return NextResponse.redirect(buildRedirectUrl("/"));

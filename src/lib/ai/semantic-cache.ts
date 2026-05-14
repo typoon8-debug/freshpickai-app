@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { embedText, embeddingToSql } from "./embedding";
 
-const DEFAULT_THRESHOLD = 0.95;
+const DEFAULT_THRESHOLD = 0.98;
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7일
 
 export interface CacheHit {

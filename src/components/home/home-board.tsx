@@ -78,11 +78,13 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
     : null;
   const isAiAutoFillSection = activeSectionObj?.aiAutoFill === true;
 
-  // sessionStorage 캐시를 렌더 시 동기로 읽음 (effect 밖 — setState 없음)
-  const sessionCachedCards = useMemo(() => {
-    if (typeof window === "undefined") return null;
-    if (!customSectionId || !isAiAutoFillSection) return null;
-    return readAutoFillCache(customSectionId);
+  // sessionStorage 캐시 (hydration 안전 — effect에서만 읽기)
+  const [sessionCachedCards, setSessionCachedCards] = useState<MenuCard[] | null>(null);
+
+  useEffect(() => {
+    const value =
+      customSectionId && isAiAutoFillSection ? readAutoFillCache(customSectionId) : null;
+    Promise.resolve().then(() => setSessionCachedCards(value));
   }, [customSectionId, isAiAutoFillSection]);
 
   // 현재 섹션의 AI 카드 (세션 캐시 → fetch 결과 순서로 우선)
