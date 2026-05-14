@@ -1,0 +1,24 @@
+{
+  "name": "FreshPick AI — 우리가족 AI 큐레이팅 장보기",
+  "short_name": "FreshPick AI",
+  "description": "가족이 함께하는 AI 장보기 큐레이팅 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6B4A2E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}

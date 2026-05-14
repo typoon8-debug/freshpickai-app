@@ -30,6 +30,19 @@ export async function saveOnboarding(values: OnboardingValues): Promise<{ succes
 
   const now = new Date().toISOString();
 
+  // 기존 persona_tags 유지 + household 태그만 교체
+  const { data: existingPref } = await supabase
+    .from("fp_user_preference")
+    .select("persona_tags")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const prevTags: string[] = existingPref?.persona_tags ?? [];
+  const nextTags = [
+    ...prevTags.filter((t) => !t.startsWith("household:")),
+    `household:${values.householdSize}`,
+  ];
+
   const [prefResult, profileResult] = await Promise.all([
     supabase.from("fp_user_preference").upsert(
       {
@@ -37,6 +50,7 @@ export async function saveOnboarding(values: OnboardingValues): Promise<{ succes
         wellness_goals: values.wellnessTags,
         cook_time_min: parseCookTimeMin(values.cookTime),
         budget_level: parseBudgetLevel(values.budget),
+        persona_tags: nextTags,
         modified_at: now,
       },
       { onConflict: "user_id" }

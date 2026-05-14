@@ -8,6 +8,39 @@
 
 ---
 
+## 태스크 관리 규칙 ⚡ 최우선 준수
+
+### 핵심 규칙
+
+1. **모든 태스크는 `docs/ROADMAP.md` 기준**으로 수행 — 다른 출처 금지
+2. 태스크 착수 전 `mcp__shrimp-task-manager__list_tasks`로 현황 확인 후 `in_progress` 처리
+3. **태스크 완료 즉시** 아래 두 곳 동시 업데이트 **필수**:
+   - `docs/ROADMAP.md` 상단 **진행 현황 테이블**에 완료 행 추가:
+     `| TXxx: 태스크명 | ✅ 완료 | YYYY-MM-DD |`
+   - `docs/ROADMAP.md` 해당 태스크 섹션 구현 항목 체크박스 `[ ]` → `[x]` + ` ✅ YYYY-MM-DD` 추기
+4. shrimp task manager에서 해당 태스크 `completed` 처리
+5. `npm run check-all` + `npm run build` 통과 후 완료 선언
+
+### 태스크 우선순위 판단
+
+```
+P0 > P1 > P2
+Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4
+BlockedBy 있는 태스크는 선행 완료 후 착수
+```
+
+### ROADMAP.md 업데이트 형식
+
+```markdown
+<!-- 진행 현황 테이블 (파일 상단) -->
+| T006: 로그인 + 온보딩 UI 구현 | ✅ 완료 | 2026-05-07 |
+
+<!-- 태스크 섹션 내 체크박스 -->
+- [x] **로그인 페이지** (`src/app/(auth)/login/page.tsx`) ✅ 2026-05-07
+```
+
+---
+
 ## 프로젝트 아키텍처
 
 ### 디렉토리 구조 및 역할
@@ -394,3 +427,4 @@ npm run build       # 프로덕션 빌드 성공 확인
 - 상대 경로 임포트 금지 (항상 `@/*` 사용)
 - 컴포넌트에서 `console.log` 남기기 금지 (개발 중 임시 사용 후 제거)
 - `--no-verify` 플래그로 Husky 훅 우회 금지
+- **ROADMAP.md 업데이트 없이 태스크 완료 처리 금지** — 진행 현황 테이블 + 체크박스 동시 갱신 필수

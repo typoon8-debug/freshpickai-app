@@ -4,3 +4,5 @@ public
 *.md
 docs
 shrimp_data
+.playwright-mcp
+test-results

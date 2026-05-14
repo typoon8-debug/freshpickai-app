@@ -1,7 +1,7 @@
-/* @import 순서: Tailwind v4는 @import가 가장 먼저 와야 함 */
-@import "tailwindcss";
+/* 외부 폰트는 tailwindcss 확장 전에 선언해야 PostCSS 변환 후 순서 유지됨 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap");
+@import "tailwindcss";
 
 @plugin "tailwindcss-animate";
 
@@ -45,6 +45,9 @@
   --shadow-cta: 0 4px 14px rgba(107, 74, 46, 0.25);
   --shadow-phone: 0 30px 80px rgba(59, 42, 30, 0.2);
 
+  --tracking-tightest: -2px;
+  --tracking-tighter: -0.8px;
+  --tracking-tight: -0.3px;
   --tracking-label: 2px;
 
   --max-w-phone: 375px;
