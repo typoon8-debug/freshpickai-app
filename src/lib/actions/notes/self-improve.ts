@@ -3,8 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
-const LLM_JUDGE_MODEL = "claude-haiku-4-5-20251001";
 const PASS_SCORE = 4;
 
 /**
@@ -36,8 +36,9 @@ export async function triggerSelfImprove(
 
 점수만 숫자로 답하세요 (예: 4).`;
 
+    const judgeModelId = await getAiModelId(AI_MODEL_KEYS.SELF_IMPROVE);
     const { text } = await generateText({
-      model: anthropic(LLM_JUDGE_MODEL),
+      model: anthropic(judgeModelId),
       prompt: judgePrompt,
       maxOutputTokens: 10,
     });
@@ -102,8 +103,9 @@ export async function triggerSubstituteMerge(noteId: string, noteBody: string): 
 두부: 순두부, 연두부
 계란: 두부, 아마씨물`;
 
+    const extractModelId = await getAiModelId(AI_MODEL_KEYS.SELF_IMPROVE);
     const { text } = await generateText({
-      model: anthropic(LLM_JUDGE_MODEL),
+      model: anthropic(extractModelId),
       prompt: extractPrompt,
       maxOutputTokens: 150,
     });

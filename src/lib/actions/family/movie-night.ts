@@ -5,6 +5,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import type { MovieNightCard } from "@/lib/types";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
 // ── 무비나이트 장르 옵션 ─────────────────────────────────────
 export const MOVIE_GENRES = [
@@ -60,7 +61,6 @@ export async function triggerMovieNight(
     genre = (sorted[0]?.[0] as MovieGenre) ?? "가족";
   }
 
-  // Claude Sonnet 4.6으로 페어링 카드 생성
   const MovieNightSchema = z.object({
     adult: z.object({
       name: z.string(),
@@ -92,8 +92,9 @@ export async function triggerMovieNight(
 
   let generated;
   try {
+    const movieModelId = await getAiModelId(AI_MODEL_KEYS.MOVIE_NIGHT);
     const result = await generateObject({
-      model: anthropic("claude-sonnet-4-6"),
+      model: anthropic(movieModelId),
       schema: MovieNightSchema,
       prompt: `당신은 홈시네마 나이트 전문 푸드 큐레이터입니다.
 오늘의 무비 장르: "${genre}"

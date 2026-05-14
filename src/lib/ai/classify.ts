@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
 export type ChatIntentType =
   | "meal_recommendation"
@@ -47,8 +48,9 @@ export async function classifyIntent(text: string): Promise<ChatIntentType> {
   }
 
   try {
+    const modelId = await getAiModelId(AI_MODEL_KEYS.CLASSIFY);
     const { text: raw } = await generateText({
-      model: anthropic("claude-haiku-4-5-20251001"),
+      model: anthropic(modelId),
       prompt: `다음 메시지의 의도를 분류하세요. 반드시 아래 중 하나만 답하세요:
 meal_recommendation, recipe_question, cart_action, memo_action, general
 

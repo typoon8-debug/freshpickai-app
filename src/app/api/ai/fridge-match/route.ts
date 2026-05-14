@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { generateObject } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
 export const maxDuration = 30;
 
@@ -114,9 +115,11 @@ export async function POST(req: NextRequest) {
     )
     .join("\n");
 
+  const modelId = await getAiModelId(AI_MODEL_KEYS.FRIDGE_MATCH);
+
   try {
     const { object } = await generateObject({
-      model: anthropic("claude-haiku-4-5-20251001"),
+      model: anthropic(modelId),
       schema: MatchedCardSchema,
       prompt: `사용자가 가진 재료: ${ingredients.join(", ")}
 

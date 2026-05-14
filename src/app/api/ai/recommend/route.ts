@@ -8,6 +8,7 @@ import { buildPersonaContext } from "@/lib/ai/persona-context";
 import { getCards } from "@/lib/actions/cards";
 import { RecommendResponseSchema } from "@/lib/validations/recommendation";
 import type { MenuCard } from "@/lib/types";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
 function getCurrentSeason(): string {
   const month = new Date().getMonth() + 1;
@@ -226,9 +227,11 @@ ${JSON.stringify(cardSummary)}
 각 카드의 reason은 한국어 2문장, confidence는 0.0~1.0 사이.
 반드시 위 카드 목록의 id 값을 cardId로 사용하세요.`;
 
+  const modelId = await getAiModelId(AI_MODEL_KEYS.RECOMMEND);
+
   try {
     const result = await generateObject({
-      model: anthropic("claude-haiku-4-5-20251001"),
+      model: anthropic(modelId),
       schema: RecommendResponseSchema,
       system: systemPrompt,
       prompt: userPrompt,

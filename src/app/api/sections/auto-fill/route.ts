@@ -6,6 +6,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import type { MenuCard, CardTheme } from "@/lib/types";
 import { mapCard } from "@/lib/actions/cards/mappers";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
 type RpcCard = {
   card_id: string;
@@ -116,14 +117,15 @@ export async function GET(req: NextRequest) {
     ? `페르소나: ${ctx.personaName} (${ctx.personaDescription})\n식이 태그: ${ctx.dietaryTags.join(", ") || "없음"}\n가구 인원: ${ctx.householdSize}명\n예산: ${ctx.budgetLevel}`
     : "";
 
-  // Claude Haiku 4.5 — 섹션에 최적인 카드 3개 선별
+  const modelId = await getAiModelId(AI_MODEL_KEYS.AUTO_FILL);
+
   const cardList = candidateCards
     .slice(0, 20)
     .map((c) => `- cardId: ${c.cardId} | 제목: ${c.name} | 테마: ${c.cardTheme}`)
     .join("\n");
 
   const { object } = await generateObject({
-    model: anthropic("claude-haiku-4-5-20251001"),
+    model: anthropic(modelId),
     schema: AutoFillSchema,
     prompt: `섹션 "${section.name}"에 어울리는 카드를 최대 3개 선택하세요.
 

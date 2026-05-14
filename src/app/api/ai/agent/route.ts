@@ -11,6 +11,7 @@ import { createGetUserContextTool } from "@/lib/ai/tools/get-user-context";
 import { createGetInventoryTool } from "@/lib/ai/tools/get-inventory";
 import { createAddToCartTool } from "@/lib/ai/tools/add-to-cart";
 import { createAddToMemoTool } from "@/lib/ai/tools/add-to-memo";
+import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
 // ── 레이트 리밋 (30 req/min per userId) ──────────────────────
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -73,14 +74,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // common_code 테이블에서 에이전트 모델 조회
-  const { data: codeRow } = await supabase
-    .from("common_code")
-    .select("description")
-    .eq("code", "AI_AGENT_LLM")
-    .maybeSingle();
-
-  const modelId = codeRow?.description ?? "claude-sonnet-4-6";
+  const modelId = await getAiModelId(AI_MODEL_KEYS.AGENT);
 
   // 페르소나 컨텍스트 + 시스템 프롬프트 빌드
   const personaCtx = await buildPersonaContext(user.id);
