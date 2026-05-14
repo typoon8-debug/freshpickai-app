@@ -43,27 +43,30 @@ function readSessionCache(): RecommendResponse | null {
   return null;
 }
 
-function getInitialState(): RecommendState {
-  const cached = readSessionCache();
-  return cached
-    ? { data: cached, loading: false, error: false }
-    : { data: null, loading: true, error: false };
-}
-
 interface AIRecommendSectionProps {
   initialCards: MenuCard[];
 }
 
 export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
   const router = useRouter();
-  const [state, setState] = useState<RecommendState>(getInitialState);
+  // SSR: 항상 loading:true 로 시작 → hydration mismatch 방지
+  const [state, setState] = useState<RecommendState>({ data: null, loading: true, error: false });
   const [activeTheme, setActiveTheme] = useState(0);
   const hasFetchedRef = useRef(false);
 
   const cardMap = new Map(initialCards.map((c) => [c.cardId, c]));
 
   useEffect(() => {
-    if (!state.loading || hasFetchedRef.current) return;
+    // 마운트 후 sessionStorage 캐시 확인 (서버에서는 실행 안 됨)
+    const cached = readSessionCache();
+    if (cached) {
+      hasFetchedRef.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setState({ data: cached, loading: false, error: false });
+      return;
+    }
+
+    if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
 
     fetch("/api/ai/recommend")
@@ -83,7 +86,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
       .catch(() => {
         setState({ data: null, loading: false, error: true });
       });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   if (state.error) return null;
 

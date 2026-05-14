@@ -33,8 +33,7 @@ export function EmailLoginForm({ onBack, className }: EmailLoginFormProps) {
     try {
       const result = await signInWithEmail(data.email, data.password);
       if (result.error) throw new Error(result.error);
-      router.push("/");
-      router.refresh();
+      router.replace("/");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "로그인에 실패했어요.");
     }

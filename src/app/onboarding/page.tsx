@@ -31,9 +31,10 @@ export default async function OnboardingPage() {
   const isOnboarded = !!profileRes.data?.onboarded_at;
   const isSkipped = !!prefRes.data?.onboarding_skipped_at;
 
-  // 이미 완료/스킵된 사용자는 홈으로 (미들웨어가 다음 요청에서 쿠키 설정)
+  // 이미 완료/스킵된 사용자 → sync 라우트에서 fp_onboarded 쿠키 설정 후 홈으로 이동
+  // (새 기기/쿠키 삭제 시 OnboardingGuard 리다이렉트 루프 방지)
   if (isOnboarded || isSkipped) {
-    redirect("/");
+    redirect("/api/auth/onboarding-sync");
   }
 
   // 슬라이드 1에 표시할 실제 카드 데이터 (10종 카드 시드 연결)
