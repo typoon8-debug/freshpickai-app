@@ -34,6 +34,9 @@ export default function NewCardPage() {
       tags: [],
       ingredients: [],
       budget: "",
+      cardName: "",
+      submitForReview: false,
+      aiConsent: false,
     },
   });
 
@@ -41,6 +44,9 @@ export default function NewCardPage() {
   const tags = useWatch({ control: form.control, name: "tags" }) ?? [];
   const ingredients = useWatch({ control: form.control, name: "ingredients" }) ?? [];
   const budget = useWatch({ control: form.control, name: "budget" }) ?? "";
+  const cardName = useWatch({ control: form.control, name: "cardName" }) ?? "";
+  const submitForReview = useWatch({ control: form.control, name: "submitForReview" }) ?? false;
+  const aiConsent = useWatch({ control: form.control, name: "aiConsent" }) ?? false;
   const { errors } = form.formState;
 
   const canNext =
@@ -117,10 +123,15 @@ export default function NewCardPage() {
         )}
         {step === 4 && (
           <Step4Preview
-            cardName={tags.slice(0, 2).join(" · ")}
+            cardName={cardName}
             theme={theme ?? null}
             tags={tags}
             budget={budget}
+            submitForReview={submitForReview}
+            aiConsent={aiConsent}
+            onCardNameChange={(v) => form.setValue("cardName", v)}
+            onSubmitForReviewChange={(v) => form.setValue("submitForReview", v)}
+            onAiConsentChange={(v) => form.setValue("aiConsent", v)}
           />
         )}
       </div>

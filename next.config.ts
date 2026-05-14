@@ -2,6 +2,7 @@ import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion", "vaul"],
   },
@@ -13,6 +14,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "api.dicebear.com" },
+      { protocol: "https", hostname: "*.supabase.co" },
     ],
   },
 };
