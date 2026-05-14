@@ -57,13 +57,13 @@ export default function LoginPage() {
         {view === "login" ? (
           <div className="flex flex-col gap-6">
             <SocialButtons onEmailClick={() => setView("email")} />
-            <p className="text-ink-300 text-center text-xs">
+            <p className="text-ink-700 text-center text-xs">
               로그인 시{" "}
-              <button type="button" className="text-ink-500 underline">
+              <button type="button" className="text-ink-700 underline">
                 서비스 이용약관
               </button>{" "}
               및{" "}
-              <button type="button" className="text-ink-500 underline">
+              <button type="button" className="text-ink-700 underline">
                 개인정보 처리방침
               </button>
               에 동의합니다

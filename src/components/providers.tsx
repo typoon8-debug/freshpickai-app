@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { getQueryClient } from "@/lib/query-client";
 import { AuthSync } from "@/components/auth/auth-sync";
+import { PostHogClientProvider } from "@/components/analytics/posthog-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
@@ -12,9 +13,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
-        <AuthSync />
-        {children}
-        <Toaster position="bottom-center" richColors />
+        <PostHogClientProvider>
+          <AuthSync />
+          {children}
+          <Toaster position="bottom-center" richColors />
+        </PostHogClientProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

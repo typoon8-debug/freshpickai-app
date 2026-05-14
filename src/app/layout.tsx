@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Bree_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -52,7 +54,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // 카카오 JS Key가 설정된 경우에만 SDK 로드 (없으면 graceful degradation)
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
 
   return (
@@ -63,6 +64,8 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col antialiased">
         <Providers>{children}</Providers>
+        <Analytics />
+        <SpeedInsights />
         {kakaoKey && (
           <Script
             src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"

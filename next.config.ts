@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs";
 import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 
@@ -35,4 +36,14 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV !== "production",
 });
 
-export default withSerwist(nextConfig);
+export default withSentryConfig(withSerwist(nextConfig), {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true,
+  disableLogger: true,
+  automaticVercelMonitors: true,
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+});
