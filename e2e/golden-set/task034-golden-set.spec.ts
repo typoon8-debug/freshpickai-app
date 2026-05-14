@@ -479,7 +479,7 @@ test.describe("Task034-6: 9 페르소나 골든셋 품질 검증", () => {
     if (parseBtnVisible) {
       await parseBtn.click();
       // 파싱 완료 대기 (최대 10초)
-      await parseBtn.waitFor({ state: "enabled", timeout: 10000 }).catch(() => null);
+      await parseBtn.waitFor({ state: "visible", timeout: 10000 }).catch(() => null);
       await page.waitForTimeout(1000);
     }
 

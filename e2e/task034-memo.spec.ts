@@ -177,7 +177,7 @@ test.describe("Task034-5: 메모 파싱", () => {
     await parseBtn.click();
 
     // 파싱 완료 대기
-    await parseBtn.waitFor({ state: "enabled", timeout: 10000 }).catch(() => null);
+    await parseBtn.waitFor({ state: "visible", timeout: 10000 }).catch(() => null);
     await page.waitForTimeout(1000);
 
     // "장바구니 담기" 또는 "담기" 버튼 확인

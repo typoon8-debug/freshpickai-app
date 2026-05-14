@@ -50,7 +50,7 @@ test.describe("Task033: 성능 최적화", () => {
     // 실제 렌더링에서 data-nimg 없는 카드 이미지가 없어야 함
     const rawCardImages = await page.evaluate(() => {
       const cards = document.querySelectorAll(".grid-cols-2 img, .overflow-hidden img");
-      return Array.from(cards).filter((img) => !img.dataset["nimg"]).length;
+      return Array.from(cards).filter((img) => !(img as HTMLImageElement).dataset["nimg"]).length;
     });
 
     expect(rawCardImages).toBe(0);
