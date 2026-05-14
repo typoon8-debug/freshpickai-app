@@ -8,12 +8,21 @@ import { useWishlistStore } from "@/lib/store/wishlist-store";
  * cart·sections·wishlist·auth 4개 persist 스토어가 모두 localStorage
  * hydration을 완료하면 true를 반환합니다.
  *
- * 목적: 홈 화면 모바일 깜빡임 방지.
- * 각 스토어가 독립적으로 setState를 발생시키는 대신,
- * 마지막 스토어가 완료되는 시점에 단 1회만 리렌더합니다.
+ * Grace period(150ms) 패턴:
+ * localStorage hydration은 보통 50ms 내에 완료되므로, 150ms 동안은
+ * hydration 완료 여부와 관계없이 true를 반환합니다.
+ * → 빠른 기기에서 스켈레톤이 화면에 그려질 기회 자체가 없어짐
+ * → 느린 기기에서는 150ms 후 스켈레톤 표시 (그레이스풀 폴백)
  */
 export function useStoresHydrated(): boolean {
   const [hydrated, setHydrated] = useState(false);
+  // 150ms 유예기간: 이 기간 동안은 콘텐츠를 바로 표시
+  const [gracePeriod, setGracePeriod] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setGracePeriod(false), 150);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     type S = {
@@ -43,5 +52,5 @@ export function useStoresHydrated(): boolean {
     return () => unsubs.forEach((u) => u());
   }, []);
 
-  return hydrated;
+  return hydrated || gracePeriod;
 }

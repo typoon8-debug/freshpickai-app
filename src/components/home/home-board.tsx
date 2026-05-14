@@ -142,7 +142,9 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       return res.json() as Promise<MenuCard[]>;
     },
     initialData: initialCards,
-    initialDataUpdatedAt, // RSC 데이터를 최신으로 표시 → 즉각 stale 재fetch 방지
+    // 기본 상태(필터 없음)에서만 RSC 초기 데이터를 최신으로 표시 → stale 즉시 재fetch 방지
+    // 필터가 적용된 쿼리 키는 initialDataUpdatedAt 없음 → epoch 기준으로 즉시 stale → 재fetch 강제
+    initialDataUpdatedAt: filterKey === "all:all:" ? initialDataUpdatedAt : undefined,
     enabled: !isAiAutoFillSection, // AI 자동 채움 섹션은 별도 fetch
   });
 

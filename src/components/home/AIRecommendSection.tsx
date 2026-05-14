@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
@@ -56,17 +56,21 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
 
   const cardMap = new Map(initialCards.map((c) => [c.cardId, c]));
 
+  // useLayoutEffect: 페인트 이전 동기 실행 → 캐시가 있으면 스켈레톤이 화면에 그려지기 전에 전환
+  // "use client" 컴포넌트이므로 SSR 경고 없음
+  useLayoutEffect(() => {
+    if (hasFetchedRef.current) return;
+    const cached = readSessionCache();
+    if (cached) {
+      hasFetchedRef.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setState({ data: cached, loading: false, error: false });
+    }
+  }, []);
+
   useEffect(() => {
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
-
-    // 캐시 확인 → 있으면 fetch 생략
-    const cached = readSessionCache();
-    if (cached) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setState({ data: cached, loading: false, error: false });
-      return;
-    }
 
     fetch("/api/ai/recommend")
       .then((res) => {
