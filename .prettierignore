@@ -6,3 +6,4 @@ docs
 shrimp_data
 .playwright-mcp
 test-results
+playwright-report

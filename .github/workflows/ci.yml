@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: "22"
 
 jobs:
   # ── 1단계: 타입체크 · 린트 · 포맷 검사 ──────────────────────────────────
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 의존성 설치
         run: npm ci
@@ -54,18 +54,18 @@ jobs:
       TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
       KAKAO_REST_KEY: ${{ secrets.KAKAO_REST_KEY }}
       NEXT_PUBLIC_DELIVERY_GUARD_MODE: WARN
-      NEXT_PUBLIC_DEFAULT_DELIVERY_RADIUS_M: '1000'
-      GEOCODE_RATE_LIMIT_PER_MIN: '120'
-      GEOCODE_DRY_RUN: 'true'
-      RAG_VECTOR_THRESHOLD: '0.78'
-      RAG_CACHE_THRESHOLD: '0.92'
+      NEXT_PUBLIC_DEFAULT_DELIVERY_RADIUS_M: "1000"
+      GEOCODE_RATE_LIMIT_PER_MIN: "120"
+      GEOCODE_DRY_RUN: "true"
+      RAG_VECTOR_THRESHOLD: "0.78"
+      RAG_CACHE_THRESHOLD: "0.92"
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 의존성 설치
         run: npm ci
@@ -95,18 +95,18 @@ jobs:
       TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
       KAKAO_REST_KEY: ${{ secrets.KAKAO_REST_KEY }}
       NEXT_PUBLIC_DELIVERY_GUARD_MODE: WARN
-      NEXT_PUBLIC_DEFAULT_DELIVERY_RADIUS_M: '1000'
-      GEOCODE_RATE_LIMIT_PER_MIN: '120'
-      GEOCODE_DRY_RUN: 'true'
-      RAG_VECTOR_THRESHOLD: '0.78'
-      RAG_CACHE_THRESHOLD: '0.92'
+      NEXT_PUBLIC_DEFAULT_DELIVERY_RADIUS_M: "1000"
+      GEOCODE_RATE_LIMIT_PER_MIN: "120"
+      GEOCODE_DRY_RUN: "true"
+      RAG_VECTOR_THRESHOLD: "0.78"
+      RAG_CACHE_THRESHOLD: "0.92"
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 의존성 설치
         run: npm ci

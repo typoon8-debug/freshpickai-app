@@ -27,8 +27,8 @@ export async function login(page: Page) {
   await page.getByRole("textbox", { name: "비밀번호" }).fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "로그인", exact: true }).click();
 
-  // 로그인 완료 후 /login 이탈 대기
-  await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 15000 });
+  // 로그인 완료 후 /login 이탈 대기 (Supabase 인증 지연 고려해 30초 허용)
+  await page.waitForURL((url) => !url.pathname.includes("/login"), { timeout: 30000 });
 
   // 온보딩 가드 우회: Zustand fp-auth persist 스토어에 skipOnboarding 설정
   await page.evaluate(() => {

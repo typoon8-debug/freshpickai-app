@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// task027/028: BASE_URL fallback이 3000이므로 3001로 맞춤
+process.env.NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -19,5 +22,8 @@ export default defineConfig({
     url: "http://localhost:3001",
     reuseExistingServer: true,
     timeout: 120000,
+    env: {
+      NODE_OPTIONS: "--max-old-space-size=4096",
+    },
   },
 });
