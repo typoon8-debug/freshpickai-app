@@ -4,10 +4,12 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUIStore, useSectionStore } from "@/lib/store";
 import { qk } from "@/lib/query-keys";
+import { useStoresHydrated } from "@/hooks/use-stores-hydrated";
 import { SectionTabs } from "./section-tabs";
 import { CategoryFilter } from "./category-filter";
 import { AiTagFilter } from "./ai-tag-filter";
 import { CardGrid } from "./card-grid";
+import { HomeBoardSkeleton } from "@/components/ui/skeleton";
 import type { MenuCard } from "@/lib/types";
 
 const CATEGORY_THEME_MAP: Record<string, string[]> = {
@@ -58,11 +60,14 @@ interface HomeBoardProps {
 }
 
 export function HomeBoard({ initialCards }: HomeBoardProps) {
+  const storesHydrated = useStoresHydrated();
+
   const [activeSection, setActiveSection] = useState("all");
   const [selectedAiTags, setSelectedAiTags] = useState<string[]>([]);
   // API fetch 결과 저장 (sectionId → cards)
   const [fetchedCardMap, setFetchedCardMap] = useState<Map<string, MenuCard[]>>(new Map());
   const [aiFetching, setAiFetching] = useState(false);
+  const [initialDataUpdatedAt] = useState<number>(() => Date.now());
   const { homeFilter } = useUIStore();
   const { sections } = useSectionStore();
   const fetchedRef = useRef<Set<string>>(new Set());
@@ -84,7 +89,9 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
   useEffect(() => {
     const value =
       customSectionId && isAiAutoFillSection ? readAutoFillCache(customSectionId) : null;
-    Promise.resolve().then(() => setSessionCachedCards(value));
+    // sessionStorage는 동기 API — Promise 래핑 없이 직접 set
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSessionCachedCards(value);
   }, [customSectionId, isAiAutoFillSection]);
 
   // 현재 섹션의 AI 카드 (세션 캐시 → fetch 결과 순서로 우선)
@@ -135,6 +142,7 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       return res.json() as Promise<MenuCard[]>;
     },
     initialData: initialCards,
+    initialDataUpdatedAt, // RSC 데이터를 최신으로 표시 → 즉각 stale 재fetch 방지
     enabled: !isAiAutoFillSection, // AI 자동 채움 섹션은 별도 fetch
   });
 
@@ -164,6 +172,12 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
   }, [allCards]);
 
   const loading = isAiAutoFillSection ? aiFetching : isFetching;
+
+  // persist 스토어 hydration 완료 전: 섹션 탭·카드 영역만 Skeleton으로 대체
+  // (카드 그리드 데이터는 initialCards로 이미 있으므로 탭 영역만 가림)
+  if (!storesHydrated) {
+    return <HomeBoardSkeleton />;
+  }
 
   return (
     <>
