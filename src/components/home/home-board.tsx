@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useUIStore } from "@/lib/store";
+import { useUIStore, useSectionStore } from "@/lib/store";
 import { qk } from "@/lib/query-keys";
 import { SectionTabs } from "./section-tabs";
 import { CategoryFilter } from "./category-filter";
@@ -24,6 +24,35 @@ const CATEGORY_THEME_MAP: Record<string, string[]> = {
   cinema: ["cinema_night"],
 };
 
+// 섹션 AI 자동 채움 캐시 (24h, sessionStorage)
+const AI_FILL_CACHE_PREFIX = "ai-fill:v1:";
+const AI_FILL_TTL_MS = 24 * 60 * 60 * 1000;
+
+function readAutoFillCache(sectionId: string): MenuCard[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(`${AI_FILL_CACHE_PREFIX}${sectionId}`);
+    if (!raw) return null;
+    const { data, timestamp } = JSON.parse(raw) as { data: MenuCard[]; timestamp: number };
+    if (Date.now() - timestamp < AI_FILL_TTL_MS) return data;
+  } catch {
+    // 무시
+  }
+  return null;
+}
+
+function writeAutoFillCache(sectionId: string, cards: MenuCard[]) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(
+      `${AI_FILL_CACHE_PREFIX}${sectionId}`,
+      JSON.stringify({ data: cards, timestamp: Date.now() })
+    );
+  } catch {
+    // 무시
+  }
+}
+
 interface HomeBoardProps {
   initialCards: MenuCard[];
 }
@@ -31,14 +60,72 @@ interface HomeBoardProps {
 export function HomeBoard({ initialCards }: HomeBoardProps) {
   const [activeSection, setActiveSection] = useState("all");
   const [selectedAiTags, setSelectedAiTags] = useState<string[]>([]);
+  // API fetch 결과 저장 (sectionId → cards)
+  const [fetchedCardMap, setFetchedCardMap] = useState<Map<string, MenuCard[]>>(new Map());
+  const [aiFetching, setAiFetching] = useState(false);
   const { homeFilter } = useUIStore();
+  const { sections } = useSectionStore();
+  const fetchedRef = useRef<Set<string>>(new Set());
+
+  // 커스텀 섹션 선택 시 sectionId 추출
+  const customSectionId = activeSection.startsWith("custom:")
+    ? activeSection.replace("custom:", "")
+    : null;
+
+  // 해당 섹션의 aiAutoFill 여부 확인
+  const activeSectionObj = customSectionId
+    ? sections.find((s) => s.sectionId === customSectionId)
+    : null;
+  const isAiAutoFillSection = activeSectionObj?.aiAutoFill === true;
+
+  // sessionStorage 캐시를 렌더 시 동기로 읽음 (effect 밖 — setState 없음)
+  const sessionCachedCards = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    if (!customSectionId || !isAiAutoFillSection) return null;
+    return readAutoFillCache(customSectionId);
+  }, [customSectionId, isAiAutoFillSection]);
+
+  // 현재 섹션의 AI 카드 (세션 캐시 → fetch 결과 순서로 우선)
+  const aiCards: MenuCard[] | null =
+    sessionCachedCards ?? (customSectionId ? (fetchedCardMap.get(customSectionId) ?? null) : null);
+
+  // AI 자동 채움 API fetch — setState는 모두 비동기 콜백(.then/.catch)에서만 호출
+  useEffect(() => {
+    if (!customSectionId || !isAiAutoFillSection) return;
+    if (sessionCachedCards !== null) return; // 이미 캐시 있음
+    if (fetchedCardMap.has(customSectionId)) return; // 이미 fetch 완료
+    if (fetchedRef.current.has(customSectionId)) return; // 이미 fetch 중
+
+    const sectionId = customSectionId;
+    fetchedRef.current.add(sectionId);
+    setAiFetching(true);
+
+    fetch(`/api/sections/auto-fill?sectionId=${sectionId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`${res.status}`);
+        return res.json() as Promise<{ cards: MenuCard[] }>;
+      })
+      .then(({ cards }) => {
+        const result = cards ?? [];
+        setFetchedCardMap((prev) => new Map(prev).set(sectionId, result));
+        writeAutoFillCache(sectionId, result);
+      })
+      .catch(() => {
+        setFetchedCardMap((prev) => new Map(prev).set(sectionId, []));
+      })
+      .finally(() => {
+        setAiFetching(false);
+        fetchedRef.current.delete(sectionId);
+      });
+  }, [customSectionId, isAiAutoFillSection, sessionCachedCards, fetchedCardMap]);
 
   const filterKey = `${activeSection}:${homeFilter}:${selectedAiTags.sort().join(",")}`;
   const { data: allCards = initialCards, isFetching } = useQuery<MenuCard[]>({
     queryKey: qk.cards(filterKey),
     queryFn: async (): Promise<MenuCard[]> => {
       const params = new URLSearchParams({ official: "true" });
-      if (activeSection !== "all") params.set("theme", activeSection);
+      if (activeSection !== "all" && !activeSection.startsWith("custom:"))
+        params.set("theme", activeSection);
       if (homeFilter !== "all") params.set("category", homeFilter);
       if (selectedAiTags.length > 0) params.set("aiTags", selectedAiTags.join(","));
       const res = await fetch(`/api/cards?${params.toString()}`);
@@ -46,12 +133,17 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       return res.json() as Promise<MenuCard[]>;
     },
     initialData: initialCards,
-    enabled: true,
+    enabled: !isAiAutoFillSection, // AI 자동 채움 섹션은 별도 fetch
   });
 
   const filteredCards = useMemo(() => {
+    // AI 자동 채움 섹션: AI 결과 사용
+    if (isAiAutoFillSection && aiCards !== null) {
+      return aiCards;
+    }
+
     let cards = allCards;
-    if (activeSection !== "all") {
+    if (activeSection !== "all" && !activeSection.startsWith("custom:")) {
       cards = cards.filter((c) => c.cardTheme === activeSection);
     }
     if (homeFilter !== "all") {
@@ -59,7 +151,7 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       cards = cards.filter((c) => allowed.includes(c.cardTheme));
     }
     return cards;
-  }, [allCards, activeSection, homeFilter]);
+  }, [allCards, activeSection, homeFilter, isAiAutoFillSection, aiCards]);
 
   const top3Ids = useMemo(() => {
     return [...allCards]
@@ -69,12 +161,26 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       .map((c) => c.cardId);
   }, [allCards]);
 
+  const loading = isAiAutoFillSection ? aiFetching : isFetching;
+
   return (
     <>
       <SectionTabs activeSection={activeSection} onSectionChange={setActiveSection} />
       <CategoryFilter />
       <AiTagFilter selected={selectedAiTags} onChange={setSelectedAiTags} />
-      <CardGrid cards={filteredCards} loading={isFetching} top3Ids={top3Ids} />
+
+      {isAiAutoFillSection && !aiFetching && aiCards !== null && aiCards.length === 0 && (
+        <p className="text-ink-400 py-8 text-center text-sm" data-testid="ai-fill-empty">
+          AI가 카드를 준비 중입니다. 잠시 후 다시 확인해보세요.
+        </p>
+      )}
+
+      <CardGrid
+        cards={filteredCards}
+        loading={loading}
+        top3Ids={top3Ids}
+        data-testid="home-card-grid"
+      />
     </>
   );
 }

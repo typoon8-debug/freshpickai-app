@@ -11,14 +11,12 @@ interface SectionItemProps {
   index: number;
   total: number;
   isDragging?: boolean;
+  dragHandleProps?: Record<string, unknown>;
   onMoveUp: () => void;
   onMoveDown: () => void;
   onRename: (name: string) => void;
   onToggleAI: () => void;
   onDelete: () => void;
-  onHandlePointerDown?: (e: React.PointerEvent<HTMLSpanElement>) => void;
-  onHandlePointerMove?: (e: React.PointerEvent<HTMLSpanElement>) => void;
-  onHandlePointerUp?: (e: React.PointerEvent<HTMLSpanElement>) => void;
 }
 
 export function SectionItem({
@@ -26,14 +24,12 @@ export function SectionItem({
   index,
   total,
   isDragging,
+  dragHandleProps,
   onMoveUp,
   onMoveDown,
   onRename,
   onToggleAI,
   onDelete,
-  onHandlePointerDown,
-  onHandlePointerMove,
-  onHandlePointerUp,
 }: SectionItemProps) {
   const [editing, setEditing] = useState(false);
   const [draftName, setDraftName] = useState(section.name);
@@ -51,17 +47,16 @@ export function SectionItem({
       )}
     >
       <div className="flex items-center gap-2 px-3 py-3">
-        {/* 드래그 핸들 */}
+        {/* 드래그 핸들 — @dnd-kit listeners + attributes 주입 */}
         <span
           className={cn(
             "text-ink-200 hover:text-mocha-500 flex-shrink-0 transition",
             isDragging ? "text-mocha-400 cursor-grabbing" : "cursor-grab"
           )}
           style={{ touchAction: "none" }}
-          onPointerDown={onHandlePointerDown}
-          onPointerMove={onHandlePointerMove}
-          onPointerUp={onHandlePointerUp}
           aria-label="드래그로 순서 변경"
+          data-testid="drag-handle"
+          {...(dragHandleProps as React.HTMLAttributes<HTMLSpanElement>)}
         >
           <GripVertical size={16} />
         </span>

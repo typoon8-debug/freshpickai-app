@@ -16,7 +16,7 @@ import {
 import type { CardSection } from "@/lib/types";
 
 export default function SectionsPage() {
-  const { sections, setSections, reorder, toggleAiAutoFill, rename } = useSectionStore();
+  const { sections, setSections, toggleAiAutoFill, rename } = useSectionStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,24 +52,10 @@ export default function SectionsPage() {
     await toggleAiAutoFillAction(sectionId, !section.aiAutoFill);
   };
 
-  const handleMoveUp = async (idx: number) => {
-    reorder(idx, idx - 1);
-    const next = [...sections];
-    const [item] = next.splice(idx, 1);
-    next.splice(idx - 1, 0, item);
-    const updated: Pick<CardSection, "sectionId" | "sortOrder">[] = next.map((s, i) => ({
-      sectionId: s.sectionId,
-      sortOrder: i,
-    }));
-    await reorderSectionsAction(updated);
-  };
-
-  const handleMoveDown = async (idx: number) => {
-    reorder(idx, idx + 1);
-    const next = [...sections];
-    const [item] = next.splice(idx, 1);
-    next.splice(idx + 1, 0, item);
-    const updated: Pick<CardSection, "sectionId" | "sortOrder">[] = next.map((s, i) => ({
+  // 드래그앤드롭 또는 화살표 버튼으로 순서 변경 시 호출
+  const handleReorder = async (newSections: CardSection[]) => {
+    setSections(newSections);
+    const updated = newSections.map((s, i) => ({
       sectionId: s.sectionId,
       sortOrder: i,
     }));
@@ -100,8 +86,7 @@ export default function SectionsPage() {
 
         <SectionList
           sections={sections}
-          onMoveUp={handleMoveUp}
-          onMoveDown={handleMoveDown}
+          onReorder={handleReorder}
           onRename={handleRename}
           onToggleAI={handleToggleAI}
           onDelete={handleDelete}
