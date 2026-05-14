@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트 + 모바일 홈화면 깜빡임 근본 수정)
+## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트 + 모바일 홈화면 깜빡임 근본 수정 + AI 태그 필터 회귀 수정)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -843,6 +843,37 @@ useEffect(() => {
 - [x] **`src/components/cards/menu-card.tsx`** — Framer Motion `<motion.div>`에 `initial={false}` 추가, 마운트 FLIP 측정 완전 제거 (hover 효과는 유지)
 
 **예상 효과**: 1차 수정 포함 총 7가지 수정으로 홈화면 렌더 사이클 **8회 → 2회** 수준으로 감소, 깜빡임 95%+ 제거.
+
+---
+
+#### 버그 수정: AI 태그 필터 회귀 + 깜빡임 잔존 4가지 추가 수정 ✅
+
+> **완료**: 2026-05-15
+
+**2차 수정 이후 사용자 재테스트에서 발견된 4가지 문제 수정.**
+
+**원인 1 — AI 태그 필터 동작 안 함 (회귀 버그)**
+
+`query-client.ts`의 전역 `staleTime: 10분` + `initialDataUpdatedAt: Date.now()` 조합이 문제. 사용자가 "비건" 등 AI 태그를 선택하면 쿼리 키가 `"all:all:비건"`으로 바뀌지만, 새 키에도 `initialData = initialCards`와 `initialDataUpdatedAt = 마운트 시각`이 함께 전달되어 "10분간 신선한 데이터"로 판정 → API 재fetch 차단 → 필터링 안 됨. 테마·카테고리 필터는 클라이언트 사이드 필터링이라 영향 없어 AI 태그만 깨짐.
+
+**원인 2 — Pull-to-Refresh 깜빡임**
+
+`overscroll-behavior` CSS 미설정 → 브라우저 네이티브 pull-to-refresh 제스처가 전체 페이지 리로드를 트리거 → React 상태 초기화 → 스켈레톤 재노출.
+
+**원인 3 — 첫 로그인 스켈레톤 플래시**
+
+`useStoresHydrated`가 `false`로 시작 → 스켈레톤 렌더(첫 화면에 그려짐) → localStorage hydration 완료(~50ms) → 콘텐츠 렌더. 빠른 기기에서도 1~2프레임 스켈레톤이 노출됨.
+
+**원인 4 — AI 추천 캐시 있어도 스켈레톤 1프레임 노출**
+
+`useEffect`는 페인트 이후 실행 → sessionStorage 캐시가 있어도 첫 페인트에서 `loading: true`(스켈레톤) 그려짐 → 다음 프레임에 캐시 데이터로 전환. 재방문마다 AI 추천 섹션이 순간 깜빡임.
+
+**수정 내역**
+
+- [x] **`src/components/home/home-board.tsx`** — `initialDataUpdatedAt`을 `filterKey === "all:all:"` 조건부로만 적용. 필터가 적용된 모든 쿼리 키는 `initialDataUpdatedAt = undefined` → epoch 기준 즉시 stale → API 재fetch 강제 → AI 태그 필터 복구
+- [x] **`src/app/globals.css`** — `html, body { overscroll-behavior: none }` 추가 → 브라우저 네이티브 pull-to-refresh 차단 → 전체 페이지 리로드 방지
+- [x] **`src/hooks/use-stores-hydrated.ts`** — Grace Period 패턴 추가: 첫 150ms 동안 `gracePeriod = true` → `hydrated || gracePeriod` 반환. localStorage hydration(보통 50ms 내)이 완료되기 전에 스켈레톤이 그려지는 플래시 제거. 느린 기기에서는 150ms 후 스켈레톤 표시(그레이스풀 폴백)
+- [x] **`src/components/home/AIRecommendSection.tsx`** — `useEffect` → `useLayoutEffect`로 캐시 체크 이전(페인트 전 동기 실행). 캐시 있으면 스켈레톤이 화면에 그려지기 전에 콘텐츠로 전환. fetch 로직은 `useEffect`에 유지(비동기 사이드 이펙트 분리)
 
 ---
 
