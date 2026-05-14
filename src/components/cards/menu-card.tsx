@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Crown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ const THEME_LABELS: Record<string, string> = {
 interface MenuCardProps {
   card: MenuCardType;
   onClick?: () => void;
+  onMouseEnter?: () => void;
   className?: string;
   /** 우리가족 TOP3 순위(1~3). 없으면 미표시 */
   topRank?: number;
@@ -29,7 +31,14 @@ interface MenuCardProps {
   aiMatch?: number;
 }
 
-export function MenuCard({ card, onClick, className, topRank, aiMatch }: MenuCardProps) {
+export function MenuCard({
+  card,
+  onClick,
+  onMouseEnter,
+  className,
+  topRank,
+  aiMatch,
+}: MenuCardProps) {
   const themeLabel = THEME_LABELS[card.cardTheme] ?? card.cardTheme;
 
   return (
@@ -37,13 +46,19 @@ export function MenuCard({ card, onClick, className, topRank, aiMatch }: MenuCar
       whileHover={{ y: -4, boxShadow: "var(--shadow-hover)" }}
       transition={{ duration: 0.2 }}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       className={cn("bg-card shadow-card cursor-pointer overflow-hidden rounded-xl", className)}
     >
       {/* 썸네일 */}
       <div className="bg-mocha-50 relative h-40 w-full">
         {card.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={card.coverImage} alt={card.name} className="h-full w-full object-cover" />
+          <Image
+            src={card.coverImage}
+            alt={card.name}
+            fill
+            sizes="(max-width: 640px) 50vw, 33vw"
+            className="object-cover"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-5xl">
             {card.emoji ?? "🍽️"}

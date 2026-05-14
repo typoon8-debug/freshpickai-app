@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bree_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import { Providers } from "@/components/providers";
 import "./globals.css";
@@ -9,6 +10,15 @@ const breeSerif = Bree_Serif({
   weight: "400",
   variable: "--font-display",
   display: "swap",
+  preload: true,
+});
+
+const pretendard = localFont({
+  src: "./fonts/PretendardVariable.woff2",
+  variable: "--font-sans",
+  weight: "100 900",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -46,7 +56,11 @@ export default function RootLayout({
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
 
   return (
-    <html lang="ko" className={`${breeSerif.variable} h-full`} suppressHydrationWarning>
+    <html
+      lang="ko"
+      className={`${breeSerif.variable} ${pretendard.variable} h-full`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-full flex-col antialiased">
         <Providers>{children}</Providers>
         {kakaoKey && (

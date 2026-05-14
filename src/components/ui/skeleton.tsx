@@ -44,4 +44,64 @@ function TextSkeleton({ lines = 3, className }: { lines?: number; className?: st
   );
 }
 
-export { Skeleton, CardSkeleton, ListSkeleton, TextSkeleton };
+function DailyHeroSkeleton() {
+  return (
+    <div className="bg-card shadow-card overflow-hidden rounded-2xl">
+      <Skeleton className="h-44 w-full rounded-none" />
+      <div className="flex flex-col gap-2 p-4">
+        <Skeleton className="h-5 w-1/3" />
+        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-3 w-1/2" />
+        <Skeleton className="rounded-pill mt-1 h-9 w-28" />
+      </div>
+    </div>
+  );
+}
+
+function AIRecommendSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-24" />
+      </div>
+      <div className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="rounded-pill h-8 w-24 flex-shrink-0" />
+        ))}
+      </div>
+      <div className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-44 w-40 flex-shrink-0 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HomeBoardSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="rounded-pill h-8 w-20 flex-shrink-0" />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <CardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export {
+  Skeleton,
+  CardSkeleton,
+  ListSkeleton,
+  TextSkeleton,
+  DailyHeroSkeleton,
+  AIRecommendSkeleton,
+  HomeBoardSkeleton,
+};

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -180,8 +181,13 @@ function RecommendCard({ rec, card, onClick }: RecommendCardItemProps) {
     >
       <div className="bg-mocha-50 relative h-32 w-full flex-shrink-0">
         {card?.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={card.coverImage} alt={rec.title} className="h-full w-full object-cover" />
+          <Image
+            src={card.coverImage}
+            alt={rec.title}
+            fill
+            sizes="160px"
+            className="object-cover"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-4xl">
             {card?.emoji ?? "🍽️"}

@@ -4,9 +4,10 @@ function makeQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 5 * 60 * 1000,
-        gcTime: 10 * 60 * 1000,
+        staleTime: 10 * 60 * 1000, // 10분 — 자주 바뀌지 않는 카드/섹션 데이터
+        gcTime: 30 * 60 * 1000, // 30분 — 캐시 보관 시간 연장으로 재탐색 시 즉각 표시
         retry: 1,
+        refetchOnWindowFocus: false, // 탭 전환 시 불필요한 재요청 방지
       },
     },
   });

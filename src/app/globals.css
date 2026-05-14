@@ -1,6 +1,4 @@
-/* 외부 폰트는 tailwindcss 확장 전에 선언해야 PostCSS 변환 후 순서 유지됨 */
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
-@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap");
+/* Bree Serif, Pretendard → next/font/local + next/font/google 로 layout.tsx에서 로딩 */
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";

@@ -1,21 +1,34 @@
+import { Suspense } from "react";
 import { BrandHeader } from "@/components/layout/brand-header";
-import { DailyHero } from "@/components/home/daily-hero";
-import { HomeBoard } from "@/components/home/home-board";
-import { AIRecommendSection } from "@/components/home/AIRecommendSection";
-import { getCards, getDailyPick } from "@/lib/actions/cards";
+import { DailyHeroLoader } from "@/components/home/daily-hero-loader";
+import { CardsSectionLoader } from "@/components/home/cards-section-loader";
+import {
+  DailyHeroSkeleton,
+  AIRecommendSkeleton,
+  HomeBoardSkeleton,
+} from "@/components/ui/skeleton";
 
-export const dynamic = "force-dynamic";
+function CardsSectionFallback() {
+  return (
+    <>
+      <AIRecommendSkeleton />
+      <HomeBoardSkeleton />
+    </>
+  );
+}
 
-export default async function HomePage() {
-  const [cards, dailyCard] = await Promise.all([getCards({ officialOnly: true }), getDailyPick()]);
-
+export default function HomePage() {
   return (
     <>
       <BrandHeader />
       <main className="flex flex-col gap-4 px-4 pt-4 pb-24">
-        <DailyHero card={dailyCard ?? undefined} />
-        <AIRecommendSection initialCards={cards} />
-        <HomeBoard initialCards={cards} />
+        <Suspense fallback={<DailyHeroSkeleton />}>
+          <DailyHeroLoader />
+        </Suspense>
+        <Suspense fallback={<CardsSectionFallback />}>
+          {/* AIRecommendSection + HomeBoard 데이터를 단일 fetch로 공유 */}
+          <CardsSectionLoader />
+        </Suspense>
       </main>
     </>
   );

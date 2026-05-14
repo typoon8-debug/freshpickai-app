@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { DetailHeader } from "@/components/detail/detail-header";
 import { CardFlipper } from "@/components/detail/card-flipper";
 import { HealthScoreSection } from "@/components/detail/health-score-section";
@@ -8,12 +9,17 @@ import { PriceCompareSection } from "@/components/detail/price-compare-section";
 import { DishList } from "@/components/detail/dish-list";
 import { IngredientMetaBlock } from "@/components/detail/ingredient-meta-block";
 import { CardNoteSection } from "@/components/detail/card-note-section";
-import { NoteWriteDrawer } from "@/components/detail/note-write-drawer";
 import { ShareButton } from "@/components/detail/share-button";
 import { CookModeButton } from "@/components/detail/cook-mode-button";
 import { DetailFooter } from "@/components/detail/detail-footer";
 import type { CardDetail } from "@/lib/actions/cards/detail";
 import type { CardNote } from "@/lib/types";
+
+// 드로어는 열릴 때만 필요하므로 초기 번들에서 제외
+const NoteWriteDrawer = dynamic(
+  () => import("@/components/detail/note-write-drawer").then((m) => m.NoteWriteDrawer),
+  { ssr: false }
+);
 
 const THEME_LABELS: Record<string, string> = {
   chef_table: "흑백요리사",

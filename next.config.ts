@@ -4,7 +4,16 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   turbopack: {},
   experimental: {
-    optimizePackageImports: ["lucide-react", "framer-motion", "vaul"],
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "vaul",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@ai-sdk/react",
+      "@ai-sdk/anthropic",
+    ],
   },
   images: {
     formats: ["image/avif", "image/webp"],

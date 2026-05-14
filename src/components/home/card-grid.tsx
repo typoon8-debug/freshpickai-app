@@ -14,6 +14,10 @@ interface CardGridProps {
 export function CardGrid({ cards, loading = false, top3Ids = [] }: CardGridProps) {
   const router = useRouter();
 
+  function prefetchCard(cardId: string) {
+    router.prefetch(`/cards/${cardId}`);
+  }
+
   if (loading && cards.length === 0) {
     return (
       <div className="grid grid-cols-2 gap-3">
@@ -46,6 +50,7 @@ export function CardGrid({ cards, loading = false, top3Ids = [] }: CardGridProps
               card.healthScore !== undefined ? Math.round(card.healthScore * 100) : undefined
             }
             onClick={() => router.push(`/cards/${card.cardId}`)}
+            onMouseEnter={() => prefetchCard(card.cardId)}
           />
         );
       })}
