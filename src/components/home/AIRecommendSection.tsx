@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
@@ -43,33 +43,27 @@ function readSessionCache(): RecommendResponse | null {
   return null;
 }
 
+function getInitialState(): RecommendState {
+  const cached = readSessionCache();
+  return cached
+    ? { data: cached, loading: false, error: false }
+    : { data: null, loading: true, error: false };
+}
+
 interface AIRecommendSectionProps {
   initialCards: MenuCard[];
 }
 
 export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
   const router = useRouter();
-  // 서버·클라이언트 초기 상태를 동일하게 유지 (hydration mismatch 방지)
-  const [state, setState] = useState<RecommendState>({ data: null, loading: true, error: false });
+  const [state, setState] = useState<RecommendState>(getInitialState);
   const [activeTheme, setActiveTheme] = useState(0);
   const hasFetchedRef = useRef(false);
 
   const cardMap = new Map(initialCards.map((c) => [c.cardId, c]));
 
-  // useLayoutEffect: 페인트 이전 동기 실행 → 캐시가 있으면 스켈레톤이 화면에 그려지기 전에 전환
-  // "use client" 컴포넌트이므로 SSR 경고 없음
-  useLayoutEffect(() => {
-    if (hasFetchedRef.current) return;
-    const cached = readSessionCache();
-    if (cached) {
-      hasFetchedRef.current = true;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setState({ data: cached, loading: false, error: false });
-    }
-  }, []);
-
   useEffect(() => {
-    if (hasFetchedRef.current) return;
+    if (!state.loading || hasFetchedRef.current) return;
     hasFetchedRef.current = true;
 
     fetch("/api/ai/recommend")
@@ -89,7 +83,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
       .catch(() => {
         setState({ data: null, loading: false, error: true });
       });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (state.error) return null;
 

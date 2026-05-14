@@ -2,12 +2,20 @@
 
 import Link from "next/link";
 import { Heart, ShoppingCart, User } from "lucide-react";
+import { useSyncExternalStore } from "react";
 import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
-import { useStoresHydrated } from "@/hooks/use-stores-hydrated";
+
+function useIsMounted() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+}
 
 export function BrandHeader() {
-  const storesHydrated = useStoresHydrated();
+  const mounted = useIsMounted();
   const cartCount = useCartStore((s) => s.items.length);
   const wishCount = useWishlistStore((s) => s.ids.size);
 
@@ -22,7 +30,7 @@ export function BrandHeader() {
           aria-label="찜 목록"
         >
           <Heart className="text-ink-500 h-5 w-5" />
-          {storesHydrated && wishCount > 0 && (
+          {mounted && wishCount > 0 && (
             <span className="bg-terracotta absolute top-2 right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white">
               {wishCount > 99 ? "99+" : wishCount}
             </span>
@@ -35,7 +43,7 @@ export function BrandHeader() {
           aria-label="장바구니"
         >
           <ShoppingCart className="text-ink-500 h-5 w-5" />
-          {storesHydrated && cartCount > 0 && (
+          {mounted && cartCount > 0 && (
             <span className="bg-mocha-700 absolute top-2 right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white">
               {cartCount > 99 ? "99+" : cartCount}
             </span>
