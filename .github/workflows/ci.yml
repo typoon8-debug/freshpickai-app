@@ -1,0 +1,136 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  # ── 1단계: 타입체크 · 린트 · 포맷 검사 ──────────────────────────────────
+  check:
+    name: 타입체크 · 린트 · 포맷
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: TypeScript 타입 검사
+        run: npm run typecheck
+
+      - name: ESLint 검사
+        run: npm run lint
+
+      - name: Prettier 포맷 검사
+        run: npm run format:check
+
+  # ── 2단계: 프로덕션 빌드 검증 ──────────────────────────────────────────
+  build:
+    name: 프로덕션 빌드
+    runs-on: ubuntu-latest
+    needs: check
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      NEXT_PUBLIC_TOSS_CLIENT_KEY: ${{ secrets.NEXT_PUBLIC_TOSS_CLIENT_KEY }}
+      TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
+      KAKAO_REST_KEY: ${{ secrets.KAKAO_REST_KEY }}
+      NEXT_PUBLIC_DELIVERY_GUARD_MODE: WARN
+      NEXT_PUBLIC_DEFAULT_DELIVERY_RADIUS_M: '1000'
+      GEOCODE_RATE_LIMIT_PER_MIN: '120'
+      GEOCODE_DRY_RUN: 'true'
+      RAG_VECTOR_THRESHOLD: '0.78'
+      RAG_CACHE_THRESHOLD: '0.92'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: Next.js 프로덕션 빌드
+        run: npm run build
+
+      - name: 빌드 아티팩트 캐시
+        uses: actions/cache@v4
+        with:
+          path: .next
+          key: nextjs-build-${{ github.sha }}
+
+  # ── 3단계: Playwright E2E 테스트 ────────────────────────────────────────
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    needs: check
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      NEXT_PUBLIC_TOSS_CLIENT_KEY: ${{ secrets.NEXT_PUBLIC_TOSS_CLIENT_KEY }}
+      TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
+      KAKAO_REST_KEY: ${{ secrets.KAKAO_REST_KEY }}
+      NEXT_PUBLIC_DELIVERY_GUARD_MODE: WARN
+      NEXT_PUBLIC_DEFAULT_DELIVERY_RADIUS_M: '1000'
+      GEOCODE_RATE_LIMIT_PER_MIN: '120'
+      GEOCODE_DRY_RUN: 'true'
+      RAG_VECTOR_THRESHOLD: '0.78'
+      RAG_CACHE_THRESHOLD: '0.92'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: Playwright 브라우저 설치
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E 테스트 실행
+        run: npm run test:e2e
+        env:
+          CI: true
+
+      - name: Playwright 리포트 업로드 (실패 시)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 7
+
+      - name: 테스트 결과 업로드 (실패 시)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results-${{ github.run_id }}
+          path: test-results/
+          retention-days: 7

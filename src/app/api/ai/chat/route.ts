@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 import { streamText, stepCountIs } from "ai";
+
+export const maxDuration = 60;
 import { anthropic } from "@ai-sdk/anthropic";
 import { createClient } from "@/lib/supabase/server";
 import { buildPersonaContext } from "@/lib/ai/persona-context";

@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 import { generateObject } from "ai";
+
+export const maxDuration = 60;
 import { anthropic } from "@ai-sdk/anthropic";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { buildPersonaContext } from "@/lib/ai/persona-context";
