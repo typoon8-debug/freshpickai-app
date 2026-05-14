@@ -67,7 +67,13 @@ export function CardDetailClient({ detail }: CardDetailClientProps) {
         </div>
 
         {/* 카드 flip */}
-        {mainDish && <CardFlipper dish={mainDish} ingredients={mainDish.ingredients} />}
+        {mainDish && (
+          <CardFlipper
+            dish={mainDish}
+            ingredients={mainDish.ingredients}
+            coverImage={detail.coverImage}
+          />
+        )}
 
         {/* 건강 점수 — 3지표 실 데이터 */}
         <HealthScoreSection healthScore={detail.healthScore} healthScore3={detail.healthScore3} />

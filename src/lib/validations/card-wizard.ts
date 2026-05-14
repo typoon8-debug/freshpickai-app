@@ -31,6 +31,7 @@ export const cardWizardSchema = z.object({
     .min(1, "예상 예산을 입력하세요")
     .refine((v) => !Number.isNaN(Number(v)) && Number(v) > 0, "올바른 금액을 입력하세요"),
   cardName: z.string().optional(),
+  coverImageUrl: z.string().optional(),
   submitForReview: z.boolean(),
   aiConsent: z.boolean(),
 });

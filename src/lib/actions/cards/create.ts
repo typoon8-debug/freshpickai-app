@@ -140,6 +140,7 @@ export async function createCardAction(
       name: finalCardName,
       category,
       description,
+      cover_image: values.coverImageUrl ?? null,
       is_official: false,
       is_new: true,
       review_status: values.submitForReview ? "pending" : "private",
