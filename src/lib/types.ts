@@ -179,6 +179,15 @@ export type CardNote = {
   createdAt: string;
 };
 
+// ── 북마크 (F017) ─────────────────────────────────────────
+/** fp_customer_card_bookmark */
+export type CardBookmark = {
+  bookmarkId: string;
+  userId: string;
+  cardId: string;
+  createdAt: string;
+};
+
 // ── 가족 투표 ──────────────────────────────────────────────
 /** fp_vote (레거시 — fp_family_vote 로 대체) */
 export type Vote = {

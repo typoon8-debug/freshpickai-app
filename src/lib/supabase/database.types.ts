@@ -2333,6 +2333,27 @@ export type Database = {
           },
         ];
       };
+      fp_customer_card_bookmark: {
+        Row: {
+          bookmark_id: string;
+          user_id: string;
+          card_id: string;
+          created_at: string;
+        };
+        Insert: {
+          bookmark_id?: string;
+          user_id: string;
+          card_id: string;
+          created_at?: string;
+        };
+        Update: {
+          bookmark_id?: string;
+          user_id?: string;
+          card_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       fp_wishlist: {
         Row: {
           added_at: string;

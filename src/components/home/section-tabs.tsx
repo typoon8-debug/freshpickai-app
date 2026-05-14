@@ -18,6 +18,8 @@ const OFFICIAL_SECTIONS = [
   { id: "k_dessert", label: "K디저트" },
   { id: "snack_pack", label: "간식팩" },
   { id: "cinema_night", label: "홈시네마" },
+  /** F020: 냉장고 비우기 가상 섹션 */
+  { id: "fridge", label: "🧊 냉장고" },
 ];
 
 interface SectionTabsProps {

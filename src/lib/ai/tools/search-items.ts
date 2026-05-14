@@ -66,6 +66,11 @@ const searchItemsSchema = z.object({
   mode: z.enum(["recipe", "item"]).describe("recipe: 레시피 검색, item: 상품 검색"),
   filters: filtersSchema,
   limit: z.number().optional().default(8).describe("최대 결과 수 (기본 8, 최대 20)"),
+  /** F020 냉장고 비우기: 보유 재료 목록 — recipe 모드에서 재료 매칭 우선순위 조정 */
+  availableIngredients: z
+    .array(z.string())
+    .optional()
+    .describe("보유 재료 목록 (냉장고 비우기 모드) — recipe 모드에서 매칭 스코어 보정에 사용"),
 });
 
 /**
@@ -142,14 +147,21 @@ export function createSearchItemsTool(supabase: SupabaseClient<Database>) {
       mode,
       filters,
       limit = 8,
+      availableIngredients,
     }: z.infer<typeof searchItemsSchema>): Promise<SearchItemsToolResult> => {
       const clampedLimit = Math.min(limit, 20);
 
       try {
         if (mode === "recipe") {
           // 레시피 벡터 검색 + substitutes 병렬 조회 (F018)
+          // F020: availableIngredients가 있으면 쿼리에 재료 컨텍스트 추가
+          const enrichedQuery =
+            availableIngredients && availableIngredients.length > 0
+              ? `${query} 재료: ${availableIngredients.join(", ")}`
+              : query;
+
           const [vectorResults, ingredientSubstitutes] = await Promise.all([
-            searchByVector(query, {
+            searchByVector(enrichedQuery, {
               table: "recipe",
               limit: clampedLimit,
               filters: {

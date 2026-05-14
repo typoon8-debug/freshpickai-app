@@ -15,6 +15,8 @@ const OFFICIAL_SECTIONS = [
   { name: "K디저트", sortOrder: 7, aiAutoFill: false },
   { name: "간식박스", sortOrder: 8, aiAutoFill: false },
   { name: "홈시네마", sortOrder: 9, aiAutoFill: false },
+  /** F020: 냉장고 비우기 — AI 자동채움 ON 기본값 */
+  { name: "냉장고 비우기", sortOrder: 10, aiAutoFill: true },
 ];
 
 async function getAuthUser() {
