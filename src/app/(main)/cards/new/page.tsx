@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PageHeader } from "@/components/layout/page-header";
+import { TopHeader } from "@/components/layout/top-header";
 import { WizardProgress } from "@/components/wizard/wizard-progress";
 import { Step1Theme } from "@/components/wizard/steps/step1-theme";
 import { Step2Tags } from "@/components/wizard/steps/step2-tags";
@@ -45,6 +45,7 @@ export default function NewCardPage() {
   const ingredients = useWatch({ control: form.control, name: "ingredients" }) ?? [];
   const budget = useWatch({ control: form.control, name: "budget" }) ?? "";
   const cardName = useWatch({ control: form.control, name: "cardName" }) ?? "";
+  const coverImageUrl = useWatch({ control: form.control, name: "coverImageUrl" });
   const submitForReview = useWatch({ control: form.control, name: "submitForReview" }) ?? false;
   const aiConsent = useWatch({ control: form.control, name: "aiConsent" }) ?? false;
   const { errors } = form.formState;
@@ -80,7 +81,7 @@ export default function NewCardPage() {
 
   return (
     <>
-      <PageHeader title="카드 만들기" />
+      <TopHeader title="카드 만들기" />
       <WizardProgress currentStep={step} />
 
       <div className="px-4 pt-2 pb-32">
@@ -127,9 +128,11 @@ export default function NewCardPage() {
             theme={theme ?? null}
             tags={tags}
             budget={budget}
+            coverImageUrl={coverImageUrl}
             submitForReview={submitForReview}
             aiConsent={aiConsent}
             onCardNameChange={(v) => form.setValue("cardName", v)}
+            onCoverImageChange={(v) => form.setValue("coverImageUrl", v)}
             onSubmitForReviewChange={(v) => form.setValue("submitForReview", v)}
             onAiConsentChange={(v) => form.setValue("aiConsent", v)}
           />

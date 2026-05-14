@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageHeader } from "@/components/layout/page-header";
+import { TopHeader } from "@/components/layout/top-header";
 import { SectionList } from "@/components/sections/section-list";
 import { AddSectionButton } from "@/components/sections/add-section-button";
 import { useSectionStore } from "@/lib/store";
@@ -65,7 +65,7 @@ export default function SectionsPage() {
   if (loading) {
     return (
       <>
-        <PageHeader title="내 섹션 관리" />
+        <TopHeader title="내 섹션 관리" />
         <div className="px-4 py-4">
           <div className="flex flex-col gap-2">
             {[1, 2, 3, 4].map((i) => (
@@ -79,7 +79,7 @@ export default function SectionsPage() {
 
   return (
     <>
-      <PageHeader title="내 섹션 관리" />
+      <TopHeader title="내 섹션 관리" />
 
       <div className="px-4 py-4">
         <p className="text-ink-500 mb-4 text-sm">섹션 순서를 바꾸거나 AI 자동 채움을 켜보세요.</p>

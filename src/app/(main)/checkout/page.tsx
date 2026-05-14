@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
+import { TopHeader } from "@/components/layout/top-header";
 import { AddressBlock } from "@/components/checkout/address-block";
 import { PaymentSelector } from "@/components/checkout/payment-selector";
 import { BenefitBlock, MOCK_COUPONS } from "@/components/checkout/benefit-block";
@@ -158,7 +158,7 @@ function CheckoutContent() {
   if (items.length === 0) {
     return (
       <>
-        <PageHeader title="결제" />
+        <TopHeader title="결제" backHref="/cart" />
         <div className="flex flex-col items-center gap-4 py-20 text-center">
           <p className="text-ink-400 text-sm">결제할 상품이 없어요</p>
           <Link href="/cart" className="btn-primary px-8">
@@ -171,7 +171,7 @@ function CheckoutContent() {
 
   return (
     <>
-      <PageHeader title="결제" />
+      <TopHeader title="결제" backHref="/cart" />
 
       <div className="flex flex-col gap-4 px-4 pt-4 pb-36">
         {/* 주문 상품 요약 */}

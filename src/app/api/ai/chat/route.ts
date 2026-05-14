@@ -49,6 +49,9 @@ function extractCacheableQuery(messages: SimpleMessage[], quickChip?: string): s
   const text = userMessages[0].content.trim();
   if (!text || text.length < 5) return null;
 
+  // 타임스탬프(10자리 이상 숫자) 포함 쿼리는 캐시 제외 — 프로그래밍 테스트 쿼리 방어
+  if (/\d{10,}/.test(text)) return null;
+
   return quickChip ? `[${quickChip}] ${text}` : text;
 }
 

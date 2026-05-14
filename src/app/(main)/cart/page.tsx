@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/components/layout/page-header";
+import { TopHeader } from "@/components/layout/top-header";
 import { FreeShippingBar } from "@/components/cart/free-shipping-bar";
 import { CartGroup } from "@/components/cart/cart-group";
 import { CartSummary } from "@/components/cart/cart-summary";
@@ -73,7 +73,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <>
-        <PageHeader title="장바구니" />
+        <TopHeader title="장바구니" />
         <div className="flex flex-col items-center gap-4 py-20 text-center">
           <ShoppingCart size={48} className="text-ink-200" />
           <p className="text-ink-400 text-sm">장바구니가 비어있어요</p>
@@ -87,7 +87,7 @@ export default function CartPage() {
 
   return (
     <>
-      <PageHeader title={`장바구니 (${items.length})`} />
+      <TopHeader title={`장바구니 (${items.length})`} />
       <FreeShippingBar subtotal={subtotal} />
 
       {/* 전체 선택 바 */}

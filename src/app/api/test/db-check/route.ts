@@ -46,7 +46,15 @@ export async function GET(req: NextRequest) {
     .limit(1);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const msg = error.message ?? "";
+    const isForbidden =
+      error.code === "42501" ||
+      msg.toLowerCase().includes("permission denied") ||
+      msg.toLowerCase().includes("insufficient_privilege") ||
+      msg.toLowerCase().includes("row-level security");
+    // 기타 모든 오류(스키마 캐시 미등록, 테이블 미존재 등)는 404 처리
+    const status = isForbidden ? 403 : 404;
+    return NextResponse.json({ error: msg }, { status });
   }
 
   return NextResponse.json({ table, data });

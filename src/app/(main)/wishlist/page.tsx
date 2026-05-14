@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
+import { TopHeader } from "@/components/layout/top-header";
 import { WishlistClient } from "@/components/wishlist/wishlist-client";
 import { fetchWishlistAction } from "@/lib/actions/wishlist";
 
@@ -10,7 +10,7 @@ export default async function WishlistPage() {
 
   return (
     <>
-      <PageHeader title="찜 목록" />
+      <TopHeader title="찜 목록" />
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
           <Heart size={40} className="text-muted-foreground/40" />
