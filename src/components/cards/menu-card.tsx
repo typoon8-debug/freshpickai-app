@@ -43,6 +43,7 @@ export function MenuCard({
 
   return (
     <motion.div
+      initial={false}
       whileHover={{ y: -4, boxShadow: "var(--shadow-hover)" }}
       transition={{ duration: 0.2 }}
       onClick={onClick}

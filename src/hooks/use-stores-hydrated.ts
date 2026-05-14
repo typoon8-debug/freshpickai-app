@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useCartStore, useSectionStore } from "@/lib/store";
+import { useEffect, useState, startTransition } from "react";
+import { useCartStore, useSectionStore, useAuthStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
 
 /**
- * cart·sections·wishlist 3개 persist 스토어가 모두 localStorage
+ * cart·sections·wishlist·auth 4개 persist 스토어가 모두 localStorage
  * hydration을 완료하면 true를 반환합니다.
  *
  * 목적: 홈 화면 모바일 깜빡임 방지.
@@ -23,12 +23,12 @@ export function useStoresHydrated(): boolean {
       };
     };
 
-    const stores: S[] = [useCartStore, useSectionStore, useWishlistStore];
+    const stores: S[] = [useCartStore, useSectionStore, useWishlistStore, useAuthStore];
     const pending = stores.filter((s) => !s.persist.hasHydrated());
 
     // 모두 이미 완료된 경우 (페이지 전환 후 재방문 등)
     if (pending.length === 0) {
-      Promise.resolve().then(() => setHydrated(true));
+      startTransition(() => setHydrated(true));
       return;
     }
 
