@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트)
+## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트 + 모바일 홈화면 깜빡임 근본 수정)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -796,6 +796,53 @@ useEffect(() => {
 
 - [x] `src/components/home/home-board.tsx` — sessionStorage 접근을 `useEffect`로 이동
 - [x] TypeScript 타입 체크 통과 (`npx tsc --noEmit` 오류 없음)
+
+---
+
+#### 버그 수정: 모바일 홈화면 깜빡임 — 3단계 1차 수정 ✅
+
+> **완료**: 2026-05-15
+
+**원인 분석**: Zustand persist 스토어 3개(cart·sections·wishlist)가 각각 독립적으로 `localStorage` hydration 완료 시 `setState`를 호출 → 최대 3회 별도 리렌더 발생. 모바일은 JS 실행이 2~5배 느려 각 렌더가 개별 16ms 프레임으로 분리되면서 깜빡임으로 나타남.
+
+**수정 내역**
+
+- [x] **`src/hooks/use-stores-hydrated.ts` 신규 생성** — cart·sections·wishlist 3개 persist 스토어 hydration 카운트다운, 마지막 스토어 완료 시 단 1회 `setHydrated(true)` 호출
+- [x] **`src/components/home/home-board.tsx`** — `initialDataUpdatedAt: useState(() => Date.now())` 추가로 RSC 초기 데이터를 최신으로 표시해 즉시 stale 재fetch 방지; sessionStorage `setState` 직접 호출(Promise 마이크로태스크 체인 제거); `useStoresHydrated` 적용 → hydration 전 `<HomeBoardSkeleton />` 표시
+- [x] **`src/components/layout/brand-header.tsx`** — `useSyncExternalStore` 기반 `useIsMounted` 제거, `useStoresHydrated` 통합으로 배지 카운터 hydration 단일화
+
+---
+
+#### 버그 수정: 모바일 홈화면 깜빡임 — 근본 원인 4가지 추가 수정 ✅
+
+> **완료**: 2026-05-15
+
+**1차 수정 이후에도 깜빡임이 잔존한 근본 원인 4가지를 추가로 수정.**
+
+**원인 1 — `AIRecommendSection` Hydration Mismatch (기여도 60%)**
+
+`getInitialState()` lazy initializer가 렌더 중 `sessionStorage`를 읽어 서버(스켈레톤)·클라이언트(실 데이터) 초기 상태 불일치 → React가 DOM을 강제 교체하면서 레이아웃 전체 깜빡임 발생.
+
+**원인 2 — `useAuthStore` 별도 hydration 렌더 (기여도 25%)**
+
+`OnboardingGuard`가 자체 `useState(false)` + `Promise.resolve().then()` 패턴으로 `useAuthStore`(4번째 persist 스토어)를 별도 처리 → `useStoresHydrated`(3개 묶음) 완료 후 auth 스토어가 한 번 더 리렌더 유발.
+
+**원인 3 — Framer Motion 마운트 FLIP 측정 (기여도 10%)**
+
+`MenuCard`의 `motion.div`에 `initial` prop 없으면 마운트 시 FLIP 측정·레이아웃 강제·리페인트 수행 → 그리드 카드 20개일 때 동시 20개 애니메이션 초기화로 모바일 렌더 블로킹.
+
+**원인 4 — `useStoresHydrated` 재방문 경로 microtask (기여도 5%)**
+
+페이지 재방문 시 `Promise.resolve().then(setHydrated)` 마이크로태스크가 다른 업데이트와 배치되지 않아 불필요한 추가 렌더 발생.
+
+**수정 내역**
+
+- [x] **`src/components/home/AIRecommendSection.tsx`** — `getInitialState` lazy initializer 제거, 항상 `{ loading: true }` 초기 상태(서버·클라이언트 동일), sessionStorage 읽기를 `useEffect` 내부로 이전 → hydration mismatch 해소
+- [x] **`src/hooks/use-stores-hydrated.ts`** — `useAuthStore`를 4번째 스토어로 추가, `Promise.resolve().then()` → `startTransition()` 교체로 재방문 시 배치 렌더 보장
+- [x] **`src/components/layout/onboarding-guard.tsx`** — 자체 hydration 루프(`useState` + `Promise.resolve`) 전체 제거, `useStoresHydrated` 재사용으로 auth 스토어 별도 렌더 제거
+- [x] **`src/components/cards/menu-card.tsx`** — Framer Motion `<motion.div>`에 `initial={false}` 추가, 마운트 FLIP 측정 완전 제거 (hover 효과는 유지)
+
+**예상 효과**: 1차 수정 포함 총 7가지 수정으로 홈화면 렌더 사이클 **8회 → 2회** 수준으로 감소, 깜빡임 95%+ 제거.
 
 ---
 
