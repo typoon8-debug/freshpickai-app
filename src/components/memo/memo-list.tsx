@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronRight, FileText, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
@@ -14,6 +15,7 @@ interface MemoListProps {
 }
 
 export function MemoList({ onSelect }: MemoListProps) {
+  const router = useRouter();
   const [memos, setMemos] = useState<SavedMemo[]>([]);
   // 초기값 true → 마운트 시 즉시 로딩 상태 표시
   const [loading, setLoading] = useState(true);
@@ -65,25 +67,28 @@ export function MemoList({ onSelect }: MemoListProps) {
         >
           <button
             type="button"
-            onClick={() => onSelect?.(memo)}
+            onClick={() => {
+              onSelect?.(memo);
+              router.push(`/memo/${memo.memoId}`);
+            }}
             className="hover:bg-mocha-50 flex min-w-0 flex-1 items-center gap-3 text-left transition"
           >
-            <FileText size={18} className="text-mocha-400 flex-shrink-0" />
+            <FileText size={18} className="text-mocha-400 shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-ink-900 text-sm font-semibold">{memo.title}</p>
               <p className="text-ink-400 mt-0.5 truncate text-xs">{memo.rawText}</p>
             </div>
-            <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
+            <div className="flex shrink-0 flex-col items-end gap-0.5">
               <span className="text-ink-400 text-xs">{formatDate(memo.createdAt)}</span>
               <span className="text-mocha-500 text-[11px]">{memo.itemCount}개 항목</span>
             </div>
-            <ChevronRight size={15} className="text-ink-300 flex-shrink-0" />
+            <ChevronRight size={15} className="text-ink-300 shrink-0" />
           </button>
 
           <button
             type="button"
             onClick={(e) => handleDelete(e, memo.memoId)}
-            className="text-ink-300 hover:text-terracotta flex-shrink-0 p-1 transition"
+            className="text-ink-300 hover:text-terracotta shrink-0 p-1 transition"
             aria-label="메모 삭제"
           >
             <Trash2 size={14} />

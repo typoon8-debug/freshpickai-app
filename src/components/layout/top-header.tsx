@@ -1,10 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, ShoppingCart, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, Heart, ShoppingCart, User } from "lucide-react";
 import { useSyncExternalStore } from "react";
+import { cn } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
+
+interface TopHeaderProps {
+  title: string;
+  onBack?: () => void;
+  backHref?: string;
+  className?: string;
+}
 
 function useIsMounted() {
   return useSyncExternalStore(
@@ -14,14 +23,39 @@ function useIsMounted() {
   );
 }
 
-export function BrandHeader() {
+export function TopHeader({ title, onBack, backHref, className }: TopHeaderProps) {
+  const router = useRouter();
   const mounted = useIsMounted();
   const cartCount = useCartStore((s) => s.items.length);
   const wishCount = useWishlistStore((s) => s.ids.size);
 
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else if (backHref) {
+      router.push(backHref);
+    } else {
+      router.back();
+    }
+  };
+
   return (
-    <header className="bg-paper/90 border-line sticky top-0 z-10 flex h-14 items-center border-b px-4 backdrop-blur-sm">
-      <span className="font-display text-mocha-700 flex-1 text-lg">FreshPick AI</span>
+    <header
+      className={cn(
+        "bg-paper/90 border-line sticky top-0 z-10 flex h-14 items-center border-b px-1 backdrop-blur-sm",
+        className
+      )}
+    >
+      <button
+        type="button"
+        onClick={handleBack}
+        className="text-ink-700 flex min-h-11 min-w-11 items-center justify-center"
+        aria-label="뒤로가기"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+
+      <h1 className="text-ink-900 flex-1 truncate px-1 text-base font-semibold">{title}</h1>
 
       <div className="flex items-center">
         <Link

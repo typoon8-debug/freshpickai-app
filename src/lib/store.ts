@@ -39,6 +39,7 @@ type CartState = {
   remove: (cartItemId: string) => void;
   clear: () => void;
   total: () => number;
+  totalCount: () => number;
 };
 export const useCartStore = create<CartState>()(
   persist(
@@ -59,6 +60,7 @@ export const useCartStore = create<CartState>()(
         set((s) => ({ items: s.items.filter((i) => i.cartItemId !== cartItemId) })),
       clear: () => set({ items: [] }),
       total: () => get().items.reduce((s, i) => s + i.price * i.qty, 0),
+      totalCount: () => get().items.length,
     }),
     { name: "fp-cart" }
   )

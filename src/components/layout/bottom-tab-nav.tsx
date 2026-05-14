@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MessageCircle, Users, ListTodo, ShoppingCart } from "lucide-react";
+import { Home, MessageCircle, Users, ListTodo, LayoutGrid } from "lucide-react";
 
 const TABS = [
   { href: "/", icon: Home, label: "홈" },
   { href: "/chat", icon: MessageCircle, label: "AI" },
+  { href: "/category", icon: LayoutGrid, label: "카테고리" },
   { href: "/family", icon: Users, label: "가족" },
   { href: "/memo", icon: ListTodo, label: "메모" },
-  { href: "/cart", icon: ShoppingCart, label: "장바구니" },
 ];
 
 export function BottomTabNav() {
@@ -23,7 +23,7 @@ export function BottomTabNav() {
           <Link
             key={href}
             href={href}
-            className={`flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors ${
+            className={`flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors ${
               isActive ? "text-mocha-700" : "text-ink-300"
             }`}
           >

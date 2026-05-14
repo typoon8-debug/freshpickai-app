@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader } from "@/components/layout/page-header";
+import { TopHeader } from "@/components/layout/top-header";
 import { MemoInput } from "@/components/memo/memo-input";
 import { ParsePreview } from "@/components/memo/parse-preview";
 import { MemoList } from "@/components/memo/memo-list";
@@ -15,6 +15,7 @@ import { saveMemoAction } from "@/lib/actions/memo";
 import type { MemoItem } from "@/lib/types";
 import type { ParseMeta } from "@/lib/memo-adapter";
 import type { ParsedItem } from "@/app/api/memo/parse/route";
+import type { SearchStoreItem } from "@/app/api/memo/search-items/route";
 
 type Tab = "new" | "saved";
 
@@ -66,6 +67,18 @@ export default function MemoPage() {
     }
   };
 
+  const handleMatch = (memoItemId: string, storeItem: SearchStoreItem) => {
+    setMemoItems((prev) =>
+      prev.map((i) =>
+        i.memoItemId === memoItemId ? { ...i, refStoreItemId: storeItem.storeItemId } : i
+      )
+    );
+    setParseMeta((prev) => ({
+      ...prev,
+      [memoItemId]: { ...prev[memoItemId], matched: true },
+    }));
+  };
+
   const handleAddToCart = () => {
     const cartItems = selected.map((i, idx) => ({
       cartItemId: `memo-${Date.now()}-${idx}`,
@@ -86,7 +99,7 @@ export default function MemoPage() {
 
   return (
     <>
-      <PageHeader title="장보기 메모" />
+      <TopHeader title="장보기 메모" />
 
       {/* 탭 */}
       <div className="border-line flex border-b">
@@ -117,6 +130,7 @@ export default function MemoPage() {
                   meta={parseMeta}
                   onToggle={handleToggle}
                   onQtyChange={handleQtyChange}
+                  onMatch={handleMatch}
                 />
 
                 {/* 저장 버튼 */}
