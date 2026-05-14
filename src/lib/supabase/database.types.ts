@@ -614,6 +614,42 @@ export type Database = {
           },
         ];
       };
+      batch_job: {
+        Row: {
+          completed: number;
+          estimated_completion: string | null;
+          failed: number;
+          job_id: string;
+          options: Json | null;
+          result: Json | null;
+          started_at: string | null;
+          status: string;
+          total: number;
+        };
+        Insert: {
+          completed?: number;
+          estimated_completion?: string | null;
+          failed?: number;
+          job_id?: string;
+          options?: Json | null;
+          result?: Json | null;
+          started_at?: string | null;
+          status?: string;
+          total?: number;
+        };
+        Update: {
+          completed?: number;
+          estimated_completion?: string | null;
+          failed?: number;
+          job_id?: string;
+          options?: Json | null;
+          result?: Json | null;
+          started_at?: string | null;
+          status?: string;
+          total?: number;
+        };
+        Relationships: [];
+      };
       cart: {
         Row: {
           cart_id: string;
@@ -1348,6 +1384,1073 @@ export type Database = {
           },
         ];
       };
+      fp_ai_review_queue: {
+        Row: {
+          ai_confidence: number | null;
+          context: string | null;
+          created_at: string;
+          item_name: string;
+          reason: string;
+          review_id: string;
+          status: string;
+          store_item_id: string | null;
+        };
+        Insert: {
+          ai_confidence?: number | null;
+          context?: string | null;
+          created_at?: string;
+          item_name: string;
+          reason?: string;
+          review_id?: string;
+          status?: string;
+          store_item_id?: string | null;
+        };
+        Update: {
+          ai_confidence?: number | null;
+          context?: string | null;
+          created_at?: string;
+          item_name?: string;
+          reason?: string;
+          review_id?: string;
+          status?: string;
+          store_item_id?: string | null;
+        };
+        Relationships: [];
+      };
+      fp_ai_semantic_cache: {
+        Row: {
+          cache_id: string;
+          created_at: string;
+          expires_at: string;
+          hit_count: number;
+          query_embedding: string;
+          query_text: string;
+          response_text: string;
+        };
+        Insert: {
+          cache_id?: string;
+          created_at?: string;
+          expires_at: string;
+          hit_count?: number;
+          query_embedding: string;
+          query_text: string;
+          response_text: string;
+        };
+        Update: {
+          cache_id?: string;
+          created_at?: string;
+          expires_at?: string;
+          hit_count?: number;
+          query_embedding?: string;
+          query_text?: string;
+          response_text?: string;
+        };
+        Relationships: [];
+      };
+      fp_card_dish: {
+        Row: {
+          card_dish_id: string;
+          card_id: string;
+          dish_id: string;
+          role: string;
+          sort_order: number;
+        };
+        Insert: {
+          card_dish_id?: string;
+          card_id: string;
+          dish_id: string;
+          role?: string;
+          sort_order?: number;
+        };
+        Update: {
+          card_dish_id?: string;
+          card_id?: string;
+          dish_id?: string;
+          role?: string;
+          sort_order?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_card_dish_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_menu_card";
+            referencedColumns: ["card_id"];
+          },
+          {
+            foreignKeyName: "fp_card_dish_dish_id_fkey";
+            columns: ["dish_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_dish";
+            referencedColumns: ["dish_id"];
+          },
+        ];
+      };
+      fp_card_note: {
+        Row: {
+          admin_reply: string | null;
+          ai_consent: boolean;
+          body: string;
+          card_id: string;
+          created_at: string;
+          helpful_count: number;
+          modified_at: string;
+          note_id: string;
+          note_type: string;
+          review_needed: boolean;
+          user_id: string;
+        };
+        Insert: {
+          admin_reply?: string | null;
+          ai_consent?: boolean;
+          body: string;
+          card_id: string;
+          created_at?: string;
+          helpful_count?: number;
+          modified_at?: string;
+          note_id?: string;
+          note_type?: string;
+          review_needed?: boolean;
+          user_id: string;
+        };
+        Update: {
+          admin_reply?: string | null;
+          ai_consent?: boolean;
+          body?: string;
+          card_id?: string;
+          created_at?: string;
+          helpful_count?: number;
+          modified_at?: string;
+          note_id?: string;
+          note_type?: string;
+          review_needed?: boolean;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_card_note_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_menu_card";
+            referencedColumns: ["card_id"];
+          },
+          {
+            foreignKeyName: "fp_card_note_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_card_section: {
+        Row: {
+          ai_auto_fill: boolean;
+          created_at: string;
+          is_official: boolean;
+          name: string;
+          section_id: string;
+          sort_order: number;
+          user_id: string;
+        };
+        Insert: {
+          ai_auto_fill?: boolean;
+          created_at?: string;
+          is_official?: boolean;
+          name: string;
+          section_id?: string;
+          sort_order?: number;
+          user_id: string;
+        };
+        Update: {
+          ai_auto_fill?: boolean;
+          created_at?: string;
+          is_official?: boolean;
+          name?: string;
+          section_id?: string;
+          sort_order?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_card_section_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_cart_item: {
+        Row: {
+          card_id: string | null;
+          cart_item_id: string;
+          created_at: string;
+          emoji: string | null;
+          ingredient_id: string | null;
+          name: string;
+          price: number;
+          qty: number;
+          ref_store_item_id: string | null;
+          unit: string | null;
+          user_id: string;
+        };
+        Insert: {
+          card_id?: string | null;
+          cart_item_id?: string;
+          created_at?: string;
+          emoji?: string | null;
+          ingredient_id?: string | null;
+          name: string;
+          price?: number;
+          qty?: number;
+          ref_store_item_id?: string | null;
+          unit?: string | null;
+          user_id: string;
+        };
+        Update: {
+          card_id?: string | null;
+          cart_item_id?: string;
+          created_at?: string;
+          emoji?: string | null;
+          ingredient_id?: string | null;
+          name?: string;
+          price?: number;
+          qty?: number;
+          ref_store_item_id?: string | null;
+          unit?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_cart_item_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_menu_card";
+            referencedColumns: ["card_id"];
+          },
+          {
+            foreignKeyName: "fp_cart_item_ingredient_id_fkey";
+            columns: ["ingredient_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_dish_ingredient";
+            referencedColumns: ["ingredient_id"];
+          },
+          {
+            foreignKeyName: "fp_cart_item_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_dish: {
+        Row: {
+          cook_time: number | null;
+          created_at: string;
+          description: string | null;
+          diet_tags: string[];
+          dish_id: string;
+          embedding: string | null;
+          health_score: number | null;
+          kcal: number | null;
+          modified_at: string;
+          name: string;
+          persona_tags: string[];
+          price: number | null;
+          season_end: number | null;
+          season_start: number | null;
+        };
+        Insert: {
+          cook_time?: number | null;
+          created_at?: string;
+          description?: string | null;
+          diet_tags?: string[];
+          dish_id?: string;
+          embedding?: string | null;
+          health_score?: number | null;
+          kcal?: number | null;
+          modified_at?: string;
+          name: string;
+          persona_tags?: string[];
+          price?: number | null;
+          season_end?: number | null;
+          season_start?: number | null;
+        };
+        Update: {
+          cook_time?: number | null;
+          created_at?: string;
+          description?: string | null;
+          diet_tags?: string[];
+          dish_id?: string;
+          embedding?: string | null;
+          health_score?: number | null;
+          kcal?: number | null;
+          modified_at?: string;
+          name?: string;
+          persona_tags?: string[];
+          price?: number | null;
+          season_end?: number | null;
+          season_start?: number | null;
+        };
+        Relationships: [];
+      };
+      fp_dish_ingredient: {
+        Row: {
+          dish_id: string;
+          emoji: string | null;
+          ingredient_id: string;
+          name: string;
+          price: number | null;
+          price_was: number | null;
+          quantity: string | null;
+          ref_store_item_id: string | null;
+          sort_order: number;
+          unit: string | null;
+        };
+        Insert: {
+          dish_id: string;
+          emoji?: string | null;
+          ingredient_id?: string;
+          name: string;
+          price?: number | null;
+          price_was?: number | null;
+          quantity?: string | null;
+          ref_store_item_id?: string | null;
+          sort_order?: number;
+          unit?: string | null;
+        };
+        Update: {
+          dish_id?: string;
+          emoji?: string | null;
+          ingredient_id?: string;
+          name?: string;
+          price?: number | null;
+          price_was?: number | null;
+          quantity?: string | null;
+          ref_store_item_id?: string | null;
+          sort_order?: number;
+          unit?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_dish_ingredient_dish_id_fkey";
+            columns: ["dish_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_dish";
+            referencedColumns: ["dish_id"];
+          },
+        ];
+      };
+      fp_dish_recipe: {
+        Row: {
+          ai_consent: boolean;
+          body: string | null;
+          created_at: string;
+          dish_id: string;
+          embedding: string | null;
+          modified_at: string;
+          recipe_id: string;
+          status: string;
+          title: string;
+        };
+        Insert: {
+          ai_consent?: boolean;
+          body?: string | null;
+          created_at?: string;
+          dish_id: string;
+          embedding?: string | null;
+          modified_at?: string;
+          recipe_id?: string;
+          status?: string;
+          title: string;
+        };
+        Update: {
+          ai_consent?: boolean;
+          body?: string | null;
+          created_at?: string;
+          dish_id?: string;
+          embedding?: string | null;
+          modified_at?: string;
+          recipe_id?: string;
+          status?: string;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_dish_recipe_dish_id_fkey";
+            columns: ["dish_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_dish";
+            referencedColumns: ["dish_id"];
+          },
+        ];
+      };
+      fp_dish_recipe_step: {
+        Row: {
+          description: string;
+          image_url: string | null;
+          recipe_id: string;
+          step_id: string;
+          step_no: number;
+          timer_seconds: number | null;
+        };
+        Insert: {
+          description: string;
+          image_url?: string | null;
+          recipe_id: string;
+          step_id?: string;
+          step_no: number;
+          timer_seconds?: number | null;
+        };
+        Update: {
+          description?: string;
+          image_url?: string | null;
+          recipe_id?: string;
+          step_id?: string;
+          step_no?: number;
+          timer_seconds?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_dish_recipe_step_recipe_id_fkey";
+            columns: ["recipe_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_dish_recipe";
+            referencedColumns: ["recipe_id"];
+          },
+        ];
+      };
+      fp_family_group: {
+        Row: {
+          created_at: string;
+          group_id: string;
+          invite_code: string;
+          name: string;
+        };
+        Insert: {
+          created_at?: string;
+          group_id?: string;
+          invite_code?: string;
+          name: string;
+        };
+        Update: {
+          created_at?: string;
+          group_id?: string;
+          invite_code?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
+      fp_family_member: {
+        Row: {
+          group_id: string;
+          joined_at: string;
+          member_id: string;
+          user_id: string;
+        };
+        Insert: {
+          group_id: string;
+          joined_at?: string;
+          member_id?: string;
+          user_id: string;
+        };
+        Update: {
+          group_id?: string;
+          joined_at?: string;
+          member_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_family_member_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_family_member_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_ingredient_meta: {
+        Row: {
+          created_at: string;
+          measurement_hints: string | null;
+          meta_id: string;
+          modified_at: string;
+          name: string;
+          prep_tips: string | null;
+          substitutes: string[];
+        };
+        Insert: {
+          created_at?: string;
+          measurement_hints?: string | null;
+          meta_id?: string;
+          modified_at?: string;
+          name: string;
+          prep_tips?: string | null;
+          substitutes?: string[];
+        };
+        Update: {
+          created_at?: string;
+          measurement_hints?: string | null;
+          meta_id?: string;
+          modified_at?: string;
+          name?: string;
+          prep_tips?: string | null;
+          substitutes?: string[];
+        };
+        Relationships: [];
+      };
+      fp_memo_item: {
+        Row: {
+          category: string | null;
+          corrected_text: string | null;
+          created_at: string;
+          done: boolean;
+          matched_dish_ingredient_id: string | null;
+          memo_id: string;
+          memo_item_id: string;
+          qty_unit: string | null;
+          qty_value: number | null;
+          raw_text: string;
+          ref_store_item_id: string | null;
+          sort_order: number;
+        };
+        Insert: {
+          category?: string | null;
+          corrected_text?: string | null;
+          created_at?: string;
+          done?: boolean;
+          matched_dish_ingredient_id?: string | null;
+          memo_id: string;
+          memo_item_id?: string;
+          qty_unit?: string | null;
+          qty_value?: number | null;
+          raw_text: string;
+          ref_store_item_id?: string | null;
+          sort_order?: number;
+        };
+        Update: {
+          category?: string | null;
+          corrected_text?: string | null;
+          created_at?: string;
+          done?: boolean;
+          matched_dish_ingredient_id?: string | null;
+          memo_id?: string;
+          memo_item_id?: string;
+          qty_unit?: string | null;
+          qty_value?: number | null;
+          raw_text?: string;
+          ref_store_item_id?: string | null;
+          sort_order?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_memo_item_matched_dish_ingredient_id_fkey";
+            columns: ["matched_dish_ingredient_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_dish_ingredient";
+            referencedColumns: ["ingredient_id"];
+          },
+          {
+            foreignKeyName: "fp_memo_item_memo_id_fkey";
+            columns: ["memo_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_shopping_memo";
+            referencedColumns: ["memo_id"];
+          },
+        ];
+      };
+      fp_menu_card: {
+        Row: {
+          card_id: string;
+          card_theme: string;
+          category: string;
+          cover_image: string | null;
+          created_at: string;
+          description: string | null;
+          emoji: string | null;
+          health_score: number | null;
+          is_new: boolean;
+          is_official: boolean;
+          modified_at: string;
+          name: string;
+          owner_user_id: string | null;
+          price_max: number | null;
+          price_min: number | null;
+          review_status: string;
+          section_id: string | null;
+          subtitle: string | null;
+          taste: string | null;
+        };
+        Insert: {
+          card_id?: string;
+          card_theme: string;
+          category?: string;
+          cover_image?: string | null;
+          created_at?: string;
+          description?: string | null;
+          emoji?: string | null;
+          health_score?: number | null;
+          is_new?: boolean;
+          is_official?: boolean;
+          modified_at?: string;
+          name: string;
+          owner_user_id?: string | null;
+          price_max?: number | null;
+          price_min?: number | null;
+          review_status?: string;
+          section_id?: string | null;
+          subtitle?: string | null;
+          taste?: string | null;
+        };
+        Update: {
+          card_id?: string;
+          card_theme?: string;
+          category?: string;
+          cover_image?: string | null;
+          created_at?: string;
+          description?: string | null;
+          emoji?: string | null;
+          health_score?: number | null;
+          is_new?: boolean;
+          is_official?: boolean;
+          modified_at?: string;
+          name?: string;
+          owner_user_id?: string | null;
+          price_max?: number | null;
+          price_min?: number | null;
+          review_status?: string;
+          section_id?: string | null;
+          subtitle?: string | null;
+          taste?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_menu_card_owner_user_id_fkey";
+            columns: ["owner_user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "fp_menu_card_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_card_section";
+            referencedColumns: ["section_id"];
+          },
+        ];
+      };
+      fp_order: {
+        Row: {
+          address_full: string | null;
+          address_name: string | null;
+          address_phone: string | null;
+          created_at: string;
+          delivery_window: string | null;
+          discount: number;
+          fp_order_id: string;
+          modified_at: string;
+          payment_key: string | null;
+          payment_method: string | null;
+          ref_order_id: string | null;
+          shipping: number;
+          status: string;
+          subtotal: number;
+          total: number;
+          user_id: string;
+        };
+        Insert: {
+          address_full?: string | null;
+          address_name?: string | null;
+          address_phone?: string | null;
+          created_at?: string;
+          delivery_window?: string | null;
+          discount?: number;
+          fp_order_id?: string;
+          modified_at?: string;
+          payment_key?: string | null;
+          payment_method?: string | null;
+          ref_order_id?: string | null;
+          shipping?: number;
+          status?: string;
+          subtotal: number;
+          total: number;
+          user_id: string;
+        };
+        Update: {
+          address_full?: string | null;
+          address_name?: string | null;
+          address_phone?: string | null;
+          created_at?: string;
+          delivery_window?: string | null;
+          discount?: number;
+          fp_order_id?: string;
+          modified_at?: string;
+          payment_key?: string | null;
+          payment_method?: string | null;
+          ref_order_id?: string | null;
+          shipping?: number;
+          status?: string;
+          subtotal?: number;
+          total?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_order_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_semantic_cache: {
+        Row: {
+          cache_id: string;
+          created_at: string;
+          embedding: string | null;
+          expires_at: string;
+          hit_count: number;
+          query_text: string;
+          response: string;
+        };
+        Insert: {
+          cache_id?: string;
+          created_at?: string;
+          embedding?: string | null;
+          expires_at?: string;
+          hit_count?: number;
+          query_text: string;
+          response: string;
+        };
+        Update: {
+          cache_id?: string;
+          created_at?: string;
+          embedding?: string | null;
+          expires_at?: string;
+          hit_count?: number;
+          query_text?: string;
+          response?: string;
+        };
+        Relationships: [];
+      };
+      fp_shopping_memo: {
+        Row: {
+          created_at: string;
+          memo_id: string;
+          modified_at: string;
+          raw_text: string | null;
+          title: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          memo_id?: string;
+          modified_at?: string;
+          raw_text?: string | null;
+          title: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          memo_id?: string;
+          modified_at?: string;
+          raw_text?: string | null;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_shopping_memo_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_store_item_embedding: {
+        Row: {
+          embedded_at: string | null;
+          embedding: string;
+          item_name: string | null;
+          store_item_id: string;
+        };
+        Insert: {
+          embedded_at?: string | null;
+          embedding: string;
+          item_name?: string | null;
+          store_item_id: string;
+        };
+        Update: {
+          embedded_at?: string | null;
+          embedding?: string;
+          item_name?: string | null;
+          store_item_id?: string;
+        };
+        Relationships: [];
+      };
+      fp_user_preference: {
+        Row: {
+          budget_level: string | null;
+          cook_time_min: number | null;
+          created_at: string;
+          dietary_tags: string[];
+          embedding: string | null;
+          modified_at: string;
+          onboarding_skipped_at: string | null;
+          persona_tags: string[];
+          pref_id: string;
+          user_id: string;
+          wellness_goals: string[];
+        };
+        Insert: {
+          budget_level?: string | null;
+          cook_time_min?: number | null;
+          created_at?: string;
+          dietary_tags?: string[];
+          embedding?: string | null;
+          modified_at?: string;
+          onboarding_skipped_at?: string | null;
+          persona_tags?: string[];
+          pref_id?: string;
+          user_id: string;
+          wellness_goals?: string[];
+        };
+        Update: {
+          budget_level?: string | null;
+          cook_time_min?: number | null;
+          created_at?: string;
+          dietary_tags?: string[];
+          embedding?: string | null;
+          modified_at?: string;
+          onboarding_skipped_at?: string | null;
+          persona_tags?: string[];
+          pref_id?: string;
+          user_id?: string;
+          wellness_goals?: string[];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_user_preference_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_user_profile: {
+        Row: {
+          avatar_url: string | null;
+          created_at: string;
+          display_name: string;
+          family_role: string;
+          level: number;
+          modified_at: string;
+          onboarded_at: string | null;
+          ref_customer_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          created_at?: string;
+          display_name?: string;
+          family_role?: string;
+          level?: number;
+          modified_at?: string;
+          onboarded_at?: string | null;
+          ref_customer_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          avatar_url?: string | null;
+          created_at?: string;
+          display_name?: string;
+          family_role?: string;
+          level?: number;
+          modified_at?: string;
+          onboarded_at?: string | null;
+          ref_customer_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      fp_vote: {
+        Row: {
+          card_id: string;
+          created_at: string;
+          group_id: string;
+          user_id: string;
+          vote_id: string;
+        };
+        Insert: {
+          card_id: string;
+          created_at?: string;
+          group_id: string;
+          user_id: string;
+          vote_id?: string;
+        };
+        Update: {
+          card_id?: string;
+          created_at?: string;
+          group_id?: string;
+          user_id?: string;
+          vote_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_vote_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_menu_card";
+            referencedColumns: ["card_id"];
+          },
+          {
+            foreignKeyName: "fp_vote_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_vote_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_wishlist: {
+        Row: {
+          added_at: string;
+          store_id: string;
+          store_item_id: string;
+          user_id: string;
+          wishlist_id: string;
+        };
+        Insert: {
+          added_at?: string;
+          store_id: string;
+          store_item_id: string;
+          user_id: string;
+          wishlist_id?: string;
+        };
+        Update: {
+          added_at?: string;
+          store_id?: string;
+          store_item_id?: string;
+          user_id?: string;
+          wishlist_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_wishlist_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_vote_session: {
+        Row: {
+          session_id: string;
+          group_id: string;
+          title: string;
+          card_ids: Json;
+          ends_at: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          session_id?: string;
+          group_id: string;
+          title?: string;
+          card_ids?: Json;
+          ends_at: string;
+          status?: string;
+          created_at?: string;
+        };
+        Update: {
+          session_id?: string;
+          group_id?: string;
+          title?: string;
+          card_ids?: Json;
+          ends_at?: string;
+          status?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_vote_session_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+        ];
+      };
+      fp_family_vote: {
+        Row: {
+          vote_id: string;
+          session_id: string;
+          group_id: string;
+          card_id: string;
+          user_id: string;
+          vote_type: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          vote_id?: string;
+          session_id: string;
+          group_id: string;
+          card_id: string;
+          user_id: string;
+          vote_type: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          vote_id?: string;
+          session_id?: string;
+          group_id?: string;
+          card_id?: string;
+          user_id?: string;
+          vote_type?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_family_vote_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_vote_session";
+            referencedColumns: ["session_id"];
+          },
+          {
+            foreignKeyName: "fp_family_vote_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+        ];
+      };
       geocode_log: {
         Row: {
           created_at: string;
@@ -1545,6 +2648,20 @@ export type Database = {
             columns: ["inventory_id"];
             isOneToOne: false;
             referencedRelation: "inventory";
+            referencedColumns: ["inventory_id"];
+          },
+          {
+            foreignKeyName: "inventory_txn_inventory_id_fkey";
+            columns: ["inventory_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_inventory_item";
+            referencedColumns: ["inventory_id"];
+          },
+          {
+            foreignKeyName: "inventory_txn_inventory_id_fkey";
+            columns: ["inventory_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_item";
             referencedColumns: ["inventory_id"];
           },
           {
@@ -2504,6 +3621,7 @@ export type Database = {
           promo_id: string;
           reward_qty: number | null;
           reward_store_item_id: string | null;
+          snapshot_sale_price: number | null;
           status: string;
           store_item_id: string;
           updated_at: string;
@@ -2516,6 +3634,7 @@ export type Database = {
           promo_id: string;
           reward_qty?: number | null;
           reward_store_item_id?: string | null;
+          snapshot_sale_price?: number | null;
           status?: string;
           store_item_id: string;
           updated_at?: string;
@@ -2528,6 +3647,7 @@ export type Database = {
           promo_id?: string;
           reward_qty?: number | null;
           reward_store_item_id?: string | null;
+          snapshot_sale_price?: number | null;
           status?: string;
           store_item_id?: string;
           updated_at?: string;
@@ -2538,6 +3658,13 @@ export type Database = {
             columns: ["promo_id"];
             isOneToOne: false;
             referencedRelation: "promotion";
+            referencedColumns: ["promo_id"];
+          },
+          {
+            foreignKeyName: "promotion_item_promo_id_fkey";
+            columns: ["promo_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_promo_price";
             referencedColumns: ["promo_id"];
           },
           {
@@ -3564,20 +4691,6 @@ export type Database = {
             referencedRelation: "tenant_item_master";
             referencedColumns: ["tenant_item_id"];
           },
-          {
-            foreignKeyName: "store_item_tenant_item_id_fkey";
-            columns: ["tenant_item_id"];
-            isOneToOne: false;
-            referencedRelation: "v_store_inventory_item";
-            referencedColumns: ["tenant_item_id"];
-          },
-          {
-            foreignKeyName: "store_item_tenant_item_id_fkey";
-            columns: ["tenant_item_id"];
-            isOneToOne: false;
-            referencedRelation: "v_store_item";
-            referencedColumns: ["tenant_item_id"];
-          },
         ];
       };
       store_quick_policy: {
@@ -3857,18 +4970,120 @@ export type Database = {
             referencedRelation: "tenant_item_master";
             referencedColumns: ["tenant_item_id"];
           },
+        ];
+      };
+      tenant_item_detail_ai: {
+        Row: {
+          ad_copy: string | null;
+          ai_confidence: number | null;
+          ai_model: string | null;
+          calories: Json | null;
+          cooking_usage: string | null;
+          description_markup: string | null;
+          detail_ai_id: string;
+          embedding: string | null;
+          generated_at: string | null;
+          generation_log: Json | null;
+          item_detail_img_adv1: string | null;
+          item_detail_img_adv2: string | null;
+          item_detail_img_adv3: string | null;
+          item_detail_img_label: string | null;
+          item_image: string | null;
+          item_name_metadata: string | null;
+          item_name_parse_log: Json | null;
+          item_name_parsed: string | null;
+          item_name_raw: string | null;
+          item_thumbnail_big: string | null;
+          item_thumbnail_small: string | null;
+          nutrition_summary: Json | null;
+          rag_confidence: Json | null;
+          rag_stage_used: number | null;
+          retry_count: number | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          source_context: Json | null;
+          stale_reason: string | null;
+          status: string | null;
+          tags: string[] | null;
+          tenant_item_id: string;
+          user_reputation: Json | null;
+        };
+        Insert: {
+          ad_copy?: string | null;
+          ai_confidence?: number | null;
+          ai_model?: string | null;
+          calories?: Json | null;
+          cooking_usage?: string | null;
+          description_markup?: string | null;
+          detail_ai_id?: string;
+          embedding?: string | null;
+          generated_at?: string | null;
+          generation_log?: Json | null;
+          item_detail_img_adv1?: string | null;
+          item_detail_img_adv2?: string | null;
+          item_detail_img_adv3?: string | null;
+          item_detail_img_label?: string | null;
+          item_image?: string | null;
+          item_name_metadata?: string | null;
+          item_name_parse_log?: Json | null;
+          item_name_parsed?: string | null;
+          item_name_raw?: string | null;
+          item_thumbnail_big?: string | null;
+          item_thumbnail_small?: string | null;
+          nutrition_summary?: Json | null;
+          rag_confidence?: Json | null;
+          rag_stage_used?: number | null;
+          retry_count?: number | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          source_context?: Json | null;
+          stale_reason?: string | null;
+          status?: string | null;
+          tags?: string[] | null;
+          tenant_item_id: string;
+          user_reputation?: Json | null;
+        };
+        Update: {
+          ad_copy?: string | null;
+          ai_confidence?: number | null;
+          ai_model?: string | null;
+          calories?: Json | null;
+          cooking_usage?: string | null;
+          description_markup?: string | null;
+          detail_ai_id?: string;
+          embedding?: string | null;
+          generated_at?: string | null;
+          generation_log?: Json | null;
+          item_detail_img_adv1?: string | null;
+          item_detail_img_adv2?: string | null;
+          item_detail_img_adv3?: string | null;
+          item_detail_img_label?: string | null;
+          item_image?: string | null;
+          item_name_metadata?: string | null;
+          item_name_parse_log?: Json | null;
+          item_name_parsed?: string | null;
+          item_name_raw?: string | null;
+          item_thumbnail_big?: string | null;
+          item_thumbnail_small?: string | null;
+          nutrition_summary?: Json | null;
+          rag_confidence?: Json | null;
+          rag_stage_used?: number | null;
+          retry_count?: number | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          source_context?: Json | null;
+          stale_reason?: string | null;
+          status?: string | null;
+          tags?: string[] | null;
+          tenant_item_id?: string;
+          user_reputation?: Json | null;
+        };
+        Relationships: [
           {
-            foreignKeyName: "tenant_item_detail_tenant_item_id_fkey";
+            foreignKeyName: "tenant_item_detail_ai_tenant_item_id_fkey";
             columns: ["tenant_item_id"];
-            isOneToOne: false;
-            referencedRelation: "v_store_inventory_item";
-            referencedColumns: ["tenant_item_id"];
-          },
-          {
-            foreignKeyName: "tenant_item_detail_tenant_item_id_fkey";
-            columns: ["tenant_item_id"];
-            isOneToOne: false;
-            referencedRelation: "v_store_item";
+            isOneToOne: true;
+            referencedRelation: "tenant_item_master";
             referencedColumns: ["tenant_item_id"];
           },
         ];
@@ -3877,12 +5092,12 @@ export type Database = {
         Row: {
           category_code: string | null;
           category_name: string | null;
-          consumer_price: number | null;
           created_at: string;
           default_list_price: number;
           default_sale_price: number;
           item_code: string;
           item_name: string;
+          net_price: number | null;
           ranking: number;
           ranking_yn: string;
           sale_code: string;
@@ -3901,12 +5116,12 @@ export type Database = {
         Insert: {
           category_code?: string | null;
           category_name?: string | null;
-          consumer_price?: number | null;
           created_at?: string;
           default_list_price?: number;
           default_sale_price?: number;
           item_code: string;
           item_name: string;
+          net_price?: number | null;
           ranking?: number;
           ranking_yn?: string;
           sale_code: string;
@@ -3925,12 +5140,12 @@ export type Database = {
         Update: {
           category_code?: string | null;
           category_name?: string | null;
-          consumer_price?: number | null;
           created_at?: string;
           default_list_price?: number;
           default_sale_price?: number;
           item_code?: string;
           item_name?: string;
+          net_price?: number | null;
           ranking?: number;
           ranking_yn?: string;
           sale_code?: string;
@@ -3949,6 +5164,234 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tenant_item_master_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant";
+            referencedColumns: ["tenant_id"];
+          },
+        ];
+      };
+      tenant_item_master_update: {
+        Row: {
+          ai_error_msg: string | null;
+          ai_status: string;
+          apply_error_msg: string | null;
+          apply_status: string;
+          apply_type: string | null;
+          batch_id: string;
+          category_code: string | null;
+          category_name: string | null;
+          category_raw: string | null;
+          created_at: string;
+          default_list_price: number;
+          default_sale_price: number;
+          display_position: string | null;
+          dps_type: string | null;
+          facing: number | null;
+          is_excluded: boolean;
+          item_code: string;
+          item_name: string;
+          item_status_raw: string | null;
+          large_name_raw: string | null;
+          medium_name_raw: string | null;
+          net_price: number | null;
+          note: string | null;
+          order_qty: number | null;
+          order_unit: string | null;
+          override_list_price: number | null;
+          override_ranking_yn: string | null;
+          override_sale_price: number | null;
+          override_status: string | null;
+          pog_large: string | null;
+          pog_name: string | null;
+          qty_per_box: number | null;
+          route: string | null;
+          sale_code: string;
+          shipping_price_type: string | null;
+          small_name_raw: string | null;
+          status: string;
+          std_large_code: string | null;
+          std_large_name: string | null;
+          std_medium_code: string | null;
+          std_medium_name: string | null;
+          std_small_code: string | null;
+          std_small_name: string | null;
+          supplier: string | null;
+          tenant_id: string;
+          tenant_item_id: string | null;
+          update_id: string;
+          upload_date: string;
+        };
+        Insert: {
+          ai_error_msg?: string | null;
+          ai_status?: string;
+          apply_error_msg?: string | null;
+          apply_status?: string;
+          apply_type?: string | null;
+          batch_id: string;
+          category_code?: string | null;
+          category_name?: string | null;
+          category_raw?: string | null;
+          created_at?: string;
+          default_list_price?: number;
+          default_sale_price?: number;
+          display_position?: string | null;
+          dps_type?: string | null;
+          facing?: number | null;
+          is_excluded?: boolean;
+          item_code: string;
+          item_name: string;
+          item_status_raw?: string | null;
+          large_name_raw?: string | null;
+          medium_name_raw?: string | null;
+          net_price?: number | null;
+          note?: string | null;
+          order_qty?: number | null;
+          order_unit?: string | null;
+          override_list_price?: number | null;
+          override_ranking_yn?: string | null;
+          override_sale_price?: number | null;
+          override_status?: string | null;
+          pog_large?: string | null;
+          pog_name?: string | null;
+          qty_per_box?: number | null;
+          route?: string | null;
+          sale_code: string;
+          shipping_price_type?: string | null;
+          small_name_raw?: string | null;
+          status?: string;
+          std_large_code?: string | null;
+          std_large_name?: string | null;
+          std_medium_code?: string | null;
+          std_medium_name?: string | null;
+          std_small_code?: string | null;
+          std_small_name?: string | null;
+          supplier?: string | null;
+          tenant_id: string;
+          tenant_item_id?: string | null;
+          update_id?: string;
+          upload_date: string;
+        };
+        Update: {
+          ai_error_msg?: string | null;
+          ai_status?: string;
+          apply_error_msg?: string | null;
+          apply_status?: string;
+          apply_type?: string | null;
+          batch_id?: string;
+          category_code?: string | null;
+          category_name?: string | null;
+          category_raw?: string | null;
+          created_at?: string;
+          default_list_price?: number;
+          default_sale_price?: number;
+          display_position?: string | null;
+          dps_type?: string | null;
+          facing?: number | null;
+          is_excluded?: boolean;
+          item_code?: string;
+          item_name?: string;
+          item_status_raw?: string | null;
+          large_name_raw?: string | null;
+          medium_name_raw?: string | null;
+          net_price?: number | null;
+          note?: string | null;
+          order_qty?: number | null;
+          order_unit?: string | null;
+          override_list_price?: number | null;
+          override_ranking_yn?: string | null;
+          override_sale_price?: number | null;
+          override_status?: string | null;
+          pog_large?: string | null;
+          pog_name?: string | null;
+          qty_per_box?: number | null;
+          route?: string | null;
+          sale_code?: string;
+          shipping_price_type?: string | null;
+          small_name_raw?: string | null;
+          status?: string;
+          std_large_code?: string | null;
+          std_large_name?: string | null;
+          std_medium_code?: string | null;
+          std_medium_name?: string | null;
+          std_small_code?: string | null;
+          std_small_name?: string | null;
+          supplier?: string | null;
+          tenant_id?: string;
+          tenant_item_id?: string | null;
+          update_id?: string;
+          upload_date?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tenant_item_master_update_batch_id_fkey";
+            columns: ["batch_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant_item_upload_batch";
+            referencedColumns: ["batch_id"];
+          },
+          {
+            foreignKeyName: "tenant_item_master_update_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant";
+            referencedColumns: ["tenant_id"];
+          },
+          {
+            foreignKeyName: "tenant_item_master_update_tenant_item_id_fkey";
+            columns: ["tenant_item_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant_item_master";
+            referencedColumns: ["tenant_item_id"];
+          },
+        ];
+      };
+      tenant_item_upload_batch: {
+        Row: {
+          ai_done_rows: number;
+          ai_error_rows: number;
+          apply_done_rows: number;
+          apply_error_rows: number;
+          batch_id: string;
+          batch_status: string;
+          created_at: string;
+          created_by: string | null;
+          file_name: string;
+          tenant_id: string;
+          total_rows: number;
+          upload_date: string;
+        };
+        Insert: {
+          ai_done_rows?: number;
+          ai_error_rows?: number;
+          apply_done_rows?: number;
+          apply_error_rows?: number;
+          batch_id?: string;
+          batch_status?: string;
+          created_at?: string;
+          created_by?: string | null;
+          file_name: string;
+          tenant_id: string;
+          total_rows?: number;
+          upload_date: string;
+        };
+        Update: {
+          ai_done_rows?: number;
+          ai_error_rows?: number;
+          apply_done_rows?: number;
+          apply_error_rows?: number;
+          batch_id?: string;
+          batch_status?: string;
+          created_at?: string;
+          created_by?: string | null;
+          file_name?: string;
+          tenant_id?: string;
+          total_rows?: number;
+          upload_date?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tenant_item_upload_batch_tenant_id_fkey";
             columns: ["tenant_id"];
             isOneToOne: false;
             referencedRelation: "tenant";
@@ -4347,33 +5790,50 @@ export type Database = {
     Views: {
       v_store_inventory_item: {
         Row: {
+          ai_ad_copy: string | null;
+          ai_calories: Json | null;
+          ai_confidence: number | null;
+          ai_cooking_usage: string | null;
+          ai_generated_at: string | null;
+          ai_nutrition_summary: Json | null;
+          ai_reviewed_at: string | null;
+          ai_status: string | null;
+          ai_tags: string[] | null;
           available_quantity: number | null;
           category_code: string | null;
           category_name: string | null;
-          consumer_price: number | null;
           created_at: string | null;
           default_list_price: number | null;
           default_sale_price: number | null;
+          description_markup: string | null;
+          detail_ai_id: string | null;
+          discount_pct: number | null;
+          discount_promo_type: string | null;
+          effective_sale_price: number | null;
+          inventory_id: string | null;
+          inventory_status: string | null;
           is_in_stock: boolean | null;
           item_code: string | null;
-          item_detail_id: string | null;
           item_detail_img_adv1: string | null;
           item_detail_img_adv2: string | null;
           item_detail_img_adv3: string | null;
           item_detail_img_label: string | null;
-          item_img: string | null;
+          item_image: string | null;
           item_name: string | null;
           item_thumbnail_big: string | null;
           item_thumbnail_small: string | null;
           list_price: number | null;
+          net_price: number | null;
           on_hand: number | null;
+          promo_id: string | null;
+          promo_name: string | null;
+          promo_type: string | null;
           ranking: number | null;
           ranking_yn: string | null;
           reserved: number | null;
           safety_stock: number | null;
           sale_code: string | null;
           sale_price: number | null;
-          short_description: string | null;
           status: string | null;
           std_large_code: string | null;
           std_large_name: string | null;
@@ -4395,6 +5855,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "store";
             referencedColumns: ["store_id"];
+          },
+          {
+            foreignKeyName: "store_item_tenant_item_id_fkey";
+            columns: ["tenant_item_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant_item_master";
+            referencedColumns: ["tenant_item_id"];
           },
           {
             foreignKeyName: "tenant_item_master_tenant_id_fkey";
@@ -4407,28 +5874,38 @@ export type Database = {
       };
       v_store_item: {
         Row: {
+          ai_confidence: number | null;
+          ai_generated_at: string | null;
+          ai_status: string | null;
+          available_quantity: number | null;
           category_code: string | null;
           category_name: string | null;
-          consumer_price: number | null;
           created_at: string | null;
           default_list_price: number | null;
           default_sale_price: number | null;
+          description_markup: string | null;
+          detail_ai_id: string | null;
+          inventory_id: string | null;
+          inventory_status: string | null;
+          is_in_stock: boolean | null;
           item_code: string | null;
-          item_detail_id: string | null;
           item_detail_img_adv1: string | null;
           item_detail_img_adv2: string | null;
           item_detail_img_adv3: string | null;
           item_detail_img_label: string | null;
-          item_img: string | null;
+          item_image: string | null;
           item_name: string | null;
           item_thumbnail_big: string | null;
           item_thumbnail_small: string | null;
           list_price: number | null;
+          net_price: number | null;
+          on_hand: number | null;
           ranking: number | null;
           ranking_yn: string | null;
+          reserved: number | null;
+          safety_stock: number | null;
           sale_code: string | null;
           sale_price: number | null;
-          short_description: string | null;
           status: string | null;
           std_large_code: string | null;
           std_large_name: string | null;
@@ -4452,11 +5929,55 @@ export type Database = {
             referencedColumns: ["store_id"];
           },
           {
+            foreignKeyName: "store_item_tenant_item_id_fkey";
+            columns: ["tenant_item_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant_item_master";
+            referencedColumns: ["tenant_item_id"];
+          },
+          {
             foreignKeyName: "tenant_item_master_tenant_id_fkey";
             columns: ["tenant_id"];
             isOneToOne: false;
             referencedRelation: "tenant";
             referencedColumns: ["tenant_id"];
+          },
+        ];
+      };
+      v_store_promo_price: {
+        Row: {
+          base_price: number | null;
+          discount_pct: number | null;
+          discount_unit: string | null;
+          discount_value: number | null;
+          effective_sale_price: number | null;
+          priority: number | null;
+          promo_id: string | null;
+          promo_name: string | null;
+          promo_type: string | null;
+          store_item_id: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "promotion_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "store_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "promotion_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_inventory_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "promotion_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_item";
+            referencedColumns: ["store_item_id"];
           },
         ];
       };
@@ -4573,8 +6094,147 @@ export type Database = {
           store_name: string;
         }[];
       };
+      fp_cards_by_ai_tags: {
+        Args: { p_tags: string[] };
+        Returns: {
+          card_id: string;
+        }[];
+      };
+      fp_cleanup_expired_cache: { Args: never; Returns: number };
+      fp_match_cache: {
+        Args: { query_embedding: string; similarity_threshold?: number };
+        Returns: {
+          cache_id: string;
+          response: string;
+          similarity: number;
+        }[];
+      };
+      fp_recommend_cards: {
+        Args: { p_limit?: number; p_tags?: string[] };
+        Returns: {
+          card_id: string;
+          score: number;
+        }[];
+      };
+      fp_search_dish: {
+        Args: {
+          match_count?: number;
+          query_embedding: string;
+          similarity_threshold?: number;
+        };
+        Returns: {
+          dish_id: string;
+          name: string;
+          similarity: number;
+        }[];
+      };
+      fp_semantic_cache_lookup: {
+        Args: { p_query_embedding: string; p_similarity_threshold?: number };
+        Returns: {
+          cache_id: string;
+          response_text: string;
+          similarity: number;
+        }[];
+      };
+      fp_get_vote_results: {
+        Args: { p_session_id: string };
+        Returns: {
+          card_id: string;
+          like_count: number;
+          dislike_count: number;
+        }[];
+      };
+      fp_monthly_popular_cards: {
+        Args: { p_group_id: string; p_limit?: number };
+        Returns: {
+          card_id: string;
+          like_count: number;
+        }[];
+      };
+      fp_vector_search_dish: {
+        Args: {
+          filter_diet_tags?: string[];
+          filter_persona_tags?: string[];
+          match_count?: number;
+          query_embedding?: string;
+          query_text: string;
+          similarity_threshold?: number;
+        };
+        Returns: {
+          dish_id: string;
+          name: string;
+          search_source: string;
+          similarity: number;
+        }[];
+      };
+      fp_vector_search_recipe: {
+        Args: {
+          match_count?: number;
+          query_embedding?: string;
+          query_text: string;
+          similarity_threshold?: number;
+        };
+        Returns: {
+          dish_id: string;
+          recipe_id: string;
+          search_source: string;
+          similarity: number;
+          title: string;
+        }[];
+      };
+      fp_vector_search_store_item: {
+        Args: {
+          filter_ai_tags?: string[];
+          match_count?: number;
+          query_embedding?: string;
+          query_text: string;
+          similarity_threshold?: number;
+        };
+        Returns: {
+          item_name: string;
+          search_source: string;
+          similarity: number;
+          store_item_id: string;
+        }[];
+      };
+      get_missing_ai_items: {
+        Args: {
+          p_category_name?: string;
+          p_keyword?: string;
+          p_limit?: number;
+          p_offset?: number;
+          p_std_large_name?: string;
+          p_std_medium_name?: string;
+          p_std_small_name?: string;
+        };
+        Returns: {
+          category_name: string;
+          item_code: string;
+          item_name: string;
+          sale_code: string;
+          std_large_name: string;
+          std_medium_name: string;
+          std_small_name: string;
+          tenant_item_id: string;
+          total_count: number;
+        }[];
+      };
       get_my_rider_id: { Args: never; Returns: string };
       is_admin: { Args: never; Returns: boolean };
+      match_tenant_item_detail_ai: {
+        Args: {
+          match_count: number;
+          match_threshold: number;
+          query_embedding: string;
+        };
+        Returns: {
+          description_markup: string;
+          item_name: string;
+          similarity: number;
+          tenant_item_id: string;
+        }[];
+      };
+      restore_expired_promotion_prices: { Args: never; Returns: undefined };
       search_items_by_store: {
         Args: {
           p_keyword: string;
@@ -4583,33 +6243,50 @@ export type Database = {
           p_threshold?: number;
         };
         Returns: {
+          ai_ad_copy: string | null;
+          ai_calories: Json | null;
+          ai_confidence: number | null;
+          ai_cooking_usage: string | null;
+          ai_generated_at: string | null;
+          ai_nutrition_summary: Json | null;
+          ai_reviewed_at: string | null;
+          ai_status: string | null;
+          ai_tags: string[] | null;
           available_quantity: number | null;
           category_code: string | null;
           category_name: string | null;
-          consumer_price: number | null;
           created_at: string | null;
           default_list_price: number | null;
           default_sale_price: number | null;
+          description_markup: string | null;
+          detail_ai_id: string | null;
+          discount_pct: number | null;
+          discount_promo_type: string | null;
+          effective_sale_price: number | null;
+          inventory_id: string | null;
+          inventory_status: string | null;
           is_in_stock: boolean | null;
           item_code: string | null;
-          item_detail_id: string | null;
           item_detail_img_adv1: string | null;
           item_detail_img_adv2: string | null;
           item_detail_img_adv3: string | null;
           item_detail_img_label: string | null;
-          item_img: string | null;
+          item_image: string | null;
           item_name: string | null;
           item_thumbnail_big: string | null;
           item_thumbnail_small: string | null;
           list_price: number | null;
+          net_price: number | null;
           on_hand: number | null;
+          promo_id: string | null;
+          promo_name: string | null;
+          promo_type: string | null;
           ranking: number | null;
           ranking_yn: string | null;
           reserved: number | null;
           safety_stock: number | null;
           sale_code: string | null;
           sale_price: number | null;
-          short_description: string | null;
           status: string | null;
           std_large_code: string | null;
           std_large_name: string | null;

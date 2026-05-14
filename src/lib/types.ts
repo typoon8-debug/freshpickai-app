@@ -152,6 +152,8 @@ export type Ingredient = {
   sortOrder: number;
   /** public.store_item.store_item_id — 매칭 완료 시 */
   refStoreItemId?: string;
+  /** v_store_inventory_item enrichment 결과 (Phase 2.5) */
+  liveData?: StoreItemAiData;
 };
 
 /** fp_ingredient_meta (F018) */
@@ -178,16 +180,56 @@ export type CardNote = {
 };
 
 // ── 가족 투표 ──────────────────────────────────────────────
-/** fp_vote */
+/** fp_vote (레거시 — fp_family_vote 로 대체) */
 export type Vote = {
   voteId: string;
   groupId: string;
   cardId: string;
   userId: string;
   createdAt: string;
-  /** 집계 결과 (JOIN) */
   totalVotes?: number;
   pct?: number;
+};
+
+/** fp_vote_session */
+export type VoteSessionRecord = {
+  sessionId: string;
+  groupId: string;
+  title: string;
+  cardIds: string[];
+  endsAt: string;
+  status: "open" | "closed";
+  createdAt: string;
+};
+
+/** fp_family_vote — 개별 투표 레코드 */
+export type FamilyVoteRecord = {
+  voteId: string;
+  sessionId: string;
+  groupId: string;
+  cardId: string;
+  userId: string;
+  voteType: "like" | "dislike";
+  createdAt: string;
+  updatedAt: string;
+};
+
+/** 투표 집계 결과 (fp_get_vote_results RPC) */
+export type VoteResult = {
+  cardId: string;
+  cardName?: string;
+  emoji?: string;
+  likeCount: number;
+  dislikeCount: number;
+};
+
+/** 무비나이트 생성 결과 */
+export type MovieNightCard = {
+  cardId: string;
+  name: string;
+  subtitle?: string;
+  emoji: string;
+  isKidsVersion: boolean;
 };
 
 // ── 장보기 메모 (F012) ─────────────────────────────────────
@@ -230,6 +272,15 @@ export type CartItem = {
   emoji?: string;
   /** public.store_item.store_item_id */
   refStoreItemId?: string;
+  /** v_store_inventory_item enrichment 결과 (Phase 2.5) */
+  aiAdCopy?: string;
+  thumbnailUrl?: string;
+  isInStock?: boolean;
+  effectiveSalePrice?: number;
+  discountPct?: number;
+  promoType?: StoreItemAiData["promoType"];
+  promoName?: string;
+  listPrice?: number;
 };
 
 /** fp_order */
@@ -252,12 +303,98 @@ export type FpOrder = {
 };
 
 // ── AI 채팅 ────────────────────────────────────────────────
+export type MemoAddedItem = {
+  name: string;
+  qty: number;
+  unit: string;
+};
+
+export type CartAddedItem = {
+  name: string;
+  qty: number;
+  price: number;
+  storeItemId?: string;
+};
+
 export type ChatMessage = {
   id: string;
   role: "ai" | "user";
   text: string;
   time: string;
   cards?: Pick<MenuCard, "cardId" | "name" | "emoji" | "priceMin" | "healthScore">[];
+  /** addToMemo 도구 실행 결과 품목 목록 */
+  memoItems?: MemoAddedItem[];
+  /** addToCart 도구 실행 결과 품목 목록 */
+  cartItems?: CartAddedItem[];
+  /** 현재 실행 중인 도구 이름 (스트리밍 중 표시용) */
+  currentTool?: string;
+};
+
+// ── 페르소나 (F003 RAG) ────────────────────────────────────
+/** customer_preference — 9 페르소나 컨텍스트 빌더 입력 */
+export type CustomerPreference = {
+  id: string;
+  customerId: string;
+  dietTags: string[];
+  cookingSkill: "beginner" | "intermediate" | "advanced";
+  cookTimePref: "10min" | "30min" | "60min";
+  budgetRange: "under_10k" | "under_20k" | "over_30k";
+  wellnessTags: string[];
+  onboardingCompletedAt: string | null; // ISO timestamp — Task 041에서 DB 컬럼 매핑
+  onboardingSkippedAt: string | null;
+};
+
+// ── v_store_inventory_item AI 데이터 (Phase 2.5) ───────────
+/** AI 칼로리 구조 (ai_calories JSONB) */
+export type ItemCalories = {
+  total: number;
+  carb: number;
+  protein: number;
+  fat: number;
+};
+
+/**
+ * v_store_inventory_item AI 데이터 필드
+ * net_price(납품가/원가)는 포함하지 않음 — UI 표시 금지
+ */
+export type StoreItemAiData = {
+  storeItemId: string;
+  storeId?: string;
+  itemName?: string;
+  thumbnailSmall?: string;
+  thumbnailBig?: string;
+  aiStatus: "ACTIVE" | "REVIEW_NEEDED" | "ERROR" | null;
+  aiConfidence?: number;
+  descriptionMarkup?: string;
+  aiAdCopy?: string;
+  aiTags: string[];
+  aiCookingUsage?: string;
+  aiCalories?: ItemCalories;
+  aiNutritionSummary?: Record<string, number>;
+  listPrice?: number;
+  salePrice?: number;
+  effectiveSalePrice?: number;
+  discountPct?: number;
+  promoId?: string;
+  promoName?: string;
+  promoType?: "SALE" | "BUNDLE" | "DISCOUNT_PCT" | "TWO_PLUS_ONE";
+  isInStock?: boolean;
+  availableQuantity?: number;
+  /** resolveAiData() 결과 플래그 — "AI 분석 보완 중" 배지 표시 여부 */
+  _showReviewBadge?: boolean;
+};
+
+/** 찜 목록 항목 */
+export type WishlistItem = StoreItemAiData & {
+  wishlistId: string;
+  addedAt: string;
+};
+
+// ── 재료 대체 (F018) ───────────────────────────────────────
+/** 재료 대체 단일 항목 */
+export type IngredientSubstitute = {
+  name: string;
+  note: string;
 };
 
 // ── 레거시 호환 (store.ts 등에서 사용 중) ─────────────────
