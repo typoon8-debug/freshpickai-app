@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-15 업데이트 → Task 043 결함 수정 6건 + Task 044 상품 상세 페이지 재개발 + Task 046 장바구니·결제 강화 + 프로필 서브 페이지 5종 신규 + 냉장고 비우기 매칭 정확도 개선 + 재료 상세 UI 개선)
+## 진행 현황 (2026-05-15 업데이트 → Task 043 결함 수정 6건 + Task 044 상품 상세 페이지 재개발 + Task 046 장바구니·결제 강화 + 프로필 서브 페이지 5종 신규 + 냉장고 비우기 매칭 정확도 개선 + 카드 API 성능 스프린트 (RPC 통합·캐시·컬럼 최적화·LCP·레이트 리밋 DB 전환·쿼리키 구조화))
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -1059,6 +1059,57 @@ AI 생성 실패  → "AI 추천을 불러오지 못했어요" + [✨ AI 테마 
 - [x] **복합 스코어 적용**: 사용자 재료 커버리지 0.6 + 카드 재료 완성도 0.4 가중 합산 → 보유 재료 비율이 높고 완성도가 높은 카드 우선 반환
 - [x] **공식 카드 우선 정렬**: `.order("is_official")` 추가로 운영자 검수 카드 상위 노출
 - [x] **`IngredientDetailSheet` UI 개선**: 레이아웃 재구성 + 표시 항목 가독성 개선
+
+---
+
+#### 성능 스프린트: 카드 API RPC 통합·Next.js 캐시·컬럼 최적화·LCP·번들 개선 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: 카드 상세 조회 5회 DB 라운드트립, 전체 컬럼 전송(`select *`), Framer Motion 마운트 FLIP 측정, dnd-kit 초기 번들 포함 등 복합 성능 문제.
+
+**변경 내용**:
+
+- [x] **`getCardDetail()` RPC 통합** (`src/lib/actions/cards/detail.ts`): 기존 card + card_dish + dish + ingredient + recipe + note 개별 5회 쿼리 → `fp_get_card_detail` RPC 단일 호출로 DB 라운드트립 5→2 감소
+- [x] **`getCards()` / `getDailyPick()` `unstable_cache` 적용** (`src/lib/actions/cards/index.ts`): 공식 카드 목록 5분 캐시 (`["official-cards"]` 태그), 데일리픽 24시간 캐시 (`["daily-pick"]` 태그) — 동일 요청 재처리 제거
+- [x] **`v_store_inventory_item` 컬럼 선택 최적화**: `select("*")` (59개) → 22개 명시 컬럼 선택 (63% 감소). 적용 범위: `detail.ts` · `create.ts` · `cart/index.ts` · `wishlist/index.ts`
+- [x] **`MenuCard` Framer Motion 제거** (`src/components/cards/menu-card.tsx`): `motion.div whileHover` → CSS `transition hover:-translate-y-1` 교체 — 마운트 FLIP 측정·JS 런타임 제거. `priority` prop 추가 (LCP 대상 표시)
+- [x] **CardGrid LCP 최적화** (`src/components/home/card-grid.tsx`): 상위 4개 카드 `priority={true}` → `<Image>` 선로딩
+- [x] **`SectionList` dynamic import** (`src/app/(main)/sections/page.tsx`): dnd-kit 번들(`@dnd-kit/core` + `@dnd-kit/sortable`)을 섹션 페이지 방문 시에만 로드 — 초기 홈 번들 분리
+
+**관련 DB 마이그레이션** (`supabase/migrations/`):
+- `20260521_008_performance_indexes.sql` — v_store_inventory_item 쿼리 성능 인덱스
+- `20260521_009_card_detail_rpc.sql` — `fp_get_card_detail` RPC 함수
+- `20260521_010_store_item_mv.sql` — store_item materialized view
+- `20260521_011_rate_limit_rpc.sql` — `fp_check_rate_limit` RPC 함수
+
+---
+
+#### 리팩토링: TanStack Query 쿼리키 구조화 + CardQueryFilter 타입 통일 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: `qk.cards(filterKey: string)` 방식이 JSON.stringify 직렬화에 의존하여 필터 조합별 캐시 슬롯 분리가 불명확하고 타입 안정성이 없었음.
+
+**변경 내용** (`src/lib/query-keys.ts`, `src/hooks/useCards.ts`, `src/components/home/home-board.tsx`):
+
+- [x] **`CardQueryFilter` 타입 신설** (`src/lib/query-keys.ts`): `{ theme?, category?, officialOnly?, aiTags? }` 구조화 타입 — `useCards.ts` / `home-board.tsx` 공유
+- [x] **`qk.cards()` 배열 키 구조화**: `["cards", theme, category, officialOnly, aiTags]` 5-튜플 — 필터 조합별 독립 캐시 슬롯, JSON.stringify 의존 제거
+- [x] **`voteSession` 쿼리키 추가**: `["vote", sessionId]` — 가족 투표 세션 캐시 슬롯
+- [x] **`home-board.tsx` 필터 구조화**: `filterKey` 문자열 → `cardFilter` 객체 `useMemo` — AI 태그 필터 쿼리키 안정화, `qk.card()` 키 `String()` 정규화
+
+---
+
+#### 보안 개선: AI 채팅 레이트 리밋 Supabase RPC 전환 + 채팅 메모리 한도 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: 기존 인메모리 `Map` 기반 레이트 리밋은 Vercel Fluid Compute 멀티인스턴스 환경에서 인스턴스 간 카운터 공유 불가 → 실질적인 제한 효과 없음.
+
+**변경 내용** (`src/app/api/ai/chat/route.ts`, `src/lib/store.ts`):
+
+- [x] **`checkRateLimit()` DB RPC 전환**: 인메모리 `Map` → `fp_check_rate_limit(p_user_id, p_max_count=30, p_window_minutes=1)` Supabase 원자적 DB 카운터. 멀티인스턴스 전체에서 정확한 30 req/min 제한 적용. RPC 실패 시 허용(서비스 중단 방지 폴백)
+- [x] **`useChatStore.push()` 메시지 한도**: 최근 30개(`MAX_CHAT_MESSAGES`)만 유지 — 장시간 AI 채팅 세션에서 발생하는 메모리 누수 방지
 
 ---
 
