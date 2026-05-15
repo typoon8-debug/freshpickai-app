@@ -24,14 +24,14 @@ const CATEGORY_THEME_MAP: Record<string, string[]> = {
   cinema: ["cinema_night"],
 };
 
-// 섹션 AI 자동 채움 캐시 (24h, sessionStorage)
-const AI_FILL_CACHE_PREFIX = "ai-fill:v1:";
+// 섹션 AI 자동 채움 캐시 (24h, localStorage — 탭 재오픈 후에도 유지)
+const AI_FILL_CACHE_PREFIX = "ai-fill:v2:";
 const AI_FILL_TTL_MS = 24 * 60 * 60 * 1000;
 
 function readAutoFillCache(sectionId: string): MenuCard[] | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(`${AI_FILL_CACHE_PREFIX}${sectionId}`);
+    const raw = localStorage.getItem(`${AI_FILL_CACHE_PREFIX}${sectionId}`);
     if (!raw) return null;
     const { data, timestamp } = JSON.parse(raw) as { data: MenuCard[]; timestamp: number };
     if (Date.now() - timestamp < AI_FILL_TTL_MS) return data;
@@ -44,7 +44,7 @@ function readAutoFillCache(sectionId: string): MenuCard[] | null {
 function writeAutoFillCache(sectionId: string, cards: MenuCard[]) {
   if (typeof window === "undefined") return;
   try {
-    sessionStorage.setItem(
+    localStorage.setItem(
       `${AI_FILL_CACHE_PREFIX}${sectionId}`,
       JSON.stringify({ data: cards, timestamp: Date.now() })
     );

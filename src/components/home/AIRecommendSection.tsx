@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import type { MenuCard } from "@/lib/types";
 import type { RecommendResponse, Recommendation } from "@/lib/validations/recommendation";
 
-const CACHE_KEY = "ai-recommend:v1";
+const CACHE_KEY = "ai-recommend:v2";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const THEME_EMOJIS: Record<string, string> = {
@@ -18,6 +18,17 @@ const THEME_EMOJIS: Record<string, string> = {
   다시만나볼까요: "💝",
   새로들어왔어요: "✨",
 };
+
+// 로딩 중 단계별 안내 메시지 (시간 순)
+const LOADING_STEPS = [
+  "AI가 식생활 패턴을 분석하고 있어요...",
+  "제철 재료·할인 상품을 확인 중이에요...",
+  "취향에 맞는 테마를 큐레이팅 중이에요...",
+  "거의 완료되었습니다 ✨",
+] as const;
+
+// 각 단계로 전환되는 시간 (ms) — 인덱스 1, 2, 3 기준
+const STEP_DELAYS = [4000, 9000, 14000] as const;
 
 interface CachedData {
   data: RecommendResponse;
@@ -30,10 +41,10 @@ type RecommendState = {
   error: boolean;
 };
 
-function readSessionCache(): RecommendResponse | null {
+function readLocalCache(): RecommendResponse | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(CACHE_KEY);
+    const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as CachedData;
     if (Date.now() - parsed.timestamp < CACHE_TTL_MS) return parsed.data;
@@ -52,17 +63,29 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
   // SSR: 항상 loading:true 로 시작 → hydration mismatch 방지
   const [state, setState] = useState<RecommendState>({ data: null, loading: true, error: false });
   const [activeTheme, setActiveTheme] = useState(0);
+  const [loadingStep, setLoadingStep] = useState(0);
   const hasFetchedRef = useRef(false);
 
   const cardMap = new Map(initialCards.map((c) => [c.cardId, c]));
 
+  // 로딩 중 단계별 메시지 타이머
   useEffect(() => {
-    // 마운트 후 sessionStorage 캐시 확인 (서버에서는 실행 안 됨)
-    const cached = readSessionCache();
+    if (!state.loading) {
+      setLoadingStep(0); // eslint-disable-line react-hooks/set-state-in-effect
+      return;
+    }
+    const timers = STEP_DELAYS.map((delay, i) =>
+      window.setTimeout(() => setLoadingStep(i + 1), delay)
+    );
+    return () => timers.forEach(window.clearTimeout);
+  }, [state.loading]);
+
+  useEffect(() => {
+    // 마운트 후 localStorage 캐시 확인 (서버에서는 실행 안 됨)
+    const cached = readLocalCache();
     if (cached) {
       hasFetchedRef.current = true;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setState({ data: cached, loading: false, error: false });
+      setState({ data: cached, loading: false, error: false }); // eslint-disable-line react-hooks/set-state-in-effect
       return;
     }
 
@@ -78,7 +101,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
         if (!data.recommendations?.length) throw new Error("empty");
         setState({ data, loading: false, error: false });
         try {
-          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
         } catch {
           // 무시
         }
@@ -92,6 +115,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
 
   const themes = state.data?.recommendations ?? [];
   const activeRec: Recommendation | undefined = themes[activeTheme];
+  const progressPct = Math.round(((loadingStep + 1) / LOADING_STEPS.length) * 100);
 
   return (
     <section className="flex flex-col gap-3" data-testid="ai-recommend-section">
@@ -99,6 +123,22 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
         <Sparkles size={16} className="text-honey" />
         <h2 className="text-ink-900 text-base font-semibold">AI 테마 추천</h2>
       </div>
+
+      {state.loading && (
+        <div className="flex flex-col items-center gap-2 py-2">
+          <Sparkles size={15} className="text-honey animate-pulse" />
+          <p className="text-ink-500 text-center text-[13px] transition-all duration-500">
+            {LOADING_STEPS[loadingStep]}
+          </p>
+          {/* 가상 프로그레스바 */}
+          <div className="bg-mocha-100 h-1 w-44 overflow-hidden rounded-full">
+            <div
+              className="bg-honey h-full rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* 테마 탭 */}
       <div
