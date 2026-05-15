@@ -278,7 +278,7 @@ export async function getOrdersWithDetails(): Promise<OrderWithDetails[]> {
       orderNo: o.order_no as string,
       storeName: storeNameMap.get(o.store_id as string) ?? "스토어",
       storeId: o.store_id as string,
-      status: o.status as string,
+      status: isDelivered ? "DELIVERED" : (o.status as string),
       orderedAt: o.ordered_at as string,
       finalPayable: o.final_payable as number,
       requests: o.requests as string | null,
