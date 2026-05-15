@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트 + 모바일 홈화면 깜빡임 근본 수정 + AI 태그 필터 회귀 수정)
+## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트 + 모바일 홈화면 깜빡임 근본 수정 + AI 태그 필터 회귀 수정 + AI 테마 추천 주간 갱신 주기 구현 + AI 추천 에러 UX 개선)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -874,6 +874,61 @@ useEffect(() => {
 - [x] **`src/app/globals.css`** — `html, body { overscroll-behavior: none }` 추가 → 브라우저 네이티브 pull-to-refresh 차단 → 전체 페이지 리로드 방지
 - [x] **`src/hooks/use-stores-hydrated.ts`** — Grace Period 패턴 추가: 첫 150ms 동안 `gracePeriod = true` → `hydrated || gracePeriod` 반환. localStorage hydration(보통 50ms 내)이 완료되기 전에 스켈레톤이 그려지는 플래시 제거. 느린 기기에서는 150ms 후 스켈레톤 표시(그레이스풀 폴백)
 - [x] **`src/components/home/AIRecommendSection.tsx`** — `useEffect` → `useLayoutEffect`로 캐시 체크 이전(페인트 전 동기 실행). 캐시 있으면 스켈레톤이 화면에 그려지기 전에 콘텐츠로 전환. fetch 로직은 `useEffect`에 유지(비동기 사이드 이펙트 분리)
+
+---
+
+#### 기능 개선: AI 테마 추천 주간 갱신 주기 구현 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: 기존 `AIRecommendSection`은 localStorage 24h 고정 TTL로 캐시를 관리했으나, 상품 리뉴얼 주기(주 1회)와 맞지 않아 최신 프로모션·시즌 상품이 반영되지 않는 문제가 있었음.
+
+**변경 내용**:
+
+- [x] **`common_code` 등록**: `AI_RECOMMEND_INTERVAL = 168` (시간 단위, DB에서 변경 시 즉시 반영)
+- [x] **`customer` 테이블 컬럼 추가** (`ai_recommend_generated_at TIMESTAMPTZ NULL`): AI 테마 마지막 생성일시 기록, 초기값 NULL
+- [x] **신규 API `GET /api/ai/recommend/meta`** (`src/app/api/ai/recommend/meta/route.ts`):
+  - 인증 사용자 이메일 → `customer.ai_recommend_generated_at` 조회
+  - `AI_RECOMMEND_INTERVAL` 조회 후 경과 시간 비교
+  - `{ stale: boolean, intervalHours: number }` 반환 (~50ms, AI 생성 없음)
+- [x] **`/api/ai/recommend` 수정**: AI 추천 생성 성공 시 `customer.ai_recommend_generated_at = now()` UPDATE
+- [x] **`AIRecommendSection.tsx` 수정**:
+  - 캐시 키 `"ai-recommend:v2"` → `"ai-recommend:v3"` (기존 캐시 자동 무효화)
+  - 마운트 시 `/meta` 먼저 호출 → `stale=true`면 캐시 삭제 후 재생성, `stale=false`면 localStorage 캐시 재사용
+
+**동작 흐름**:
+```
+최초 로그인          → stale=true(NULL) → AI 생성 → DB 타임스탬프 기록
+168시간 이내 재방문  → stale=false     → localStorage 캐시 즉시 표출
+168시간 이후 재방문  → stale=true      → AI 재생성 → DB 업데이트
+로컬 캐시 삭제       → stale=false + 캐시 없음 → AI 재생성 (자동 처리)
+```
+
+---
+
+#### 기능 개선: AI 추천 에러 UX 개선 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: AI 생성 실패 시 `if (state.error) return null`로 섹션 자체가 조용히 사라지던 문제. 사용자 입장에서 재시도 수단이 없어 UX 불량.
+
+**변경 내용** (`src/components/home/AIRecommendSection.tsx`):
+
+- [x] **에러 상태 UI 변경**: `return null` → 에러 메시지 + "AI 테마 추천 받기" 버튼 표시
+- [x] **`handleForceRegenerate` 함수 추가**:
+  - `loading: true` 전환 → 로딩 애니메이션(4단계 메시지 + 프로그레스바) 재표시
+  - localStorage 캐시 삭제
+  - `/api/ai/recommend` 직접 호출 (meta 기간 체크 생략 — 강제 재생성)
+  - 성공 시 localStorage 저장 + `customer.ai_recommend_generated_at` DB 업데이트
+  - 재시도 실패 시 에러 버튼 재표시
+
+**UX 흐름**:
+```
+AI 생성 성공  → 추천 카드 표시 (버튼 없음)
+AI 생성 실패  → "AI 추천을 불러오지 못했어요" + [✨ AI 테마 추천 받기] 버튼
+버튼 클릭     → 로딩 애니메이션(4단계) → 재생성 → 카드 표시
+재시도 실패   → 에러 버튼 재표시
+```
 
 ---
 

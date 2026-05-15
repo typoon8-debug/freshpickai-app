@@ -236,6 +236,15 @@ ${JSON.stringify(cardSummary)}
       system: systemPrompt,
       prompt: userPrompt,
     });
+
+    // AI 추천 생성 성공 시 customer 테이블 타임스탬프 업데이트
+    if (user.email) {
+      await adminClient
+        .from("customer")
+        .update({ ai_recommend_generated_at: new Date().toISOString() })
+        .eq("email", user.email);
+    }
+
     return Response.json(result.object);
   } catch (err) {
     console.error("[ai/recommend] generateObject error:", err);

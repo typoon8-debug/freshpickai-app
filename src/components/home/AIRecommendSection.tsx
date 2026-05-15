@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import type { MenuCard } from "@/lib/types";
 import type { RecommendResponse, Recommendation } from "@/lib/validations/recommendation";
 
-const CACHE_KEY = "ai-recommend:v2";
+const CACHE_KEY = "ai-recommend:v3";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const THEME_EMOJIS: Record<string, string> = {
@@ -68,6 +68,30 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
 
   const cardMap = new Map(initialCards.map((c) => [c.cardId, c]));
 
+  // 에러 시 재시도 — meta 기간 체크 없이 강제 재생성
+  async function handleForceRegenerate() {
+    setState({ data: null, loading: true, error: false });
+    try {
+      localStorage.removeItem(CACHE_KEY);
+    } catch {
+      // 무시
+    }
+    try {
+      const res = await fetch("/api/ai/recommend");
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = (await res.json()) as RecommendResponse;
+      if (!data.recommendations?.length) throw new Error("empty");
+      setState({ data, loading: false, error: false });
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+      } catch {
+        // 무시
+      }
+    } catch {
+      setState({ data: null, loading: false, error: true });
+    }
+  }
+
   // 로딩 중 단계별 메시지 타이머
   useEffect(() => {
     if (!state.loading) {
@@ -81,23 +105,42 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
   }, [state.loading]);
 
   useEffect(() => {
-    // 마운트 후 localStorage 캐시 확인 (서버에서는 실행 안 됨)
-    const cached = readLocalCache();
-    if (cached) {
-      hasFetchedRef.current = true;
-      setState({ data: cached, loading: false, error: false }); // eslint-disable-line react-hooks/set-state-in-effect
-      return;
-    }
-
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
 
-    fetch("/api/ai/recommend")
-      .then((res) => {
+    async function load() {
+      // 1. 주간 갱신 여부 확인 (경량 API, 실패 시 stale=false 처리)
+      let stale = false;
+      try {
+        const metaRes = await fetch("/api/ai/recommend/meta");
+        if (metaRes.ok) {
+          const meta = (await metaRes.json()) as { stale: boolean };
+          stale = meta.stale;
+        }
+      } catch {
+        // 무시 — meta 실패 시 캐시 우선
+      }
+
+      // 2. stale이면 기존 캐시 무효화, 아니면 캐시 확인
+      if (stale) {
+        try {
+          localStorage.removeItem(CACHE_KEY);
+        } catch {
+          // 무시
+        }
+      } else {
+        const cached = readLocalCache();
+        if (cached) {
+          setState({ data: cached, loading: false, error: false });
+          return;
+        }
+      }
+
+      // 3. AI 추천 신규 생성
+      try {
+        const res = await fetch("/api/ai/recommend");
         if (!res.ok) throw new Error(`${res.status}`);
-        return res.json() as Promise<RecommendResponse>;
-      })
-      .then((data) => {
+        const data = (await res.json()) as RecommendResponse;
         if (!data.recommendations?.length) throw new Error("empty");
         setState({ data, loading: false, error: false });
         try {
@@ -105,13 +148,36 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
         } catch {
           // 무시
         }
-      })
-      .catch(() => {
+      } catch {
         setState({ data: null, loading: false, error: true });
-      });
+      }
+    }
+
+    void load();
   }, []);
 
-  if (state.error) return null;
+  if (state.error) {
+    return (
+      <section className="flex flex-col gap-3" data-testid="ai-recommend-section">
+        <div className="flex items-center gap-2">
+          <Sparkles size={16} className="text-honey" />
+          <h2 className="text-ink-900 text-base font-semibold">AI 테마 추천</h2>
+        </div>
+        <div className="flex flex-col items-center gap-3 py-5">
+          <p className="text-ink-400 text-[13px]">AI 추천을 불러오지 못했어요</p>
+          <button
+            onClick={() => {
+              void handleForceRegenerate();
+            }}
+            className="bg-mocha-700 text-paper rounded-pill flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold"
+          >
+            <Sparkles size={13} />
+            AI 테마 추천 받기
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   const themes = state.data?.recommendations ?? [];
   const activeRec: Recommendation | undefined = themes[activeTheme];
@@ -142,7 +208,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
 
       {/* 테마 탭 */}
       <div
-        className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4"
+        className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden"
         data-testid="recommend-tabs"
       >
         {state.loading
@@ -171,7 +237,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
 
       {/* 카드 캐러셀 */}
       {state.loading ? (
-        <div className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
+        <div className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [&::-webkit-scrollbar]:hidden">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
@@ -181,7 +247,7 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
         </div>
       ) : activeRec ? (
         <div
-          className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2"
+          className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [&::-webkit-scrollbar]:hidden"
           data-testid="recommend-carousel"
         >
           {activeRec.cards.map((rec) => {
