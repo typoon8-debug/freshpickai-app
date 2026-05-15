@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-15 업데이트 → Task 043 결함 수정 6건 + Task 044 상품 상세 페이지 재개발 + Task 046 장바구니·결제 강화 + 프로필 서브 페이지 5종 신규 + 냉장고 비우기 매칭 정확도 개선 + 카드 API 성능 스프린트 (RPC 통합·캐시·컬럼 최적화·LCP·레이트 리밋 DB 전환·쿼리키 구조화))
+## 진행 현황 (2026-05-15 업데이트 → Task 043 결함 수정 6건 + Task 044 상품 상세 페이지 재개발 + Task 046 장바구니·결제 강화 + 프로필 서브 페이지 5종 신규 + 냉장고 비우기 매칭 정확도 개선 + 카드 API 성능 스프린트 (RPC 통합·캐시·컬럼 최적화·LCP·레이트 리밋 DB 전환·쿼리키 구조화) + AI 추천 로딩 플래시 버그 수정 (stale-while-revalidate·lazy initializer·폴백 타임스탬프) + 주문내역 배송완료 뱃지 오표시 버그 수정)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -1110,6 +1110,40 @@ AI 생성 실패  → "AI 추천을 불러오지 못했어요" + [✨ AI 테마 
 
 - [x] **`checkRateLimit()` DB RPC 전환**: 인메모리 `Map` → `fp_check_rate_limit(p_user_id, p_max_count=30, p_window_minutes=1)` Supabase 원자적 DB 카운터. 멀티인스턴스 전체에서 정확한 30 req/min 제한 적용. RPC 실패 시 허용(서비스 중단 방지 폴백)
 - [x] **`useChatStore.push()` 메시지 한도**: 최근 30개(`MAX_CHAT_MESSAGES`)만 유지 — 장시간 AI 채팅 세션에서 발생하는 메모리 누수 방지
+
+---
+
+#### 버그 수정: AI 추천 로딩 플래시 + stale-while-revalidate 개선 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: 성능 스프린트 운영 반영 테스트 중 홈 화면 재방문 시 매번 "AI가 식생활 패턴을 분석하고 있어요..." 로딩 화면이 표시되는 현상 발견. DB 조회 결과 `customer.ai_recommend_generated_at`은 정상 기록(경과 3.2시간, interval 168시간)되어 있어 stale 판정은 올바름. 실제 원인은 `useState({ loading: true })` 고정 초기값으로 인해 useEffect meta API 왕복(200~500ms) 동안 항상 로딩 화면이 표시되는 클라이언트 초기화 타이밍 문제.
+
+**변경 내용** (`src/components/home/AIRecommendSection.tsx`, `src/app/api/ai/recommend/route.ts`):
+
+- [x] **`useState` lazy initializer 적용** (`AIRecommendSection.tsx`): 초기 상태를 `loading: true` 고정값 대신 lazy 함수로 변경 — SSR에서는 `loading: true`, CSR에서는 localStorage 캐시를 동기적으로 확인해 캐시 유효 시 즉시 `loading: false`로 시작. 홈 재방문 시 로딩 화면 미표시
+- [x] **stale-while-revalidate 패턴 도입** (`AIRecommendSection.tsx`): stale 판정(7일 경과) 시에도 기존 캐시를 즉시 화면에 표시 후 백그라운드에서 새 AI 추천 로드. 갱신 중 로딩 화면 없이 이전 추천 유지
+- [x] **폴백 경로 타임스탬프 업데이트** (`recommend/route.ts`): `generateObject` 실패 시 폴백 응답 반환 전에도 `customer.ai_recommend_generated_at` UPDATE 수행 — 폴백 후 7일 내 재실행 방지 보장
+
+**동작 변화**:
+
+| 상황 | 수정 전 | 수정 후 |
+|------|---------|---------|
+| 홈 재방문 (캐시 유효) | meta API 완료까지 로딩 화면 | 즉시 캐시 표시, 로딩 없음 |
+| 7일 후 재방문 (stale) | 기존 캐시 삭제 후 로딩 화면 | 기존 추천 유지 + 백그라운드 갱신 |
+| AI 생성 실패 (폴백) | 타임스탬프 미업데이트 → 매번 재실행 | 타임스탬프 기록 → 7일 주기 정상 적용 |
+
+---
+
+#### 버그 수정: 주문내역 배송완료 건 배송중 뱃지 오표시 ✅
+
+> **완료**: 2026-05-15
+
+**배경**: 주문내역 화면에서 배송이 완료된 주문이 "배송완료" 대신 "배송중" 뱃지로 표시되는 현상. `shipment_event.event_code = 'ARRIVED'`가 기록되어도 `order.status`가 `DISPATCHED`에서 `DELIVERED`로 DB 업데이트가 되지 않아 발생. `calcTracking()`의 `isDelivered` 파생값은 정확하지만 뱃지 렌더링에 사용되지 않았음.
+
+**변경 내용** (`src/lib/actions/orders/index.ts`):
+
+- [x] **`getOrdersWithDetails()` 반환 status 정규화**: `isDelivered` 플래그가 `true`이면 DB `order.status` 값과 무관하게 반환 status를 `"DELIVERED"`로 덮어씀 — `calcTracking()`이 이미 `shipmentEventArrived` 존재 여부를 정확히 평가하므로 추가 로직 불필요
 
 ---
 
