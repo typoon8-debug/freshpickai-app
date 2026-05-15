@@ -39,7 +39,7 @@ export function CardGrid({ cards, loading = false, top3Ids = [] }: CardGridProps
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      {cards.map((card) => {
+      {cards.map((card, idx) => {
         const topRank = top3Ids.indexOf(card.cardId);
         return (
           <MenuCard
@@ -49,6 +49,7 @@ export function CardGrid({ cards, loading = false, top3Ids = [] }: CardGridProps
             aiMatch={
               card.healthScore !== undefined ? Math.round(card.healthScore * 100) : undefined
             }
+            priority={idx < 4}
             onClick={() => router.push(`/cards/${card.cardId}`)}
             onMouseEnter={() => prefetchCard(card.cardId)}
           />

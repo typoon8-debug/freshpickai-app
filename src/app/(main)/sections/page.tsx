@@ -1,9 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { TopHeader } from "@/components/layout/top-header";
-import { SectionList } from "@/components/sections/section-list";
 import { AddSectionButton } from "@/components/sections/add-section-button";
+
+// dnd-kit 번들을 섹션 페이지 방문 시에만 로드 (초기 번들 제외)
+const SectionList = dynamic(
+  () => import("@/components/sections/section-list").then((m) => m.SectionList),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex flex-col gap-2">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="bg-ink-100 h-12 animate-pulse rounded-lg" />
+        ))}
+      </div>
+    ),
+  }
+);
 import { useSectionStore } from "@/lib/store";
 import {
   getSectionsAction,

@@ -19,7 +19,50 @@ import { resolveAiData } from "@/lib/utils/ai-data-guard";
 
 type DbRecipe = Database["public"]["Tables"]["fp_dish_recipe"]["Row"];
 type DbMeta = Database["public"]["Tables"]["fp_ingredient_meta"]["Row"];
-type DbStoreItem = Database["public"]["Views"]["v_store_inventory_item"]["Row"];
+
+// 실제 사용하는 22개 컬럼만 선택 — 59개 전체 전송 대비 63% 감소
+type DbStoreItem = Pick<
+  Database["public"]["Views"]["v_store_inventory_item"]["Row"],
+  | "store_item_id"
+  | "store_id"
+  | "item_name"
+  | "item_thumbnail_small"
+  | "item_thumbnail_big"
+  | "ai_status"
+  | "ai_confidence"
+  | "description_markup"
+  | "ai_ad_copy"
+  | "ai_tags"
+  | "ai_cooking_usage"
+  | "ai_calories"
+  | "ai_nutrition_summary"
+  | "list_price"
+  | "sale_price"
+  | "effective_sale_price"
+  | "discount_pct"
+  | "promo_id"
+  | "promo_name"
+  | "promo_type"
+  | "is_in_stock"
+  | "available_quantity"
+>;
+
+const STORE_ITEM_AI_COLS =
+  "store_item_id, store_id, item_name, item_thumbnail_small, item_thumbnail_big, " +
+  "ai_status, ai_confidence, description_markup, ai_ad_copy, ai_tags, " +
+  "ai_cooking_usage, ai_calories, ai_nutrition_summary, list_price, sale_price, " +
+  "effective_sale_price, discount_pct, promo_id, promo_name, promo_type, " +
+  "is_in_stock, available_quantity";
+
+// fp_get_card_detail RPC 반환 타입
+type RpcCardDetail = {
+  card: Database["public"]["Tables"]["fp_menu_card"]["Row"];
+  cardDishes: { dishId: string; role: string; sortOrder: number }[];
+  dishes: Database["public"]["Tables"]["fp_dish"]["Row"][];
+  ingredients: Database["public"]["Tables"]["fp_dish_ingredient"]["Row"][];
+  recipes: DbRecipe[];
+  notes: Database["public"]["Tables"]["fp_card_note"]["Row"][];
+};
 
 export type DishWithRecipe = Dish & {
   ingredients: Ingredient[];
@@ -87,19 +130,17 @@ function mapStoreItemToAiData(row: DbStoreItem): StoreItemAiData {
 export async function getCardDetail(cardId: string): Promise<CardDetail | null> {
   const supabase = createAdminClient();
 
-  const { data: cardData, error: cardError } = await supabase
-    .from("fp_menu_card")
-    .select("*")
-    .eq("card_id", cardId)
-    .single();
+  // ── Round-trip 1: fp_get_card_detail RPC (card + dishes + ingredients + recipes + notes 통합)
+  const { data: rpcRaw, error: rpcError } = await supabase.rpc("fp_get_card_detail", {
+    p_card_id: cardId,
+  });
 
-  if (cardError || !cardData) return null;
+  if (rpcError || !rpcRaw) return null;
 
-  const { data: cardDishes } = await supabase
-    .from("fp_card_dish")
-    .select("dish_id, role, sort_order")
-    .eq("card_id", cardId)
-    .order("sort_order");
+  const rpc = rpcRaw as unknown as RpcCardDetail;
+  const { card: cardData, cardDishes, dishes, ingredients, recipes, notes: notesRaw } = rpc;
+
+  if (!cardData) return null;
 
   if (!cardDishes || cardDishes.length === 0) {
     return {
@@ -111,25 +152,6 @@ export async function getCardDetail(cardId: string): Promise<CardDetail | null> 
       notes: [],
     };
   }
-
-  const dishIds = cardDishes.map((cd) => cd.dish_id);
-
-  const [{ data: dishes }, { data: ingredients }, { data: recipes }, { data: notesData }] =
-    await Promise.all([
-      supabase.from("fp_dish").select("*").in("dish_id", dishIds),
-      supabase.from("fp_dish_ingredient").select("*").in("dish_id", dishIds).order("sort_order"),
-      supabase
-        .from("fp_dish_recipe")
-        .select("*")
-        .in("dish_id", dishIds)
-        .eq("status", "approved")
-        .order("created_at"),
-      supabase
-        .from("fp_card_note")
-        .select("*")
-        .eq("card_id", cardId)
-        .order("created_at", { ascending: false }),
-    ]);
 
   const dishMap = new Map((dishes ?? []).map((d) => [d.dish_id, d]));
 
@@ -146,19 +168,19 @@ export async function getCardDetail(cardId: string): Promise<CardDetail | null> 
 
   const dishesWithRecipes: DishWithRecipe[] = cardDishes
     .map((cd): DishWithRecipe | null => {
-      const dish = dishMap.get(cd.dish_id);
+      const dish = dishMap.get(cd.dishId);
       if (!dish) return null;
       return {
         ...mapDish(dish),
-        ingredients: ingredientsByDish[cd.dish_id] ?? [],
-        recipe: recipeByDish[cd.dish_id],
+        ingredients: ingredientsByDish[cd.dishId] ?? [],
+        recipe: recipeByDish[cd.dishId],
       };
     })
     .filter((d): d is DishWithRecipe => d !== null);
 
   const allIngredients = dishesWithRecipes.flatMap((d) => d.ingredients);
 
-  // ── v_store_inventory_item enrichment (Phase 2.5) ─────────────────
+  // ── Round-trip 2: v_store_inventory_item enrichment (Phase 2.5) ─────────────────
   const refIds = allIngredients.map((i) => i.refStoreItemId).filter((id): id is string => !!id);
 
   const storeItemMap = new Map<string, StoreItemAiData>();
@@ -166,10 +188,10 @@ export async function getCardDetail(cardId: string): Promise<CardDetail | null> 
   if (refIds.length > 0) {
     const { data: storeItems } = await supabase
       .from("v_store_inventory_item")
-      .select("*")
+      .select(STORE_ITEM_AI_COLS)
       .in("store_item_id", refIds);
 
-    ((storeItems ?? []) as DbStoreItem[]).forEach((row) => {
+    ((storeItems ?? []) as unknown as DbStoreItem[]).forEach((row) => {
       if (row.store_item_id) {
         const raw = mapStoreItemToAiData(row);
         storeItemMap.set(row.store_item_id, resolveAiData(raw));
@@ -188,7 +210,7 @@ export async function getCardDetail(cardId: string): Promise<CardDetail | null> 
 
   const enrichedIngredients = enrichedDishes.flatMap((d) => d.ingredients);
 
-  // 재료 메타 일괄 조회 (F018)
+  // 재료 메타 일괄 조회 (F018) — 캐시된 RPC 응답에 포함되지 않아 별도 조회
   const uniqueNames = [...new Set(allIngredients.map((i) => i.name))];
   const metaData =
     uniqueNames.length > 0
@@ -210,7 +232,6 @@ export async function getCardDetail(cardId: string): Promise<CardDetail | null> 
     ? calcHealthScoreWithAi(enrichedIngredients)
     : calcHealthScore(allIngredients);
 
-  // 평균 discount_pct 기반 live price compare
   const liveDiscounts = enrichedIngredients
     .map((i) => i.liveData?.discountPct)
     .filter((d): d is number => d != null);
@@ -219,7 +240,7 @@ export async function getCardDetail(cardId: string): Promise<CardDetail | null> 
       ? liveDiscounts.reduce((a, b) => a + b, 0) / liveDiscounts.length
       : null;
 
-  const notes: CardNote[] = (notesData ?? []).map((row) => ({
+  const notes: CardNote[] = (notesRaw ?? []).map((row) => ({
     noteId: row.note_id,
     cardId: row.card_id,
     userId: row.user_id,

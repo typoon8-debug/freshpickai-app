@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Crown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HealthScoreBadge } from "@/components/ui/health-score-badge";
@@ -29,6 +28,8 @@ interface MenuCardProps {
   topRank?: number;
   /** pgvector 취향 매칭 점수(%). 없으면 미표시 */
   aiMatch?: number;
+  /** LCP 대상 카드(목록 상위 3장)는 true로 전달 */
+  priority?: boolean;
 }
 
 export function MenuCard({
@@ -38,16 +39,19 @@ export function MenuCard({
   className,
   topRank,
   aiMatch,
+  priority = false,
 }: MenuCardProps) {
   const themeLabel = THEME_LABELS[card.cardTheme] ?? card.cardTheme;
 
   return (
-    <motion.div
-      whileHover={{ y: -4, boxShadow: "var(--shadow-hover)" }}
-      transition={{ duration: 0.2 }}
+    <div
       onClick={onClick}
       onMouseEnter={onMouseEnter}
-      className={cn("bg-card shadow-card cursor-pointer overflow-hidden rounded-xl", className)}
+      className={cn(
+        "bg-card shadow-card cursor-pointer overflow-hidden rounded-xl",
+        "transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg",
+        className
+      )}
     >
       {/* 썸네일 */}
       <div className="bg-mocha-50 relative h-40 w-full">
@@ -58,6 +62,7 @@ export function MenuCard({
             fill
             sizes="(max-width: 640px) 50vw, 33vw"
             className="object-cover"
+            priority={priority}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-5xl">
@@ -121,6 +126,6 @@ export function MenuCard({
           </p>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

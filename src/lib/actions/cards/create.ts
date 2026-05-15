@@ -5,6 +5,14 @@ import { updateTag } from "next/cache";
 import type { CardTheme, StoreItemAiData, ItemCalories, IngredientMeta } from "@/lib/types";
 import type { CardWizardValues } from "@/lib/validations/card-wizard";
 
+// 실제 사용하는 22개 컬럼만 선택 — 59개 전체 전송 대비 63% 감소
+const STORE_ITEM_AI_COLS =
+  "store_item_id, store_id, item_name, item_thumbnail_small, item_thumbnail_big, " +
+  "ai_status, ai_confidence, description_markup, ai_ad_copy, ai_tags, " +
+  "ai_cooking_usage, ai_calories, ai_nutrition_summary, list_price, sale_price, " +
+  "effective_sale_price, discount_pct, promo_id, promo_name, promo_type, " +
+  "is_in_stock, available_quantity";
+
 function deriveCategory(theme: CardTheme): "meal" | "snack" | "cinema" {
   if (theme === "snack_pack") return "snack";
   if (theme === "cinema_night") return "cinema";
@@ -26,7 +34,7 @@ export async function matchIngredientToStoreItemAction(
 
   let query = admin
     .from("v_store_inventory_item")
-    .select("*")
+    .select(STORE_ITEM_AI_COLS)
     .eq("ai_status", "ACTIVE")
     .gte("ai_confidence", 0.6)
     .ilike("item_name", `%${name}%`)
@@ -36,7 +44,7 @@ export async function matchIngredientToStoreItemAction(
   if (storeId) query = query.eq("store_id", storeId);
 
   const { data: primaryRaw } = await query;
-  const primary = (primaryRaw ?? []) as Record<string, unknown>[];
+  const primary = (primaryRaw ?? []) as unknown as Record<string, unknown>[];
 
   if (primary.length > 0) {
     return mapStoreItem(primary[0]);
@@ -45,7 +53,7 @@ export async function matchIngredientToStoreItemAction(
   // 2순위: ai_tags 포함 매칭
   let tagQuery = admin
     .from("v_store_inventory_item")
-    .select("*")
+    .select(STORE_ITEM_AI_COLS)
     .eq("ai_status", "ACTIVE")
     .contains("ai_tags", [name])
     .order("ai_confidence", { ascending: false })
@@ -54,7 +62,7 @@ export async function matchIngredientToStoreItemAction(
   if (storeId) tagQuery = tagQuery.eq("store_id", storeId);
 
   const { data: secondaryRaw } = await tagQuery;
-  const secondary = (secondaryRaw ?? []) as Record<string, unknown>[];
+  const secondary = (secondaryRaw ?? []) as unknown as Record<string, unknown>[];
 
   if (secondary.length > 0) {
     return mapStoreItem(secondary[0]);

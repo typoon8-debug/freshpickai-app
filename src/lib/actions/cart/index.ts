@@ -189,10 +189,14 @@ export async function fetchCartItemsAction(): Promise<CartItem[]> {
 
   const { data: storeItemsRaw } = await supabase
     .from("v_store_inventory_item")
-    .select("*")
+    .select(
+      "store_item_id, item_thumbnail_small, ai_ad_copy, " +
+        "effective_sale_price, sale_price, list_price, " +
+        "discount_pct, promo_type, promo_name, is_in_stock"
+    )
     .in("store_item_id", refIds);
 
-  const storeItems = (storeItemsRaw ?? []) as LiveRow[];
+  const storeItems = (storeItemsRaw ?? []) as unknown as LiveRow[];
 
   const liveMap = new Map<string, Partial<StoreItemAiData>>(
     storeItems.map((row) => [

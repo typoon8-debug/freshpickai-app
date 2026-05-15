@@ -111,10 +111,16 @@ export async function fetchWishlistAction(): Promise<WishlistItem[]> {
   const admin = createAdminClient();
   const { data: storeItemsRaw } = await admin
     .from("v_store_inventory_item")
-    .select("*")
+    .select(
+      "store_item_id, store_id, item_name, item_thumbnail_small, item_thumbnail_big, " +
+        "ai_status, ai_confidence, description_markup, ai_ad_copy, ai_tags, " +
+        "ai_cooking_usage, ai_calories, ai_nutrition_summary, list_price, sale_price, " +
+        "effective_sale_price, discount_pct, promo_id, promo_name, promo_type, " +
+        "is_in_stock, available_quantity"
+    )
     .in("store_item_id", storeItemIds);
 
-  const storeItems = (storeItemsRaw ?? []) as VRow[];
+  const storeItems = (storeItemsRaw ?? []) as unknown as VRow[];
 
   const liveMap = new Map(
     storeItems.map((row) => {
