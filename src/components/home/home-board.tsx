@@ -121,12 +121,24 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       });
   }, [customSectionId, isAiAutoFillSection, sessionCachedCards, fetchedCardMap]);
 
-  const filterKey = `${activeSection}:${homeFilter}:${[...selectedAiTags].sort().join(",")}`;
+  // 구조화된 필터 객체로 쿼리 키 생성 (theme·category·officialOnly·aiTags 개별 캐시 슬롯)
+  const cardFilter = useMemo(
+    () => ({
+      theme:
+        activeSection !== "all" && !activeSection.startsWith("custom:")
+          ? (activeSection as import("@/lib/types").CardTheme)
+          : undefined,
+      category: homeFilter !== "all" ? (homeFilter as "meal" | "snack" | "cinema") : undefined,
+      officialOnly: true as const,
+      aiTags: selectedAiTags.length > 0 ? [...selectedAiTags].sort() : undefined,
+    }),
+    [activeSection, homeFilter, selectedAiTags]
+  );
   // AI 태그 선택 시 initialData를 사용하지 않아야 로딩 스피너가 올바르게 표시됨
   const { data: allCards = selectedAiTags.length > 0 ? [] : initialCards, isFetching } = useQuery<
     MenuCard[]
   >({
-    queryKey: qk.cards(filterKey),
+    queryKey: qk.cards(cardFilter),
     queryFn: async (): Promise<MenuCard[]> => {
       const params = new URLSearchParams({ official: "true" });
       if (activeSection !== "all" && !activeSection.startsWith("custom:"))

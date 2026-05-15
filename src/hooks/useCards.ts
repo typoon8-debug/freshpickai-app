@@ -2,14 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { qk } from "@/lib/query-keys";
-import type { MenuCard, CardTheme } from "@/lib/types";
+import type { CardQueryFilter } from "@/lib/query-keys";
+import type { MenuCard } from "@/lib/types";
 import type { CardWithDishes } from "@/lib/actions/cards";
 
-export type CardFilter = {
-  theme?: CardTheme;
-  category?: "meal" | "snack" | "cinema";
-  officialOnly?: boolean;
-};
+export type CardFilter = CardQueryFilter;
 
 async function fetchCards(filter?: CardFilter): Promise<MenuCard[]> {
   const params = new URLSearchParams();
@@ -35,9 +32,8 @@ async function fetchDailyPick(): Promise<MenuCard> {
 }
 
 export function useCards(filter?: CardFilter) {
-  const filterKey = filter ? JSON.stringify(filter) : "all";
   return useQuery({
-    queryKey: qk.cards(filterKey),
+    queryKey: qk.cards(filter),
     queryFn: () => fetchCards(filter),
   });
 }
