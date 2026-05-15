@@ -60,8 +60,12 @@ interface AIRecommendSectionProps {
 
 export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
   const router = useRouter();
-  // SSR: 항상 loading:true 로 시작 → hydration mismatch 방지
-  const [state, setState] = useState<RecommendState>({ data: null, loading: true, error: false });
+  // lazy initializer: SSR에서는 항상 loading:true, CSR에서는 캐시 있으면 즉시 표시
+  const [state, setState] = useState<RecommendState>(() => {
+    const cached = readLocalCache();
+    if (cached) return { data: cached, loading: false, error: false };
+    return { data: null, loading: true, error: false };
+  });
   const [activeTheme, setActiveTheme] = useState(0);
   const [loadingStep, setLoadingStep] = useState(0);
   const hasFetchedRef = useRef(false);
@@ -118,25 +122,32 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
           stale = meta.stale;
         }
       } catch {
-        // 무시 — meta 실패 시 캐시 우선
+        // meta 실패 시 캐시 우선
       }
 
-      // 2. stale이면 기존 캐시 무효화, 아니면 캐시 확인
-      if (stale) {
-        try {
-          localStorage.removeItem(CACHE_KEY);
-        } catch {
-          // 무시
-        }
-      } else {
+      // 2. stale 아니면 캐시 확인 (이미 lazy init에서 캐시를 표시 중이면 조용히 종료)
+      if (!stale) {
         const cached = readLocalCache();
         if (cached) {
+          // lazy init에서 이미 표시됐거나 새로 확인한 캐시로 갱신
           setState({ data: cached, loading: false, error: false });
           return;
         }
       }
 
-      // 3. AI 추천 신규 생성
+      // 3. stale-while-revalidate: 기존 캐시 있으면 먼저 표시 후 background 갱신
+      const oldCache = readLocalCache();
+      if (stale && oldCache) {
+        setState({ data: oldCache, loading: false, error: false });
+      }
+
+      // 4. 캐시 무효화 후 AI 추천 신규 생성
+      try {
+        localStorage.removeItem(CACHE_KEY);
+      } catch {
+        // 무시
+      }
+
       try {
         const res = await fetch("/api/ai/recommend");
         if (!res.ok) throw new Error(`${res.status}`);
@@ -149,7 +160,10 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
           // 무시
         }
       } catch {
-        setState({ data: null, loading: false, error: true });
+        // 기존 캐시도 없고 신규 생성도 실패한 경우만 에러 표시
+        if (!oldCache) {
+          setState({ data: null, loading: false, error: true });
+        }
       }
     }
 

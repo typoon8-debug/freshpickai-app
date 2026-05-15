@@ -248,6 +248,13 @@ ${JSON.stringify(cardSummary)}
     return Response.json(result.object);
   } catch (err) {
     console.error("[ai/recommend] generateObject error:", err);
+    // 폴백 사용 시에도 타임스탬프 기록 — 7일 내 재실행 방지
+    if (user.email) {
+      void adminClient
+        .from("customer")
+        .update({ ai_recommend_generated_at: new Date().toISOString() })
+        .eq("email", user.email);
+    }
     return Response.json(
       buildFallbackRecommendations(allCards, promoCardIds, newCardIds, repeatCardIds)
     );
