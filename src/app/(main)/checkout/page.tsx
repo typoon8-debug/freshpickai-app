@@ -1,17 +1,20 @@
 "use client";
 
-import { useState, useMemo, useRef, Suspense } from "react";
+import { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { TopHeader } from "@/components/layout/top-header";
 import { AddressBlock } from "@/components/checkout/address-block";
+import { AddressSelectSheet } from "@/components/checkout/address-select-sheet";
 import { PaymentSelector } from "@/components/checkout/payment-selector";
-import { BenefitBlock, MOCK_COUPONS } from "@/components/checkout/benefit-block";
+import { BenefitBlock } from "@/components/checkout/benefit-block";
 import { CartSummary } from "@/components/cart/cart-summary";
 import { CheckoutFooter } from "@/components/checkout/checkout-footer";
 import { useCartStore } from "@/lib/store";
 import { prepareOrderAction, type FpOrderPayload } from "@/lib/actions/orders";
+import { getAddresses, type FpAddress } from "@/lib/actions/address";
+import { getMyCouponsWithStatus, type MyCoupon } from "@/lib/actions/coupon";
 import type { FpOrder } from "@/lib/types";
 
 type PaymentMethod = NonNullable<FpOrder["paymentMethod"]>;
@@ -33,21 +36,43 @@ function CheckoutContent() {
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [pointsUsed, setPointsUsed] = useState(0);
-  const [couponId, setCouponId] = useState<string | null>(null);
+  const [couponIssuanceId, setCouponIssuanceId] = useState<string | null>(null);
+  const [couponDiscount, setCouponDiscount] = useState(0);
   const [isPaying, setIsPaying] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const initiated = useRef(false);
 
+  // 배송지 상태
+  const [selectedAddress, setSelectedAddress] = useState<FpAddress | null>(null);
+  const [showAddressSheet, setShowAddressSheet] = useState(false);
+
+  // 쿠폰 목록
+  const [availableCoupons, setAvailableCoupons] = useState<MyCoupon[]>([]);
+
+  // 배송지 + 쿠폰 초기 로드
+  useEffect(() => {
+    getAddresses().then((addrs) => {
+      const defaultAddr = addrs.find((a) => a.status === "DEFAULT") ?? addrs[0] ?? null;
+      setSelectedAddress(defaultAddr);
+    });
+    getMyCouponsWithStatus().then((coupons) => {
+      setAvailableCoupons(coupons.filter((c) => c.status === "AVAILABLE"));
+    });
+  }, []);
+
   const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price * i.qty, 0), [items]);
   const shipping = subtotal >= 30000 ? 0 : 3000;
-  const couponDiscount = MOCK_COUPONS.find((c) => c.id === couponId)?.discount ?? 0;
   const total = Math.max(0, subtotal + shipping - pointsUsed - couponDiscount);
 
-  // fail redirect에서 복귀 시 에러 메시지 (렌더 타임 직접 읽기)
   const urlError = searchParams.get("error_msg")
     ? decodeURIComponent(searchParams.get("error_msg")!)
     : null;
   const payError = actionError ?? urlError;
+
+  const handleCouponChange = (issuanceId: string | null, discount: number) => {
+    setCouponIssuanceId(issuanceId);
+    setCouponDiscount(discount);
+  };
 
   const handlePay = async () => {
     if (!paymentMethod || isPaying) return;
@@ -79,6 +104,11 @@ function CheckoutContent() {
 
       const { orderNo, amount, storeId } = prepareRes.data!;
 
+      // 배송지 전체 주소 문자열
+      const addressFull = selectedAddress
+        ? `${selectedAddress.address}${selectedAddress.addrDetail ? " " + selectedAddress.addrDetail : ""}`
+        : null;
+
       // Step 2: 주문 페이로드 sessionStorage 저장
       const payload: FpOrderPayload = {
         items: items.map((i) => ({
@@ -93,11 +123,14 @@ function CheckoutContent() {
         subtotal,
         shipping,
         pointsUsed,
-        couponId,
+        couponId: couponIssuanceId,
+        couponIssuanceId,
         couponDiscount,
         finalAmount: amount,
         paymentMethod,
-        addressFull: null,
+        addressFull,
+        addressName: selectedAddress?.addressName ?? null,
+        addressPhone: selectedAddress?.receiverPhone ?? null,
       };
       sessionStorage.setItem(`pending_order_${orderNo}`, JSON.stringify(payload));
 
@@ -116,8 +149,6 @@ function CheckoutContent() {
       const orderName =
         items.length === 1 ? items[0].name : `${items[0].name} 외 ${items.length - 1}건`;
 
-      // 카카오페이·네이버페이는 CARD method + easyPay flowMode DIRECT로 처리
-      // 계좌이체는 TRANSFER, 그 외는 CARD
       if (paymentMethod === "bank") {
         await payment.requestPayment({
           method: "TRANSFER",
@@ -145,7 +176,6 @@ function CheckoutContent() {
         });
       }
     } catch (err) {
-      // 사용자가 결제창을 닫은 경우
       const msg = err instanceof Error ? err.message : "결제 초기화 실패";
       if (!msg.includes("취소")) {
         setActionError(msg);
@@ -189,15 +219,21 @@ function CheckoutContent() {
           </div>
         </div>
 
-        <AddressBlock />
+        {/* 배송지 */}
+        <AddressBlock address={selectedAddress} onChangeRequest={() => setShowAddressSheet(true)} />
+
         <PaymentSelector selected={paymentMethod} onChange={setPaymentMethod} />
+
         <BenefitBlock
+          points={0}
           pointsUsed={pointsUsed}
           onPointsChange={setPointsUsed}
-          couponId={couponId}
-          onCouponChange={setCouponId}
+          couponIssuanceId={couponIssuanceId}
+          onCouponChange={handleCouponChange}
           subtotal={subtotal}
+          coupons={availableCoupons}
         />
+
         <CartSummary subtotal={subtotal} couponDiscount={couponDiscount} pointsUsed={pointsUsed} />
 
         {payError && (
@@ -210,6 +246,14 @@ function CheckoutContent() {
         paymentMethod={paymentMethod}
         onPay={handlePay}
         isPaying={isPaying}
+      />
+
+      {/* 배송지 선택 Sheet */}
+      <AddressSelectSheet
+        open={showAddressSheet}
+        onClose={() => setShowAddressSheet(false)}
+        onSelect={setSelectedAddress}
+        selectedId={selectedAddress?.addressId}
       />
     </>
   );

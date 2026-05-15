@@ -255,12 +255,10 @@ test.describe("Task 044: 상품 상세 페이지", () => {
       await expect(similarSection.first()).toBeVisible({ timeout: 5000 });
       // + 버튼 확인
       const plusBtns = page.getByRole("button", { name: "장바구니 담기" });
-      test
-        .info()
-        .annotations.push({
-          type: "info",
-          description: `비슷한 상품 + 버튼 수: ${await plusBtns.count()}`,
-        });
+      test.info().annotations.push({
+        type: "info",
+        description: `비슷한 상품 + 버튼 수: ${await plusBtns.count()}`,
+      });
     }
     await expect(page.locator("body")).toBeVisible();
   });

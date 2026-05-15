@@ -35,12 +35,10 @@ test.describe("Task 043: 결함 수정 검증", () => {
         cls?.includes("scrollbar-none") || cls?.includes("scrollbar-hide") || false;
       expect(hasScrollbarHide).toBe(true);
     } else {
-      test
-        .info()
-        .annotations.push({
-          type: "info",
-          description: "AI 섹션 스크롤 컨테이너를 찾지 못해 스킵",
-        });
+      test.info().annotations.push({
+        type: "info",
+        description: "AI 섹션 스크롤 컨테이너를 찾지 못해 스킵",
+      });
     }
   });
 

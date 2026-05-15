@@ -42,13 +42,18 @@ export function DetailFooter({ cardId, ingredients }: DetailFooterProps) {
 
     // DB 영속화 (백그라운드)
     const result = await addBundleAction(cardId, cartItems);
-    if (result.error) {
-      // 로그인 없는 경우 store 업데이트만 유지 (오프라인 사용 허용)
-      if (result.error !== "로그인이 필요합니다.") {
-        toast.error("장바구니 저장 실패: " + result.error);
-      }
+    if (result.error && result.error !== "로그인이 필요합니다.") {
+      toast.error(result.error);
     } else {
-      toast.success("장바구니에 담았습니다!");
+      if (result.excludedNames?.length) {
+        const names = result.excludedNames.slice(0, 2).join(", ");
+        const extra =
+          result.excludedNames.length > 2 ? ` 외 ${result.excludedNames.length - 2}개` : "";
+        toast.warning(`${names}${extra} 품절로 제외되었습니다.`);
+      }
+      if (!result.error) {
+        toast.success("장바구니에 담았습니다!");
+      }
     }
 
     setIsAdding(false);

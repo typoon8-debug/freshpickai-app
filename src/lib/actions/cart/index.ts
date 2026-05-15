@@ -14,18 +14,48 @@ async function getAuthUser() {
 
 /**
  * 카드 재료를 fp_cart_item에 일괄 삽입
- * 동일 cartItemId(cardId+ingredientId 조합)가 있으면 upsert
+ * v_store_inventory_item으로 재고 확인 후 품절 상품 제외
  */
 export async function addBundleAction(
   cardId: string,
   ingredients: Omit<CartItem, "userId">[]
-): Promise<{ error?: string }> {
+): Promise<{ error?: string; excludedNames?: string[] }> {
   const user = await getAuthUser();
   if (!user) return { error: "로그인이 필요합니다." };
 
   const supabase = await createClient();
 
-  const rows = ingredients.map((i) => ({
+  // 재고 확인: refStoreItemId 있는 항목만 v_store_inventory_item 조회
+  const refIds = ingredients.map((i) => i.refStoreItemId).filter((id): id is string => !!id);
+
+  const outOfStockIds = new Set<string>();
+
+  if (refIds.length > 0) {
+    const { data: stockRows } = await supabase
+      .from("v_store_inventory_item")
+      .select("store_item_id,is_in_stock")
+      .in("store_item_id", refIds);
+
+    const stockMap = new Map((stockRows ?? []).map((r) => [r.store_item_id, r.is_in_stock]));
+    for (const id of refIds) {
+      if (!stockMap.has(id) || stockMap.get(id) === false) {
+        outOfStockIds.add(id);
+      }
+    }
+  }
+
+  const excluded = ingredients.filter(
+    (i) => i.refStoreItemId && outOfStockIds.has(i.refStoreItemId)
+  );
+  const toInsert = ingredients.filter(
+    (i) => !i.refStoreItemId || !outOfStockIds.has(i.refStoreItemId)
+  );
+
+  if (toInsert.length === 0) {
+    return { excludedNames: excluded.map((i) => i.name), error: "모든 상품이 품절입니다." };
+  }
+
+  const rows = toInsert.map((i) => ({
     user_id: user.id,
     card_id: cardId || null,
     ingredient_id: i.ingredientId ?? null,
@@ -60,7 +90,7 @@ export async function addBundleAction(
   }
 
   updateTag("cart");
-  return {};
+  return { excludedNames: excluded.length > 0 ? excluded.map((i) => i.name) : undefined };
 }
 
 /** 장바구니 항목 수량 업데이트 */

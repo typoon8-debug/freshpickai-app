@@ -6,11 +6,6 @@ import { createPayment, logPaymentError } from "@/lib/api/payments";
 import { validateStock, decreaseInventory } from "@/lib/api/inventory";
 import { confirmTossPayment, cancelTossPayment } from "@/lib/payments/toss";
 
-// freshpickai-app의 기본 스토어 ID (공유 DB의 store 테이블 레코드)
-// 실구매 연동 시 사용자 주소 기반 스토어 ID로 교체 예정
-const DEFAULT_STORE_ID =
-  process.env.FRESHPICKAI_DEFAULT_STORE_ID ?? "00000000-0000-0000-0000-000000000001";
-
 export interface FpOrderItem {
   cartItemId: string;
   refStoreItemId?: string;
@@ -28,10 +23,13 @@ export interface FpOrderPayload {
   shipping: number;
   pointsUsed: number;
   couponId: string | null;
+  couponIssuanceId: string | null;
   couponDiscount: number;
   finalAmount: number;
   paymentMethod: string;
   addressFull: string | null;
+  addressName: string | null;
+  addressPhone: string | null;
 }
 
 interface ApiResponse<T = unknown> {
@@ -42,6 +40,7 @@ interface ApiResponse<T = unknown> {
 async function getAuthedCustomerInfo(): Promise<{
   userId: string;
   customerId: string;
+  storeId: string;
   email: string;
 } | null> {
   const supabase = await createClient();
@@ -52,40 +51,50 @@ async function getAuthedCustomerInfo(): Promise<{
 
   const admin = createAdminClient();
 
-  // 1) fp_user_profile.ref_customer_id 확인 (freshpick-app 연동 사용자)
+  // 1) fp_user_profile.ref_customer_id 확인
   const { data: profile } = await admin
     .from("fp_user_profile")
     .select("ref_customer_id")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (profile?.ref_customer_id) {
-    return { userId: user.id, customerId: profile.ref_customer_id as string, email: user.email };
+  let customerId: string | null = profile?.ref_customer_id as string | null;
+
+  if (!customerId) {
+    // 2) customer 테이블에서 이메일로 조회
+    const { data: customer } = await admin
+      .from("customer")
+      .select("customer_id")
+      .eq("email", user.email)
+      .maybeSingle();
+
+    if (customer?.customer_id) {
+      customerId = customer.customer_id as string;
+      // ref_customer_id 캐싱
+      await admin
+        .from("fp_user_profile")
+        .update({ ref_customer_id: customerId })
+        .eq("user_id", user.id);
+    }
   }
 
-  // 2) customer 테이블에서 이메일로 조회
-  const { data: customer } = await admin
+  if (!customerId) return null;
+
+  // customer.store_id 조회 (실제 storeId)
+  const { data: cust } = await admin
     .from("customer")
-    .select("customer_id")
-    .eq("email", user.email)
+    .select("store_id")
+    .eq("customer_id", customerId)
     .maybeSingle();
 
-  if (customer?.customer_id) {
-    // fp_user_profile.ref_customer_id 갱신 (이후 조회 최적화)
-    await admin
-      .from("fp_user_profile")
-      .update({ ref_customer_id: customer.customer_id })
-      .eq("user_id", user.id);
-    return { userId: user.id, customerId: customer.customer_id as string, email: user.email };
-  }
+  const storeId = (cust?.store_id as string | null) ?? null;
+  if (!storeId) return null;
 
-  // 3) customer 레코드 없음 → auth UID를 customer_id로 사용 (공유 DB FK 미적용 전제)
-  return { userId: user.id, customerId: user.id, email: user.email };
+  return { userId: user.id, customerId, storeId, email: user.email };
 }
 
 /**
  * Plan B Step 1: 가격 위변조 검증 + 재고 사전 검증 + orderNo 발급
- * checkout 페이지의 "결제하기" 버튼에서 호출
  */
 export async function prepareOrderAction(params: {
   items: FpOrderItem[];
@@ -96,7 +105,7 @@ export async function prepareOrderAction(params: {
 
   const admin = createAdminClient();
 
-  // ── 가격 위변조 검증 ──────────────────────────────────────
+  // ── 가격 위변조 + 재고 검증 ─────────────────────────────────
   const itemsWithRef = params.items.filter((i) => i.refStoreItemId);
   if (itemsWithRef.length > 0) {
     const { data: liveItems } = await admin
@@ -113,7 +122,6 @@ export async function prepareOrderAction(params: {
       const live = liveMap.get(item.refStoreItemId!);
       if (!live) continue;
 
-      // 품절 검증
       if (live.is_in_stock === false) {
         return { error: { code: "OUT_OF_STOCK", message: `품절된 상품입니다: ${item.name}` } };
       }
@@ -121,7 +129,6 @@ export async function prepareOrderAction(params: {
         return { error: { code: "OUT_OF_STOCK", message: `재고 부족: ${item.name}` } };
       }
 
-      // 가격 위변조 검증: 클라이언트 가격 ↔ live 가격 ±1원
       const livePrice = live.effective_sale_price ?? live.sale_price;
       if (livePrice != null && Math.abs(item.price - livePrice) > 1) {
         return {
@@ -134,13 +141,12 @@ export async function prepareOrderAction(params: {
     }
   }
 
-  // ── 재고 검증 (ref 없는 항목 포함 기존 로직) ───────────────
+  // 재고 재검증 (validateStock)
   const stockItems = itemsWithRef.map((i) => ({
     storeItemId: i.refStoreItemId!,
-    storeId: DEFAULT_STORE_ID,
+    storeId: authInfo.storeId,
     qty: i.qty,
   }));
-
   if (stockItems.length > 0) {
     const { valid, outOfStock } = await validateStock(stockItems);
     if (!valid) {
@@ -155,20 +161,11 @@ export async function prepareOrderAction(params: {
 
   const orderNo = `FPA-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
-  return { data: { orderNo, amount: params.finalAmount, storeId: DEFAULT_STORE_ID } };
+  return { data: { orderNo, amount: params.finalAmount, storeId: authInfo.storeId } };
 }
 
 /**
  * Plan B Step 2: Toss 결제 승인 후 주문 생성 + 재고 차감 원자적 처리
- * /checkout/success 페이지에서 호출
- *
- * 처리 순서:
- * 1. Toss 서버 승인
- * 2. 재고 재확인 (refStoreItemId 있는 항목만)
- * 3. order INSERT (PAID)
- * 4. order_item INSERT
- * 5. payment INSERT (CAPTURED)
- * 6. inventory 차감
  */
 export async function confirmAndCreateOrderAction(params: {
   paymentKey: string;
@@ -197,8 +194,9 @@ export async function confirmAndCreateOrderAction(params: {
     };
   }
 
-  // ── Steps 2~6: DB 처리 (실패 시 Toss 결제 취소) ──────────
+  // ── Steps 2~7: DB 처리 (실패 시 Toss 결제 취소) ──────────
   try {
+    // refStoreItemId 있는 항목만 재고/주문 처리 대상
     const stockItems = orderPayload.items
       .filter((i) => i.refStoreItemId)
       .map((i) => ({
@@ -217,7 +215,7 @@ export async function confirmAndCreateOrderAction(params: {
       }
     }
 
-    // Step 3: order INSERT
+    // Step 3: order INSERT (customer.store_id 사용)
     const orderRes = await createOrder({
       customerId: authInfo.customerId,
       storeId: orderPayload.storeId,
@@ -236,17 +234,22 @@ export async function confirmAndCreateOrderAction(params: {
     }
     const orderId = orderRes.data.order_id;
 
-    // Step 4: order_item INSERT (cartItemId를 store_item_id 플레이스홀더로 사용)
-    const orderItems = orderPayload.items.map((i) => ({
-      storeItemId: i.refStoreItemId ?? i.cartItemId,
-      qty: i.qty,
-      unitPrice: i.price,
-    }));
-    const itemRes = await createOrderItems(orderId, orderItems);
-    if (itemRes.error) {
-      throw Object.assign(new Error(itemRes.error.message ?? "주문 상세 생성 실패"), {
-        code: "ORDER_ITEMS_FAILED",
-      });
+    // Step 4: order_item INSERT — refStoreItemId 있는 항목만
+    const orderItemsToInsert = orderPayload.items
+      .filter((i) => i.refStoreItemId)
+      .map((i) => ({
+        storeItemId: i.refStoreItemId!,
+        qty: i.qty,
+        unitPrice: i.price,
+      }));
+
+    if (orderItemsToInsert.length > 0) {
+      const itemRes = await createOrderItems(orderId, orderItemsToInsert);
+      if (itemRes.error) {
+        throw Object.assign(new Error(itemRes.error.message ?? "주문 상세 생성 실패"), {
+          code: "ORDER_ITEMS_FAILED",
+        });
+      }
     }
 
     // Step 5: payment INSERT
@@ -267,33 +270,49 @@ export async function confirmAndCreateOrderAction(params: {
       });
     }
 
-    // Step 6: inventory 차감 (refStoreItemId 있는 항목만)
+    // Step 6: inventory 차감
     if (stockItems.length > 0) {
       await decreaseInventory(stockItems);
     }
 
-    // Step 7: fp_order 레코드 생성 + fp_cart_item 비우기
+    // Step 7: fp_order INSERT + fp_cart_item 비우기 + 쿠폰 사용 처리
     const supabaseClient = await createClient();
-    await Promise.all([
-      supabaseClient.from("fp_order").insert({
-        user_id: authInfo.userId,
-        ref_order_id: orderId,
-        subtotal: orderPayload.subtotal,
-        shipping: orderPayload.shipping,
-        discount: orderPayload.couponDiscount,
-        total: amount,
-        payment_method: orderPayload.paymentMethod,
-        payment_key: confirmedPaymentKey,
-        address_full: orderPayload.addressFull ?? null,
-        delivery_window: null,
-        status: "confirmed",
-      }),
-      supabaseClient.from("fp_cart_item").delete().eq("user_id", authInfo.userId),
-    ]);
+    const admin = createAdminClient();
+
+    const fpOrderPromise = supabaseClient.from("fp_order").insert({
+      user_id: authInfo.userId,
+      ref_order_id: orderId,
+      subtotal: orderPayload.subtotal,
+      shipping: orderPayload.shipping,
+      discount: orderPayload.couponDiscount,
+      total: amount,
+      payment_method: orderPayload.paymentMethod,
+      payment_key: confirmedPaymentKey,
+      address_name: orderPayload.addressName ?? null,
+      address_phone: orderPayload.addressPhone ?? null,
+      address_full: orderPayload.addressFull ?? null,
+      delivery_window: null,
+      status: "confirmed",
+    });
+
+    const clearCartPromise = supabaseClient
+      .from("fp_cart_item")
+      .delete()
+      .eq("user_id", authInfo.userId);
+
+    // 쿠폰 사용 처리 (issued_status → USED)
+    const couponPromise = orderPayload.couponIssuanceId
+      ? admin
+          .from("coupon_issurance")
+          .update({ issued_status: "USED", modified_at: new Date().toISOString() })
+          .eq("issuance_id", orderPayload.couponIssuanceId)
+          .eq("issued_status", "ACTIVE")
+      : Promise.resolve();
+
+    await Promise.all([fpOrderPromise, clearCartPromise, couponPromise]);
 
     return { data: { orderId } };
   } catch (err) {
-    // DB 처리 실패 → Toss 결제 취소로 고객 환불
     const errorMessage = err instanceof Error ? err.message : "주문 처리 오류";
     const errorCode = (err as { code?: string }).code ?? "ORDER_PROCESS_FAILED";
 
