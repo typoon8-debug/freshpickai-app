@@ -19,9 +19,9 @@ export type CardWithDishes = MenuCard & {
 export async function getCards(filter?: CardFilter): Promise<MenuCard[]> {
   const supabase = createAdminClient();
 
-  // AI 태그 필터: fp_cards_by_ai_tags RPC로 카드 ID 목록 먼저 조회
+  // AI 태그 필터: fp_cards_by_diet_tags RPC로 dish diet_tags 기반 카드 ID 조회
   if (filter?.aiTags && filter.aiTags.length > 0) {
-    const { data: rpcResult, error: rpcError } = await supabase.rpc("fp_cards_by_ai_tags", {
+    const { data: rpcResult, error: rpcError } = await supabase.rpc("fp_cards_by_diet_tags", {
       p_tags: filter.aiTags,
     });
     if (rpcError || !rpcResult || rpcResult.length === 0) return [];

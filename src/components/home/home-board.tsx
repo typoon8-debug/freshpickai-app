@@ -121,8 +121,11 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       });
   }, [customSectionId, isAiAutoFillSection, sessionCachedCards, fetchedCardMap]);
 
-  const filterKey = `${activeSection}:${homeFilter}:${selectedAiTags.sort().join(",")}`;
-  const { data: allCards = initialCards, isFetching } = useQuery<MenuCard[]>({
+  const filterKey = `${activeSection}:${homeFilter}:${[...selectedAiTags].sort().join(",")}`;
+  // AI 태그 선택 시 initialData를 사용하지 않아야 로딩 스피너가 올바르게 표시됨
+  const { data: allCards = selectedAiTags.length > 0 ? [] : initialCards, isFetching } = useQuery<
+    MenuCard[]
+  >({
     queryKey: qk.cards(filterKey),
     queryFn: async (): Promise<MenuCard[]> => {
       const params = new URLSearchParams({ official: "true" });
@@ -134,7 +137,7 @@ export function HomeBoard({ initialCards }: HomeBoardProps) {
       if (!res.ok) return initialCards;
       return res.json() as Promise<MenuCard[]>;
     },
-    initialData: initialCards,
+    initialData: selectedAiTags.length === 0 ? initialCards : undefined,
     enabled: !isAiAutoFillSection, // AI 자동 채움 섹션은 별도 fetch
   });
 

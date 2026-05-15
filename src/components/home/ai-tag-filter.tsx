@@ -2,7 +2,7 @@
 
 import { Chip } from "@/components/ui/chip";
 
-const AI_TAG_PRESETS = ["비건", "저GI", "10분요리", "저칼로리", "항산화", "고단백"];
+const AI_TAG_PRESETS = ["비건", "채식", "저칼로리", "고단백", "저당", "글루텐프리"];
 
 interface AiTagFilterProps {
   selected: string[];

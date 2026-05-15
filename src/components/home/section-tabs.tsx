@@ -41,7 +41,10 @@ export function SectionTabs({ activeSection, onSectionChange }: SectionTabsProps
 
   return (
     <div className="flex items-center gap-2">
-      <div ref={scrollRef} className="scrollbar-hide flex flex-1 gap-1 overflow-x-auto pb-1">
+      <div
+        ref={scrollRef}
+        className="scrollbar-hide flex flex-1 gap-1 overflow-x-auto pb-0 [&::-webkit-scrollbar]:hidden"
+      >
         {tabs.map(({ id, label }) => (
           <button
             key={id}
