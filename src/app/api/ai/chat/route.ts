@@ -14,19 +14,23 @@ import { createGetUserContextTool } from "@/lib/ai/tools/get-user-context";
 import { checkCache, saveCache, createCacheHitResponse } from "@/lib/ai/semantic-cache";
 import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 
-// ── 레이트 리밋 (30 req/min per userId) ──────────────────────
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(userId);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(userId, { count: 1, resetAt: now + 60_000 });
+// ── 레이트 리밋 (30 req/min per userId) — Supabase RPC 기반 ──
+// 멀티인스턴스 환경에서 정확한 제한을 위해 DB 원자적 upsert 사용
+async function checkRateLimit(
+  userId: string,
+  supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>
+): Promise<boolean> {
+  const { data, error } = await supabase.rpc("fp_check_rate_limit", {
+    p_user_id: userId,
+    p_max_count: 30,
+    p_window_minutes: 1,
+  });
+  if (error) {
+    // RPC 실패 시 허용 (서비스 중단 방지)
+    console.warn("[rate-limit] RPC error, allowing request:", error.message);
     return true;
   }
-  if (entry.count >= 30) return false;
-  entry.count++;
-  return true;
+  return data === true;
 }
 
 // ── 빠른칩 제약 조건 ──────────────────────────────────────────
@@ -68,7 +72,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  if (!checkRateLimit(user.id)) {
+  if (!(await checkRateLimit(user.id, supabase))) {
     return new Response(
       JSON.stringify({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." }),
       { status: 429, headers: { "Content-Type": "application/json" } }

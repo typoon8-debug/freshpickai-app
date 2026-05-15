@@ -81,11 +81,17 @@ type ChatState = {
   updateCartItems: (msgId: string, items: CartAddedItem[]) => void;
   reset: () => void;
 };
+const MAX_CHAT_MESSAGES = 30;
+
 export const useChatStore = create<ChatState>((set) => ({
   messages: [],
   isStreaming: false,
   currentTool: null,
-  push: (m) => set((s) => ({ messages: [...s.messages, m] })),
+  push: (m) =>
+    set((s) => ({
+      // 최근 MAX_CHAT_MESSAGES개만 유지 — 장시간 세션 메모리 누수 방지
+      messages: [...s.messages, m].slice(-MAX_CHAT_MESSAGES),
+    })),
   appendStream: (chunk) =>
     set((s) => {
       const last = s.messages[s.messages.length - 1];
