@@ -1,9 +1,10 @@
 "use client";
 
-import DOMPurify from "isomorphic-dompurify";
+import { Sparkles, ChefHat, FileText, Bot } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Chip } from "@/components/ui/chip";
 import type { Ingredient } from "@/lib/types";
+import { parseDescriptionSections, parseCookingUsage } from "@/lib/utils/item-parsers";
 
 interface Props {
   ingredient: Ingredient;
@@ -14,7 +15,19 @@ interface Props {
 export function IngredientDetailSheet({ ingredient, open, onClose }: Props) {
   const live = ingredient.liveData;
 
-  const safeMarkup = live?.descriptionMarkup ? DOMPurify.sanitize(live.descriptionMarkup) : null;
+  const price = live?.effectiveSalePrice ?? live?.salePrice;
+  const hasDiscount =
+    (live?.discountPct ?? 0) > 0 &&
+    live?.listPrice != null &&
+    live?.effectiveSalePrice != null &&
+    live.listPrice > live.effectiveSalePrice;
+
+  const descSections = live?.descriptionMarkup
+    ? parseDescriptionSections(live.descriptionMarkup)
+    : [];
+  const cookingUsages = live?.aiCookingUsage ? parseCookingUsage(live.aiCookingUsage) : [];
+  const aiConfidencePct =
+    live?.aiConfidence != null ? Math.round(Number(live.aiConfidence) * 100) : null;
 
   return (
     <Drawer open={open} onClose={onClose}>
@@ -32,42 +45,27 @@ export function IngredientDetailSheet({ ingredient, open, onClose }: Props) {
         </DrawerHeader>
 
         <div className="space-y-4 px-4 pb-6">
-          {/* AI 광고 카피 */}
-          {live?.aiAdCopy && (
-            <p className="text-muted-foreground text-sm italic">{live.aiAdCopy}</p>
-          )}
-
-          {/* AI 태그 */}
-          {live?.aiTags && live.aiTags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {live.aiTags.map((tag) => (
-                <Chip key={tag} size="sm" variant="outline">
-                  {tag}
-                </Chip>
-              ))}
-            </div>
-          )}
-
-          {/* 칼로리 카드 (full 레벨만) */}
-          {live?.aiCalories && (
-            <div className="bg-muted/50 rounded-xl p-4">
-              <p className="text-muted-foreground mb-2 text-xs font-medium">
-                영양 정보 (100g 기준)
-              </p>
-              <div className="grid grid-cols-4 gap-2 text-center">
-                <NutrientCell label="열량" value={`${live.aiCalories.total}kcal`} highlight />
-                <NutrientCell label="탄수화물" value={`${live.aiCalories.carb}g`} />
-                <NutrientCell label="단백질" value={`${live.aiCalories.protein}g`} />
-                <NutrientCell label="지방" value={`${live.aiCalories.fat}g`} />
-              </div>
-            </div>
-          )}
-
           {/* 가격 정보 */}
-          {live && (live.effectiveSalePrice || live.salePrice || live.listPrice) && (
-            <div className="rounded-xl border p-3">
-              <p className="text-muted-foreground mb-1.5 text-xs font-medium">현재 가격</p>
-              <PriceDisplay live={live} />
+          {price != null && (
+            <div>
+              <div className="flex items-baseline gap-2">
+                {hasDiscount && (
+                  <span className="text-lg font-bold text-red-500">
+                    {Math.round(live!.discountPct!)}%
+                  </span>
+                )}
+                <span className="text-ink-900 text-2xl font-bold">{price.toLocaleString()}원</span>
+              </div>
+              {hasDiscount && (
+                <p className="text-ink-400 mt-0.5 text-sm line-through">
+                  {live!.listPrice!.toLocaleString()}원
+                </p>
+              )}
+              {live?.promoName && (
+                <span className="bg-mocha-100 text-mocha-700 mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold">
+                  {live.promoName}
+                </span>
+              )}
             </div>
           )}
 
@@ -78,20 +76,85 @@ export function IngredientDetailSheet({ ingredient, open, onClose }: Props) {
             </div>
           )}
 
-          {/* AI 설명 마크업 */}
-          {safeMarkup && (
-            <div
-              className="prose prose-sm text-foreground max-w-none"
-              dangerouslySetInnerHTML={{ __html: safeMarkup }}
-            />
+          {/* AI 태그 */}
+          {live?.aiTags && live.aiTags.length > 0 && (
+            <div className="scrollbar-none flex gap-1.5 overflow-x-auto pb-0.5 [&::-webkit-scrollbar]:hidden">
+              {live.aiTags.map((tag) => (
+                <Chip key={tag} size="sm" variant="outline" className="shrink-0">
+                  {tag}
+                </Chip>
+              ))}
+            </div>
           )}
 
-          {/* 조리 활용법 */}
-          {live?.aiCookingUsage && (
-            <div className="bg-primary/5 rounded-lg px-3 py-2.5 text-sm">
-              <p className="mb-1 font-medium">조리 활용 팁</p>
-              <p className="text-muted-foreground">{live.aiCookingUsage}</p>
+          {/* AI 추천 문구 */}
+          {live?.aiAdCopy && (
+            <div className="rounded-xl bg-green-50 p-4">
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-bold text-green-700">
+                <Sparkles size={13} />
+                AI 추천 문구
+              </p>
+              <p className="text-ink-700 text-sm leading-relaxed">{live.aiAdCopy}</p>
             </div>
+          )}
+
+          {/* AI 제품 설명 */}
+          {descSections.length > 0 && (
+            <div>
+              <h3 className="text-ink-900 mb-3 flex items-center gap-1.5 text-sm font-bold">
+                <FileText size={14} className="text-mocha-500" />
+                AI 제품 설명
+              </h3>
+              <div className="space-y-3">
+                {descSections.map((sec) => (
+                  <div key={sec.title}>
+                    <p className="text-ink-800 mb-1 text-sm font-bold">{sec.title}</p>
+                    <p className="text-ink-600 text-[13px] leading-relaxed whitespace-pre-line">
+                      {sec.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 요리 활용법 */}
+          {cookingUsages.length > 0 && (
+            <div className="border-line rounded-xl border bg-white p-4">
+              <p className="mb-3 flex items-center gap-1.5 text-sm font-bold text-amber-600">
+                <ChefHat size={15} />
+                요리 활용법
+              </p>
+              <ul className="space-y-2">
+                {cookingUsages.map(({ key, value }) => (
+                  <li key={key} className="text-ink-700 text-[13px] leading-snug">
+                    <span className="text-ink-800 font-bold">{key}</span>
+                    <span className="text-ink-500">: {value}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* 영양 정보 */}
+          {live?.aiCalories && (
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-ink-400 mb-2 text-xs font-medium">영양 정보 (100g 기준)</p>
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <NutrientCell label="열량" value={`${live.aiCalories.total ?? 0}kcal`} highlight />
+                <NutrientCell label="탄수화물" value={`${live.aiCalories.carb ?? 0}g`} />
+                <NutrientCell label="단백질" value={`${live.aiCalories.protein ?? 0}g`} />
+                <NutrientCell label="지방" value={`${live.aiCalories.fat ?? 0}g`} />
+              </div>
+            </div>
+          )}
+
+          {/* AI 분석 정보 */}
+          {aiConfidencePct != null && (
+            <p className="text-ink-400 flex items-center gap-1.5 text-xs">
+              <Bot size={12} />
+              AI 분석 정보 · 신뢰도 {aiConfidencePct}%
+            </p>
           )}
         </div>
       </DrawerContent>
@@ -110,41 +173,12 @@ function NutrientCell({
 }) {
   return (
     <div>
-      <p className="text-muted-foreground text-xs">{label}</p>
-      <p className={`mt-0.5 text-sm font-semibold ${highlight ? "text-primary" : ""}`}>{value}</p>
-    </div>
-  );
-}
-
-function PriceDisplay({ live }: { live: NonNullable<Ingredient["liveData"]> }) {
-  const { effectiveSalePrice, salePrice, listPrice, discountPct, promoType, promoName } = live;
-
-  const displayPrice = effectiveSalePrice ?? salePrice;
-  const originalPrice = effectiveSalePrice ? (salePrice ?? listPrice) : listPrice;
-  const showDiscount = discountPct && discountPct > 0;
-
-  const promoLabel: Record<string, string> = {
-    SALE: "🏷️ 세일",
-    DISCOUNT_PCT: `💰 ${Math.round(discountPct ?? 0)}% 할인`,
-    BUNDLE: "📦 묶음",
-    TWO_PLUS_ONE: "🎁 N+1",
-  };
-
-  return (
-    <div className="flex items-end gap-2">
-      {displayPrice && (
-        <span className="text-lg font-bold">{displayPrice.toLocaleString("ko-KR")}원</span>
-      )}
-      {showDiscount && originalPrice && (
-        <span className="text-muted-foreground text-sm line-through">
-          {originalPrice.toLocaleString("ko-KR")}원
-        </span>
-      )}
-      {promoType && (
-        <span className="bg-primary/10 text-primary ml-auto rounded-full px-2 py-0.5 text-xs font-medium">
-          {promoName ?? promoLabel[promoType]}
-        </span>
-      )}
+      <p className="text-ink-400 text-xs">{label}</p>
+      <p
+        className={`mt-0.5 text-sm font-semibold ${highlight ? "text-mocha-700" : "text-ink-800"}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
