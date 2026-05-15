@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
@@ -24,15 +25,22 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 ];
 
 function ItemCard({ item }: { item: CategoryItem }) {
+  const router = useRouter();
   const toggle = useWishlistStore((s) => s.toggle);
   const isWished = useWishlistStore((s) => s.ids.has(item.storeItemId));
 
   const price = item.effectiveSalePrice ?? item.listPrice;
 
   return (
-    <div className="border-line shadow-card flex flex-col overflow-hidden rounded-xl border bg-white">
+    <div
+      className="border-line shadow-card flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-white transition-shadow hover:shadow-md"
+      onClick={() => router.push(`/category/${item.storeItemId}`)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && router.push(`/category/${item.storeItemId}`)}
+    >
       {/* 썸네일 */}
-      <div className="relative aspect-square w-full bg-gray-50">
+      <div className="relative aspect-square w-full overflow-hidden bg-gray-50">
         {item.thumbnailSmall ? (
           <Image
             src={item.thumbnailSmall}
@@ -46,9 +54,9 @@ function ItemCard({ item }: { item: CategoryItem }) {
         )}
 
         {/* 할인 배지 */}
-        {item.discountPct && item.discountPct > 0 && (
+        {(item.discountPct ?? 0) > 0 && (
           <span className="absolute top-2 left-2 rounded bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-            {Math.round(item.discountPct)}%
+            {Math.round(item.discountPct!)}%
           </span>
         )}
 
@@ -62,7 +70,10 @@ function ItemCard({ item }: { item: CategoryItem }) {
         {/* 찜 버튼 */}
         <button
           type="button"
-          onClick={() => toggle(item.storeItemId)}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggle(item.storeItemId);
+          }}
           className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/80"
           aria-label={isWished ? "찜 해제" : "찜하기"}
         >

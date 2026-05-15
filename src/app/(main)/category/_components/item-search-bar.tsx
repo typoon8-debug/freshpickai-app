@@ -20,7 +20,7 @@ export function ItemSearchBar({
   const handleChange = (v: string) => {
     setLocal(v);
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => onChange(v), 300);
+    timerRef.current = setTimeout(() => onChange(v), 200);
   };
 
   const handleClear = () => {

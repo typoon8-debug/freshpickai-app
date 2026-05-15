@@ -28,6 +28,48 @@ export type CategoryItem = {
   stdMediumCode: string | null;
 };
 
+export type CategoryItemDetail = CategoryItem & {
+  thumbnailBig: string | null;
+  itemImage: string | null;
+  descriptionMarkup: string | null;
+  aiAdCopy: string | null;
+  aiCookingUsage: string | null;
+  aiTags: string[];
+  stdLargeName: string | null;
+  stdMediumName: string | null;
+  stdSmallName: string | null;
+  promoName: string | null;
+  availableQuantity: number | null;
+  storeId: string | null;
+  aiConfidence: number | null;
+  aiGeneratedAt: string | null;
+  detailImgAdv1: string | null;
+  detailImgAdv2: string | null;
+  detailImgAdv3: string | null;
+  supplier: string | null;
+};
+
+export type StoreInfo = {
+  storeId: string;
+  storeName: string | null;
+  storeAddress: string | null;
+  storePhone: string | null;
+  minDeliveryPrice: number | null;
+  deliveryTip: number | null;
+  minDeliveryTime: number | null;
+  maxDeliveryTime: number | null;
+  ceoName: string | null;
+  regNumber: string | null;
+  regCode: string | null;
+};
+
+export type ItemReview = {
+  reviewId: string;
+  rating: number;
+  content: string | null;
+  createdAt: string;
+};
+
 export type SortBy = "popular" | "price_asc" | "price_desc" | "discount";
 
 /** 로그인 사용자의 store_id 조회 */
@@ -152,6 +194,133 @@ export async function getItemsByCategoryAction(params: {
   return { items, total: count ?? 0 };
 }
 
+/** 상품 단건 상세 조회 */
+export async function getItemByIdAction(storeItemId: string): Promise<CategoryItemDetail | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("v_store_inventory_item")
+    .select(
+      "store_item_id, store_id, item_name, item_thumbnail_small, item_thumbnail_big, item_image, effective_sale_price, list_price, discount_pct, is_in_stock, std_large_code, std_large_name, std_medium_code, std_medium_name, std_small_name, description_markup, ai_ad_copy, ai_cooking_usage, ai_tags, ai_confidence, ai_generated_at, promo_name, available_quantity, item_detail_img_adv1, item_detail_img_adv2, item_detail_img_adv3, supplier"
+    )
+    .eq("store_item_id", storeItemId)
+    .single();
+
+  if (error || !data) return null;
+
+  const r = data as Record<string, unknown>;
+  return {
+    storeItemId: r.store_item_id as string,
+    storeId: (r.store_id as string | null) ?? null,
+    itemName: r.item_name as string,
+    thumbnailSmall: (r.item_thumbnail_small as string | null) ?? null,
+    thumbnailBig: (r.item_thumbnail_big as string | null) ?? null,
+    itemImage: (r.item_image as string | null) ?? null,
+    effectiveSalePrice: (r.effective_sale_price as number | null) ?? null,
+    listPrice: (r.list_price as number | null) ?? null,
+    discountPct: (r.discount_pct as number | null) ?? null,
+    isInStock: (r.is_in_stock as boolean | null) ?? null,
+    stdLargeCode: (r.std_large_code as string | null) ?? null,
+    stdLargeName: (r.std_large_name as string | null) ?? null,
+    stdMediumCode: (r.std_medium_code as string | null) ?? null,
+    stdMediumName: (r.std_medium_name as string | null) ?? null,
+    stdSmallName: (r.std_small_name as string | null) ?? null,
+    descriptionMarkup: (r.description_markup as string | null) ?? null,
+    aiAdCopy: (r.ai_ad_copy as string | null) ?? null,
+    aiCookingUsage: (r.ai_cooking_usage as string | null) ?? null,
+    aiTags: (r.ai_tags as string[] | null) ?? [],
+    aiConfidence: (r.ai_confidence as number | null) ?? null,
+    aiGeneratedAt: (r.ai_generated_at as string | null) ?? null,
+    promoName: (r.promo_name as string | null) ?? null,
+    availableQuantity: (r.available_quantity as number | null) ?? null,
+    detailImgAdv1: (r.item_detail_img_adv1 as string | null) ?? null,
+    detailImgAdv2: (r.item_detail_img_adv2 as string | null) ?? null,
+    detailImgAdv3: (r.item_detail_img_adv3 as string | null) ?? null,
+    supplier: (r.supplier as string | null) ?? null,
+  };
+}
+
+/** 스토어 정보 조회 */
+export async function getStoreInfoAction(storeId: string): Promise<StoreInfo | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("store")
+    .select(
+      "store_id, name, address, phone, min_delivery_price, delivery_tip, min_delivery_time, max_delivery_time, ceo_name, reg_number, reg_code"
+    )
+    .eq("store_id", storeId)
+    .single();
+
+  if (error || !data) return null;
+  const r = data as Record<string, unknown>;
+  return {
+    storeId: r.store_id as string,
+    storeName: (r.name as string | null) ?? null,
+    storeAddress: (r.address as string | null) ?? null,
+    storePhone: (r.phone as string | null) ?? null,
+    minDeliveryPrice: (r.min_delivery_price as number | null) ?? null,
+    deliveryTip: (r.delivery_tip as number | null) ?? null,
+    minDeliveryTime: (r.min_delivery_time as number | null) ?? null,
+    maxDeliveryTime: (r.max_delivery_time as number | null) ?? null,
+    ceoName: (r.ceo_name as string | null) ?? null,
+    regNumber: (r.reg_number as string | null) ?? null,
+    regCode: (r.reg_code as string | null) ?? null,
+  };
+}
+
+/** 상품 리뷰 조회 */
+export async function getItemReviewsAction(storeItemId: string): Promise<ItemReview[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("review")
+    .select("review_id, rating, content, created_at")
+    .eq("store_item_id", storeItemId)
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (error || !data) return [];
+  return (data as Record<string, unknown>[]).map((r) => ({
+    reviewId: r.review_id as string,
+    rating: (r.rating as number) ?? 0,
+    content: (r.content as string | null) ?? null,
+    createdAt: r.created_at as string,
+  }));
+}
+
+/** 비슷한 상품 조회 (같은 중분류) */
+export async function getSimilarItemsAction(params: {
+  storeId: string;
+  stdMediumCode: string;
+  excludeItemId: string;
+}): Promise<CategoryItem[]> {
+  const { storeId, stdMediumCode, excludeItemId } = params;
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("v_store_inventory_item")
+    .select(
+      "store_item_id, item_name, item_thumbnail_small, effective_sale_price, list_price, discount_pct, is_in_stock, std_large_code, std_medium_code"
+    )
+    .eq("store_id", storeId)
+    .eq("std_medium_code", stdMediumCode)
+    .eq("status", "ACTIVE")
+    .neq("store_item_id", excludeItemId)
+    .limit(10);
+
+  if (error || !data) return [];
+  return (data as Record<string, unknown>[]).map((r) => ({
+    storeItemId: r.store_item_id as string,
+    itemName: r.item_name as string,
+    thumbnailSmall: (r.item_thumbnail_small as string | null) ?? null,
+    effectiveSalePrice: (r.effective_sale_price as number | null) ?? null,
+    listPrice: (r.list_price as number | null) ?? null,
+    discountPct: (r.discount_pct as number | null) ?? null,
+    isInStock: (r.is_in_stock as boolean | null) ?? null,
+    stdLargeCode: (r.std_large_code as string | null) ?? null,
+    stdMediumCode: (r.std_medium_code as string | null) ?? null,
+  }));
+}
+
 /** 상품명 검색 */
 export async function searchItemsAction(params: {
   query: string;
@@ -166,6 +335,8 @@ export async function searchItemsAction(params: {
 
   const supabase = await createClient();
 
+  const safeQuery = query.replace(/[%_]/g, "\\$&");
+
   let dbQuery = supabase
     .from("v_store_inventory_item")
     .select(
@@ -173,7 +344,7 @@ export async function searchItemsAction(params: {
       { count: "exact" }
     )
     .eq("status", "ACTIVE")
-    .ilike("item_name", `%${query}%`);
+    .ilike("item_name", `%${safeQuery}%`);
 
   if (storeId) dbQuery = dbQuery.eq("store_id", storeId);
   if (largeCode) dbQuery = dbQuery.eq("std_large_code", largeCode);
