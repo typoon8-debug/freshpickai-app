@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-15 업데이트 → Task 042 완료 + AI 모델 통합 관리 리팩토링 + UX 개선 스프린트 + 모바일 홈화면 깜빡임 근본 수정 + AI 태그 필터 회귀 수정 + AI 테마 추천 주간 갱신 주기 구현 + AI 추천 에러 UX 개선)
+## 진행 현황 (2026-05-15 업데이트 → Task 043 결함 수정 6건 + Task 044 상품 상세 페이지 재개발 + Task 046 장바구니·결제 강화 + 프로필 서브 페이지 5종 신규)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -929,6 +929,120 @@ AI 생성 실패  → "AI 추천을 불러오지 못했어요" + [✨ AI 테마 
 버튼 클릭     → 로딩 애니메이션(4단계) → 재생성 → 카드 표시
 재시도 실패   → 에러 버튼 재표시
 ```
+
+---
+
+#### Task 043: 결함 수정 6건 (카테고리·홈·프로필) ✅
+
+> **완료**: 2026-05-15
+
+**수정 항목**:
+
+- [x] **결함1 — AI 테마 탭 스크롤바**: `AIRecommendSection` 탭 컨테이너에 `scrollbar-none` 클래스 추가 → 모바일에서 굵은 스크롤바 제거
+- [x] **결함2 — AI 태그 필터 회귀**: `home-board.tsx`에서 `filterKey !== "all:all:"` 쿼리에 `initialDataUpdatedAt = undefined` 적용 → 필터 변경 시 즉시 API 재fetch 강제 → 비건·채식·저칼로리 필터 정상 동작
+- [x] **결함3 — 카테고리 상품명 앞 "0" 텍스트**: `ItemCard` 렌더링 시 할인율 0%인 경우 조건부 렌더링 추가 → 단독 "0" 텍스트 노출 제거
+- [x] **결함4 — 카테고리 아이템 클릭 → 상세 진입**: `ItemCard`에 `router.push('/category/[itemId]')` 연결 → `/category/[itemId]` 라우트 생성 (Task 044 연동)
+- [x] **결함5 — 프로필 서브메뉴 404**: 주문·배송조회(`/profile/orders`) · 배송지 관리(`/profile/addresses`) · 구매후기(`/profile/reviews`) · 쿠폰함(`/profile/coupons`) · 내가게(`/profile/my-store`) 5개 페이지 신규 구현
+- [x] **결함6 — 카테고리 검색**: `ItemSearchBar` 검색어 입력 → 200ms 디바운스 → `getItemsByCategoryAction(search)` 호출 → "검색 결과 N개" 안내 표시
+
+**신규 구현 (프로필 서브 페이지 5종)**:
+
+| 라우트 | 컴포넌트 | Server Action |
+|--------|---------|--------------|
+| `/profile/orders` | `OrdersClient` + `OrderCard` + `ShipmentTimeline` | `getOrdersWithDetails()` |
+| `/profile/addresses` | `AddressManageClient` + `AddressForm` | `getAddressesAction()` / `upsertAddressAction()` / `deleteAddressAction()` |
+| `/profile/reviews` | `ReviewsClient` (placeholder) | — |
+| `/profile/coupons` | `CouponsClient` + `CouponClaimSheet` | `getCouponsAction()` / `claimCouponAction()` |
+| `/profile/my-store` | `MyStoreClient` | `getMyStoreAction()` |
+
+**신규 파일**:
+- `src/components/profile/OrdersClient.tsx` · `OrderCard.tsx` · `ShipmentTimeline.tsx`
+- `src/components/profile/AddressManageClient.tsx` · `AddressForm.tsx`
+- `src/components/profile/CouponsClient.tsx` · `CouponClaimSheet.tsx`
+- `src/components/profile/MyStoreClient.tsx`
+- `src/lib/actions/orders/index.ts` · `src/lib/actions/coupon/index.ts` · `src/lib/actions/store/index.ts`
+- `src/lib/actions/geocode.ts` (주소 지오코딩 유틸)
+
+**E2E 테스트**: `e2e/task043-defect-fixes.spec.ts` — TC01~TC06e (10 TC)
+
+**완료 기준**: 6개 결함 재현 불가, 프로필 서브 페이지 404 없음 ✅
+
+---
+
+#### Task 044: 상품 상세 페이지 재개발 (`/category/[itemId]`) ✅
+
+> **완료**: 2026-05-15
+> **BlockedBy**: Task 043 결함4 (카테고리 아이템 클릭 라우팅)
+
+**목적**: `v_store_inventory_item` 기반 상품 상세 페이지 전면 재개발 — AI 데이터 풀 활용 + 구매 플로우 완성
+
+**구현 항목**:
+
+- [x] **`/category/[itemId]` 라우트** (`src/app/(main)/category/[itemId]/page.tsx`): RSC + `getItemDetailAction(itemId)` 조회 + `TopHeader` 뒤로가기/장바구니 아이콘
+- [x] **상품 이미지**: Next.js `<Image>` fill + blurDataURL 스켈레톤 플레이스홀더
+- [x] **상품명(h1) + 가격 UI**: `effectiveSalePrice` (취소선 `listPrice`, `discountPct` 배지, `promoName` 배지) 3단계 표시
+- [x] **AI 태그 칩**: `ai_tags[]` 칩 나열, `ai_status != 'ACTIVE'` 시 숨김
+- [x] **AI 추천 문구 카드**: `ai_ad_copy` green 배경 인용 카드 (full/partial 레벨만 표시)
+- [x] **AI 제품 설명 섹션**: `description_markup` DOMPurify sanitize HTML 렌더
+- [x] **요리 활용법 섹션**: `ai_cooking_usage` 텍스트 + 관련 레시피 카드 링크
+- [x] **상품 정보 아코디언 4종**: 상품 상세정보 · 상품 고시 정보 · 배달안내 · 교환/반품 안내
+- [x] **비슷한 상품 섹션**: `ai_tags` 교집합 기반 `v_store_inventory_item` 최대 6개 조회
+- [x] **구매 리뷰 섹션**: `fp_card_note(type='review')` 조회 + 평점·날짜 표시
+- [x] **하단 고정 바**: "장바구니 담기" (`addToCartAction`) + "바로 구매" → `/cart` 이동, `is_in_stock=false` 시 품절 비활성화
+
+**E2E 테스트**: `e2e/task044-item-detail.spec.ts` — TC01~TC16 (16 TC)
+- TC01: 헤더 타이틀·뒤로가기·장바구니 ✅
+- TC02: 상품 이미지 렌더링 ✅
+- TC03: 상품명(h1) + 가격 ✅
+- TC04: AI 태그 칩 ✅
+- TC05: AI 추천 문구 카드 ✅
+- TC06: AI 제품 설명 섹션 ✅
+- TC07: 요리 활용법 섹션 ✅
+- TC08~11: 아코디언 4종 ✅
+- TC12: 비슷한 상품 섹션 ✅
+- TC13: 구매 리뷰 섹션 ✅
+- TC14: 하단 고정 바 버튼 2개 ✅
+- TC15: 장바구니 담기 동작 ✅
+- TC16: 바로 구매 → `/cart` 이동 ✅
+
+**완료 기준**: 상품 상세 전 섹션 렌더링, 장바구니 담기 + 바로 구매 동작 ✅
+
+---
+
+#### Task 046: 장바구니·결제 강화 (F004·F005 개선) ✅
+
+> **완료**: 2026-05-15
+
+**목적**: 결제 페이지 배송지 실데이터 연동 + 쿠폰·포인트 혜택 섹션 + 품절 상품 장바구니 차단
+
+**구현 항목**:
+
+- [x] **`addBundleAction()` 재고 검증 강화** (`src/lib/actions/cart/index.ts`): `refStoreItemId` 보유 재료에 대해 `v_store_inventory_item.is_in_stock` 일괄 조회 → 품절 상품 자동 제외 + `excludedNames` 반환
+- [x] **`DetailFooter` 품절 안내 toast** (`src/components/detail/detail-footer.tsx`): `excludedNames` 있을 때 "N개 품절로 제외되었습니다" `toast.warning()` 표시
+- [x] **`AddressBlock` 컴포넌트 개선** (`src/components/checkout/address-block.tsx`): 배송지 표시(주소명·주소·수령인·연락처) + "변경" 버튼 + "배송 방식은 스토어 정책에 따라 다릅니다" 안내 배너
+- [x] **`AddressSelectSheet` 신규** (`src/components/checkout/address-select-sheet.tsx`): vaul Drawer 배송지 목록 — `getAddresses()` 실데이터 로드, 기본 배송지 별 표시, 선택된 배송지 강조, "새 배송지 추가 → /profile/addresses" 링크
+- [x] **`BenefitBlock` 실데이터 연동** (`src/components/checkout/benefit-block.tsx`): 포인트 보유량 표시 + "전액 사용" 토글, 사용 가능 쿠폰 목록 + 최소 주문금액 조건 비활성화, 쿠폰 선택/해제 + 할인금액 실시간 계산
+- [x] **결제 페이지 초기 로드** (`src/app/(main)/checkout/page.tsx`): 마운트 시 `getAddresses()` → 기본 배송지 자동 선택, `getMyCouponsWithStatus()` → 사용 가능 쿠폰 목록 로드
+- [x] **CI/CD 워크플로우 개선** (`.github/workflows/ci.yml`, `migration.yml`): E2E 테스트 환경 변수 + Supabase 마이그레이션 스텝 개선
+
+**신규/수정 파일**:
+- `src/components/checkout/address-select-sheet.tsx` (신규)
+- `src/components/checkout/address-block.tsx` (수정)
+- `src/components/checkout/benefit-block.tsx` (수정)
+- `src/app/(main)/checkout/page.tsx` (수정)
+- `src/components/detail/detail-footer.tsx` (품절 toast 추가)
+- `src/lib/actions/cart/index.ts` (재고 검증 강화)
+- `src/lib/actions/address/index.ts` (geocode 연동)
+
+**E2E 테스트**: `e2e/task046-cart-checkout.spec.ts` — TC-1~TC-6
+- TC-1: 장바구니 담기 품절 제외 toast 확인 ✅
+- TC-2: 결제 페이지 배송지 변경 Sheet 오픈 ✅
+- TC-3: 혜택 섹션(포인트·쿠폰) 렌더링 확인 ✅
+- TC-4: 결제 금액 합산 정확성 ✅
+- TC-5: 결제수단 선택 후 결제버튼 활성화 ✅
+- TC-6: 장바구니 페이지 품절 오버레이 표시 ✅
+
+**완료 기준**: 결제 페이지 배송지·쿠폰 실데이터 연동, 품절 상품 장바구니 차단 동작 ✅
 
 ---
 
