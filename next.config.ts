@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [375, 640, 768, 1080],
     imageSizes: [80, 110, 160, 240, 375],
-    minimumCacheTTL: 60 * 60 * 24 * 7,
+    minimumCacheTTL: 60,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "api.dicebear.com" },

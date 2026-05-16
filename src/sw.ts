@@ -62,12 +62,12 @@ const serwist = new Serwist({
       }),
     },
 
-    // Next.js 최적화 이미지 → StaleWhileRevalidate
+    // Next.js 최적화 이미지 → NetworkFirst
     {
       matcher: ({ url }) => url.pathname.startsWith("/_next/image"),
-      handler: new StaleWhileRevalidate({
+      handler: new NetworkFirst({
         cacheName: "next-images",
-        plugins: [new ExpirationPlugin({ maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 })],
+        plugins: [new ExpirationPlugin({ maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 })],
       }),
     },
 

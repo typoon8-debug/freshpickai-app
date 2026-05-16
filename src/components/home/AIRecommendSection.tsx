@@ -60,11 +60,12 @@ interface AIRecommendSectionProps {
 
 export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
   const router = useRouter();
-  // lazy initializer: SSR에서는 항상 loading:true, CSR에서는 캐시 있으면 즉시 표시
-  const [state, setState] = useState<RecommendState>(() => {
-    const cached = readLocalCache();
-    if (cached) return { data: cached, loading: false, error: false };
-    return { data: null, loading: true, error: false };
+  // 초기 서버 렌더에서는 항상 동일한 상태를 유지하고,
+  // 클라이언트 마운트 이후에 localStorage 기반 캐시를 적용합니다.
+  const [state, setState] = useState<RecommendState>({
+    data: null,
+    loading: true,
+    error: false,
   });
   const [activeTheme, setActiveTheme] = useState(0);
   const [loadingStep, setLoadingStep] = useState(0);
