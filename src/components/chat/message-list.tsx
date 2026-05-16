@@ -7,7 +7,7 @@ import { ToolCallIndicator } from "./tool-call-indicator";
 import type { ChatActionIntent } from "@/lib/types";
 
 interface MessageListProps {
-  onActionSelect?: (intent: ChatActionIntent) => void;
+  onActionSelect?: (intent: ChatActionIntent) => Promise<void> | void;
 }
 
 export function MessageList({ onActionSelect }: MessageListProps) {

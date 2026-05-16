@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Refrigerator } from "lucide-react";
 import { toast } from "sonner";
 import { ChatHeader } from "@/components/chat/chat-header";
@@ -10,13 +11,18 @@ import { QuickChips } from "@/components/chat/quick-chips";
 import { ChatInput } from "@/components/chat/chat-input";
 import { FridgeMode } from "@/components/chat/FridgeMode";
 import { useChatStream } from "@/hooks/use-chat-stream";
+import { useCartStore } from "@/lib/store";
+import { qk } from "@/lib/query-keys";
 import { ChatActionEnum } from "@/lib/types";
 import type { ChatActionIntent } from "@/lib/types";
 
 export default function ChatPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { send, isStreaming } = useChatStream();
   const [fridgeOpen, setFridgeOpen] = useState(false);
+  const addBundle = useCartStore((s) => s.addBundle);
+  const removeFromCart = useCartStore((s) => s.remove);
 
   const handleActionSelect = useCallback(
     async (intent: ChatActionIntent) => {
@@ -43,6 +49,24 @@ export default function ChatPage() {
             toast.error("상품 정보가 없습니다.");
             break;
           }
+
+          // 낙관적 업데이트: Zustand에 즉시 추가
+          const tempId = `chat-${storeItemId}-${Date.now()}`;
+          addBundle("", [
+            {
+              cartItemId: tempId,
+              userId: "",
+              cardId: "",
+              ingredientId: undefined,
+              name: name ?? "상품",
+              emoji: "🛒",
+              qty: 1,
+              price: 0,
+              unit: "개",
+              refStoreItemId: storeItemId,
+            },
+          ]);
+
           try {
             const res = await fetch("/api/cart", {
               method: "POST",
@@ -51,10 +75,15 @@ export default function ChatPage() {
             });
             if (res.ok) {
               toast.success(`${name ?? "상품"}을 장바구니에 담았어요`);
+              // TanStack Query 무효화 → 백그라운드 DB 동기화
+              void queryClient.invalidateQueries({ queryKey: qk.cart() });
             } else {
-              toast.error("담기 실패. 다시 시도해주세요.");
+              removeFromCart(tempId);
+              const data = (await res.json()) as { error?: string };
+              toast.error(data.error ?? "담기 실패. 다시 시도해주세요.");
             }
           } catch {
+            removeFromCart(tempId);
             toast.error("네트워크 오류가 발생했습니다.");
           }
           break;
@@ -68,22 +97,37 @@ export default function ChatPage() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ itemId }),
             });
-            if (res.ok) toast.success("찜 목록에 추가했어요");
-            else toast.error("찜 추가 실패.");
+            if (res.ok) {
+              toast.success("찜 목록에 추가했어요");
+            } else {
+              const data = (await res.json()) as { error?: string };
+              toast.error(data.error ?? "찜 추가 실패.");
+            }
           } catch {
             toast.error("네트워크 오류가 발생했습니다.");
           }
           break;
         }
         case ChatActionEnum.INITIATE_PAYMENT: {
-          router.push("/cart");
+          try {
+            const res = await fetch("/api/payment/initiate", { method: "POST" });
+            if (res.ok) {
+              const data = (await res.json()) as { checkoutUrl?: string };
+              router.push(data.checkoutUrl ?? "/cart");
+            } else {
+              const data = (await res.json()) as { error?: string };
+              toast.error(data.error ?? "결제 준비 중 오류가 발생했습니다.");
+            }
+          } catch {
+            router.push("/cart");
+          }
           break;
         }
         default:
           break;
       }
     },
-    [router, send]
+    [router, send, addBundle, removeFromCart, queryClient]
   );
 
   return (

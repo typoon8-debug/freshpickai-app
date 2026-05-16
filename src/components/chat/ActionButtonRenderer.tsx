@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   ShoppingCart,
   Heart,
@@ -9,13 +10,14 @@ import {
   Check,
   X,
   RefreshCw,
+  Loader2,
 } from "lucide-react";
 import { ChatActionEnum } from "@/lib/types";
 import type { ChatActionIntent } from "@/lib/types";
 
 interface ActionButtonRendererProps {
   intents: ChatActionIntent[];
-  onActionSelect: (intent: ChatActionIntent) => void;
+  onActionSelect: (intent: ChatActionIntent) => Promise<void> | void;
   disabled?: boolean;
 }
 
@@ -84,12 +86,26 @@ export function ActionButtonRenderer({
   onActionSelect,
   disabled = false,
 }: ActionButtonRendererProps) {
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+
   if (!intents || intents.length === 0) return null;
+
+  const isAnyPending = pendingKey !== null;
 
   // CONFIRM_YES/NO 쌍이 있으면 가로 배치, 나머지는 세로 배치
   const hasConfirmPair =
     intents.some((i) => i.action === ChatActionEnum.CONFIRM_YES) &&
     intents.some((i) => i.action === ChatActionEnum.CONFIRM_NO);
+
+  const handleClick = async (intent: ChatActionIntent, key: string) => {
+    if (isAnyPending || disabled) return;
+    setPendingKey(key);
+    try {
+      await onActionSelect(intent);
+    } finally {
+      setPendingKey(null);
+    }
+  };
 
   return (
     <div
@@ -98,17 +114,21 @@ export function ActionButtonRenderer({
       aria-label="AI 추천 액션"
     >
       {intents.map((intent, idx) => {
+        const key = `${intent.action}-${idx}`;
         const { icon, className } = getButtonConfig(intent.action);
+        const isLoading = pendingKey === key;
+
         return (
           <button
-            key={`${intent.action}-${idx}`}
+            key={key}
             type="button"
-            disabled={disabled}
-            onClick={() => onActionSelect(intent)}
+            disabled={disabled || isAnyPending}
+            onClick={() => void handleClick(intent, key)}
             className={`flex min-h-[44px] items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all duration-100 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
             aria-label={intent.label}
+            aria-busy={isLoading}
           >
-            {icon}
+            {isLoading ? <Loader2 size={14} className="animate-spin" /> : icon}
             <span>{intent.label}</span>
           </button>
         );

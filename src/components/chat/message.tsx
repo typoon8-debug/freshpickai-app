@@ -54,7 +54,7 @@ const markdownComponents: Components = {
 interface MessageProps {
   message: ChatMessage;
   isStreaming?: boolean;
-  onActionSelect?: (intent: ChatActionIntent) => void;
+  onActionSelect?: (intent: ChatActionIntent) => Promise<void> | void;
 }
 
 export function Message({ message, isStreaming, onActionSelect }: MessageProps) {
