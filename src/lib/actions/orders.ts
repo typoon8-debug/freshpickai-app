@@ -178,6 +178,18 @@ export async function confirmAndCreateOrderAction(params: {
 
   const { paymentKey, orderNo, amount, orderPayload } = params;
 
+  // ── 멱등성 체크: 동일 paymentKey로 이미 처리된 주문 확인 ──
+  // 새로고침·중복 콜백으로 인한 이중 처리 방지
+  const supabaseIdempotency = await createClient();
+  const { data: existing } = await supabaseIdempotency
+    .from("fp_order")
+    .select("ref_order_id")
+    .eq("payment_key", paymentKey)
+    .maybeSingle();
+  if (existing) {
+    return { data: { orderId: existing.ref_order_id as string } };
+  }
+
   // ── Step 1: Toss 서버 결제 승인 ──────────────────────────
   let confirmedPaymentKey: string;
   let tossApprovedAt: string;

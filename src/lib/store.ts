@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { User, CartItem, ChatMessage, KidsPick, CardSection } from "./types";
 
 // ── Auth ──────────────────────────────────────────────
@@ -83,35 +83,45 @@ type ChatState = {
 };
 const MAX_CHAT_MESSAGES = 30;
 
-export const useChatStore = create<ChatState>((set) => ({
-  messages: [],
-  isStreaming: false,
-  currentTool: null,
-  push: (m) =>
-    set((s) => ({
-      // 최근 MAX_CHAT_MESSAGES개만 유지 — 장시간 세션 메모리 누수 방지
-      messages: [...s.messages, m].slice(-MAX_CHAT_MESSAGES),
-    })),
-  appendStream: (chunk) =>
-    set((s) => {
-      const last = s.messages[s.messages.length - 1];
-      if (!last || last.role !== "ai") return s;
-      return {
-        messages: [...s.messages.slice(0, -1), { ...last, text: last.text + chunk }],
-      };
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set) => ({
+      messages: [],
+      isStreaming: false,
+      currentTool: null,
+      push: (m) =>
+        set((s) => ({
+          // 최근 MAX_CHAT_MESSAGES개만 유지 — 장시간 세션 메모리 누수 방지
+          messages: [...s.messages, m].slice(-MAX_CHAT_MESSAGES),
+        })),
+      appendStream: (chunk) =>
+        set((s) => {
+          const last = s.messages[s.messages.length - 1];
+          if (!last || last.role !== "ai") return s;
+          return {
+            messages: [...s.messages.slice(0, -1), { ...last, text: last.text + chunk }],
+          };
+        }),
+      setStreaming: (b) => set({ isStreaming: b }),
+      setCurrentTool: (tool) => set({ currentTool: tool }),
+      updateMemoItems: (msgId, items) =>
+        set((s) => ({
+          messages: s.messages.map((m) => (m.id === msgId ? { ...m, memoItems: items } : m)),
+        })),
+      updateCartItems: (msgId, items) =>
+        set((s) => ({
+          messages: s.messages.map((m) => (m.id === msgId ? { ...m, cartItems: items } : m)),
+        })),
+      reset: () => set({ messages: [], currentTool: null }),
     }),
-  setStreaming: (b) => set({ isStreaming: b }),
-  setCurrentTool: (tool) => set({ currentTool: tool }),
-  updateMemoItems: (msgId, items) =>
-    set((s) => ({
-      messages: s.messages.map((m) => (m.id === msgId ? { ...m, memoItems: items } : m)),
-    })),
-  updateCartItems: (msgId, items) =>
-    set((s) => ({
-      messages: s.messages.map((m) => (m.id === msgId ? { ...m, cartItems: items } : m)),
-    })),
-  reset: () => set({ messages: [], currentTool: null }),
-}));
+    {
+      name: "fp-chat",
+      storage: createJSONStorage(() => sessionStorage),
+      // 메시지만 persist — 스트리밍 상태는 새로고침 시 초기화
+      partialize: (state) => ({ messages: state.messages }),
+    }
+  )
+);
 
 // ── Kids Mode ─────────────────────────────────────────
 type KidsState = {

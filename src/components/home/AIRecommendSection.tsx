@@ -317,7 +317,7 @@ function RecommendCard({ rec, card, onClick }: RecommendCardItemProps) {
             {card?.emoji ?? "🍽️"}
           </div>
         )}
-        {rec.discountPct !== undefined && (
+        {rec.discountPct !== undefined && rec.discountPct > 0 && (
           <span className="rounded-pill absolute top-2 right-2 bg-red-500 px-2 py-0.5 text-[10px] font-semibold text-white">
             -{rec.discountPct}%
           </span>

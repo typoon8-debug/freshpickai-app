@@ -440,3 +440,66 @@ export type Order = FpOrder & {
   items: CartItem[];
   pointsUsed: number;
 };
+
+// ── v0.3a AI 채팅 맥락 메모리 + 인텐트 (F032·F033) ─────────
+
+/** AI 채팅 버튼 액션 종류 (9종) */
+export enum ChatActionEnum {
+  ADD_TO_WISHLIST = "ADD_TO_WISHLIST",
+  ADD_TO_CART = "ADD_TO_CART",
+  UPDATE_CART = "UPDATE_CART",
+  REMOVE_FROM_CART = "REMOVE_FROM_CART",
+  INITIATE_PAYMENT = "INITIATE_PAYMENT",
+  VIEW_CARD = "VIEW_CARD",
+  SEARCH_MORE = "SEARCH_MORE",
+  CONFIRM_YES = "CONFIRM_YES",
+  CONFIRM_NO = "CONFIRM_NO",
+}
+
+/** AI 응답에 포함되는 버튼 인텐트 단위 */
+export type ChatActionIntent = {
+  action: ChatActionEnum;
+  /** 버튼 표시 레이블 (최대 20자) */
+  label: string;
+  payload?: Record<string, unknown>;
+};
+
+/** fp_chat_message_raw 단일 레코드 */
+export type RawMessage = {
+  messageId: string;
+  customerId: string;
+  sessionId: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: string;
+};
+
+/** fp_chat_session_summary 단일 레코드 */
+export type SessionSummary = {
+  summaryId: string;
+  customerId: string;
+  sessionId: string;
+  summaryText: string;
+  keywords: string[];
+  createdAt: string;
+};
+
+/** fp_memory_items 단일 레코드 */
+export type MemoryItem = {
+  memoryId: string;
+  customerId: string;
+  content: string;
+  sourceSessionId?: string;
+  importanceScore: number;
+  createdAt: string;
+};
+
+/** AI 채팅 Route Handler에 주입되는 3계층 메모리 컨텍스트 (F032) */
+export type ChatMemoryContext = {
+  /** Layer 1: 최근 원문 메시지 (최대 10개) */
+  recentMessages: RawMessage[];
+  /** Layer 2: 최근 세션 요약 (최대 5개) */
+  sessionSummaries: SessionSummary[];
+  /** Layer 3: 유사도 기반 장기 기억 (최대 5개) */
+  memoryItems: MemoryItem[];
+};
