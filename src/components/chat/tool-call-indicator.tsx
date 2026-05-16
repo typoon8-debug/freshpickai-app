@@ -3,7 +3,13 @@
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type ToolName = "searchItems" | "getUserContext" | "getInventory" | "addToCart" | "addToMemo";
+type ToolName =
+  | "searchItems"
+  | "getUserContext"
+  | "getInventory"
+  | "addToCart"
+  | "addToMemo"
+  | "suggestIntents";
 
 const TOOL_LABELS: Record<ToolName, string> = {
   searchItems: "메뉴 검색 중",
@@ -11,6 +17,7 @@ const TOOL_LABELS: Record<ToolName, string> = {
   getInventory: "냉장고 확인 중",
   addToCart: "장바구니에 담는 중",
   addToMemo: "장보기 메모에 추가 중",
+  suggestIntents: "액션 버튼 준비 중",
 };
 
 interface ToolCallIndicatorProps {

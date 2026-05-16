@@ -337,6 +337,8 @@ export type ChatMessage = {
   cartItems?: CartAddedItem[];
   /** 현재 실행 중인 도구 이름 (스트리밍 중 표시용) */
   currentTool?: string;
+  /** suggestIntents 도구 결과 — 액션 버튼 목록 (F033) */
+  intents?: ChatActionIntent[];
 };
 
 // ── 페르소나 (F003 RAG) ────────────────────────────────────

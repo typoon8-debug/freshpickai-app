@@ -11,11 +11,13 @@ import { createSearchItemsTool } from "@/lib/ai/tools/search-items";
 import { createGetInventoryTool } from "@/lib/ai/tools/get-inventory";
 import { createAddToCartTool } from "@/lib/ai/tools/add-to-cart";
 import { createGetUserContextTool } from "@/lib/ai/tools/get-user-context";
+import { createSuggestIntentsTool } from "@/lib/ai/tools/suggest-intents";
 import { checkCache, saveCache, createCacheHitResponse } from "@/lib/ai/semantic-cache";
 import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
+import { retrieveMemoryContext, formatMemoryContext } from "@/lib/chat/memory/retrieve";
+import { saveRawMessage } from "@/lib/chat/memory/store";
 
 // ── 레이트 리밋 (30 req/min per userId) — Supabase RPC 기반 ──
-// 멀티인스턴스 환경에서 정확한 제한을 위해 DB 원자적 upsert 사용
 async function checkRateLimit(
   userId: string,
   supabase: Awaited<ReturnType<typeof import("@/lib/supabase/server").createClient>>
@@ -26,7 +28,6 @@ async function checkRateLimit(
     p_window_minutes: 1,
   });
   if (error) {
-    // RPC 실패 시 허용 (서비스 중단 방지)
     console.warn("[rate-limit] RPC error, allowing request:", error.message);
     return true;
   }
@@ -43,17 +44,28 @@ const CHIP_CONSTRAINTS: Record<string, string> = {
   초등간식: "초등학생 아이가 좋아하는 안전하고 건강한 간식 위주로 추천하세요.",
 };
 
+// ── 인텐트 버튼 시스템 프롬프트 규칙 (F033) ─────────────────
+const INTENTS_RULE = `
+## 인텐트 버튼 생성 규칙 (suggestIntents 도구)
+- 상품·메뉴를 추천했을 때: suggestIntents를 호출해 사용자가 바로 액션할 버튼 1~4개를 제공하세요
+- ADD_TO_CART: 장바구니 담기 (payload: { storeItemId: string, name: string })
+- ADD_TO_WISHLIST: 찜하기 (payload: { itemId: string })
+- VIEW_CARD: 카드 보기 (payload: { cardId: string })
+- INITIATE_PAYMENT: 바로 결제하기 (payload 불필요)
+- CONFIRM_YES / CONFIRM_NO: 예/아니요 확인 쌍으로 제공
+- SEARCH_MORE: 더 찾기 (payload: { query: string })
+- 일반 질답·인사·설명만 할 때는 suggestIntents를 호출하지 않아도 됩니다
+- suggestIntents 호출 후에는 추가 텍스트 없이 응답을 종료하세요`.trim();
+
 type SimpleMessage = { role: "user" | "assistant"; content: string };
 
-/** 단일 사용자 메시지에만 시맨틱 캐시 적용 (멀티턴 대화는 제외) */
 function extractCacheableQuery(messages: SimpleMessage[], quickChip?: string): string | null {
   const userMessages = messages.filter((m) => m.role === "user");
-  if (userMessages.length !== 1) return null; // 첫 번째 메시지만 캐시
+  if (userMessages.length !== 1) return null;
 
   const text = userMessages[0].content.trim();
   if (!text || text.length < 5) return null;
 
-  // 타임스탬프(10자리 이상 숫자) 포함 쿼리는 캐시 제외 — 프로그래밍 테스트 쿼리 방어
   if (/\d{10,}/.test(text)) return null;
 
   return quickChip ? `[${quickChip}] ${text}` : text;
@@ -81,14 +93,17 @@ export async function POST(req: NextRequest) {
 
   let messages: SimpleMessage[] = [];
   let quickChip: string | undefined;
+  let sessionId: string | undefined;
 
   try {
     const body = (await req.json()) as {
       messages?: SimpleMessage[];
       quickChip?: string;
+      sessionId?: string;
     };
     messages = body.messages ?? [];
     quickChip = body.quickChip;
+    sessionId = body.sessionId;
   } catch {
     return new Response(JSON.stringify({ error: "잘못된 요청 형식" }), {
       status: 400,
@@ -111,12 +126,34 @@ export async function POST(req: NextRequest) {
 
   const modelId = await getAiModelId(AI_MODEL_KEYS.CHAT);
 
-  // ── 페르소나 컨텍스트 + 시스템 프롬프트 빌드 ────────────
-  const personaCtx = await buildPersonaContext(user.id);
+  // ── 3계층 메모리 조회 (F032) + 페르소나 빌드 병렬 실행 ────
+  const currentQuery = messages.filter((m) => m.role === "user").at(-1)?.content ?? "";
+
+  const [personaCtx, memoryCtx] = await Promise.all([
+    buildPersonaContext(user.id),
+    retrieveMemoryContext(user.id, currentQuery).catch(() => null),
+  ]);
+
   let systemPrompt = buildChatPrompt(personaCtx);
+
+  // 메모리 컨텍스트 시스템 프롬프트 삽입
+  if (memoryCtx) {
+    const memorySection = formatMemoryContext(memoryCtx);
+    if (memorySection) {
+      systemPrompt += `\n\n## 사용자 기억 (이전 대화 맥락)\n${memorySection}`;
+    }
+  }
+
+  // 인텐트 버튼 규칙 추가
+  systemPrompt += `\n\n${INTENTS_RULE}`;
 
   if (quickChip && CHIP_CONSTRAINTS[quickChip]) {
     systemPrompt += `\n\n## 현재 제약 조건\n${CHIP_CONSTRAINTS[quickChip]}`;
+  }
+
+  // 현재 사용자 메시지 저장 (fire-and-forget, F032)
+  if (sessionId && currentQuery) {
+    void saveRawMessage(user.id, sessionId, "user", currentQuery).catch(() => {});
   }
 
   try {
@@ -130,6 +167,7 @@ export async function POST(req: NextRequest) {
         addToCart: createAddToCartTool(user.id, supabase),
         getUserContext: createGetUserContextTool(user.id),
         addToMemo: createAddToMemoTool(user.id, supabase),
+        suggestIntents: createSuggestIntentsTool(),
       },
       stopWhen: stepCountIs(5),
       experimental_telemetry: {
@@ -139,6 +177,7 @@ export async function POST(req: NextRequest) {
           userId: user.id,
           model: modelId,
           hasCacheableQuery: cacheableQuery ? "true" : "false",
+          hasMemoryContext: memoryCtx ? "true" : "false",
         },
       },
     });
@@ -148,6 +187,15 @@ export async function POST(req: NextRequest) {
       void Promise.resolve(result.text).then((text) => {
         if (text.trim().length > 10) {
           saveCache(cacheableQuery, queryEmbedding, text).catch(() => {});
+        }
+      });
+    }
+
+    // AI 응답 저장 (fire-and-forget, F032)
+    if (sessionId) {
+      void Promise.resolve(result.text).then((text) => {
+        if (text.trim().length > 0) {
+          saveRawMessage(user.id, sessionId!, "assistant", text).catch(() => {});
         }
       });
     }

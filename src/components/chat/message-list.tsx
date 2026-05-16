@@ -4,8 +4,13 @@ import { useEffect, useRef } from "react";
 import { useChatStore } from "@/lib/store";
 import { Message } from "./message";
 import { ToolCallIndicator } from "./tool-call-indicator";
+import type { ChatActionIntent } from "@/lib/types";
 
-export function MessageList() {
+interface MessageListProps {
+  onActionSelect?: (intent: ChatActionIntent) => void;
+}
+
+export function MessageList({ onActionSelect }: MessageListProps) {
   const messages = useChatStore((s) => s.messages);
   const isStreaming = useChatStore((s) => s.isStreaming);
   const currentTool = useChatStore((s) => s.currentTool);
@@ -41,7 +46,11 @@ export function MessageList() {
 
         return (
           <div key={msg.id} className="flex flex-col gap-2">
-            <Message message={msgWithTool} isStreaming={isLastStreaming} />
+            <Message
+              message={msgWithTool}
+              isStreaming={isLastStreaming}
+              onActionSelect={onActionSelect}
+            />
             {/* 도구 호출 중 — 텍스트가 비어있을 때만 별도 표시 */}
             {isLastStreaming && msg.text === "" && currentTool && (
               <div className="ml-9">

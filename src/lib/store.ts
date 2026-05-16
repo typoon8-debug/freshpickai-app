@@ -67,7 +67,7 @@ export const useCartStore = create<CartState>()(
 );
 
 // ── Chat ──────────────────────────────────────────────
-import type { MemoAddedItem, CartAddedItem } from "./types";
+import type { MemoAddedItem, CartAddedItem, ChatActionIntent } from "./types";
 
 type ChatState = {
   messages: ChatMessage[];
@@ -79,6 +79,7 @@ type ChatState = {
   setCurrentTool: (tool: string | null) => void;
   updateMemoItems: (msgId: string, items: MemoAddedItem[]) => void;
   updateCartItems: (msgId: string, items: CartAddedItem[]) => void;
+  updateIntents: (msgId: string, intents: ChatActionIntent[]) => void;
   reset: () => void;
 };
 const MAX_CHAT_MESSAGES = 30;
@@ -111,6 +112,10 @@ export const useChatStore = create<ChatState>()(
       updateCartItems: (msgId, items) =>
         set((s) => ({
           messages: s.messages.map((m) => (m.id === msgId ? { ...m, cartItems: items } : m)),
+        })),
+      updateIntents: (msgId, intents) =>
+        set((s) => ({
+          messages: s.messages.map((m) => (m.id === msgId ? { ...m, intents } : m)),
         })),
       reset: () => set({ messages: [], currentTool: null }),
     }),

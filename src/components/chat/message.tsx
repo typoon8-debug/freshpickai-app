@@ -5,11 +5,12 @@ import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/lib/types";
+import type { ChatMessage, ChatActionIntent } from "@/lib/types";
 import { RecCardCarousel } from "./rec-card-carousel";
 import { AddToMemoConfirmCard } from "./AddToMemoConfirmCard";
 import { ActionableProductCard } from "./actionable-product-card";
 import { ToolCallIndicator } from "./tool-call-indicator";
+import { ActionButtonRenderer } from "./ActionButtonRenderer";
 
 const markdownComponents: Components = {
   p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
@@ -53,9 +54,10 @@ const markdownComponents: Components = {
 interface MessageProps {
   message: ChatMessage;
   isStreaming?: boolean;
+  onActionSelect?: (intent: ChatActionIntent) => void;
 }
 
-export function Message({ message, isStreaming }: MessageProps) {
+export function Message({ message, isStreaming, onActionSelect }: MessageProps) {
   const isAi = message.role === "ai";
 
   return (
@@ -119,6 +121,15 @@ export function Message({ message, isStreaming }: MessageProps) {
         {isAi && message.cards && message.cards.length > 0 && !isStreaming && (
           <RecCardCarousel cards={message.cards} />
         )}
+
+        {/* 인텐트 버튼 (F033) */}
+        {isAi &&
+          message.intents &&
+          message.intents.length > 0 &&
+          !isStreaming &&
+          onActionSelect && (
+            <ActionButtonRenderer intents={message.intents} onActionSelect={onActionSelect} />
+          )}
 
         {/* 시간 */}
         <span className="text-ink-300 text-[10px]">{message.time}</span>

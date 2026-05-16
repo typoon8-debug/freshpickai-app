@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useMemo } from "react";
 import { useChatStore } from "@/lib/store";
-import type { MemoAddedItem, CartAddedItem } from "@/lib/types";
+import type { MemoAddedItem, CartAddedItem, ChatActionIntent } from "@/lib/types";
 
 function formatTime() {
   return new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
@@ -21,6 +21,17 @@ function parseSseLine(line: string): Record<string, unknown> | null {
   }
 }
 
+// 브라우저 세션당 고정 UUID — 탭 닫기 전까지 유지
+function getSessionId(): string {
+  if (typeof window === "undefined") return crypto.randomUUID();
+  const key = "fp-chat-session-id";
+  const existing = sessionStorage.getItem(key);
+  if (existing) return existing;
+  const id = crypto.randomUUID();
+  sessionStorage.setItem(key, id);
+  return id;
+}
+
 export function useChatStream() {
   const {
     push,
@@ -29,11 +40,14 @@ export function useChatStream() {
     setCurrentTool,
     updateMemoItems,
     updateCartItems,
+    updateIntents,
     isStreaming,
   } = useChatStore();
 
   const historyRef = useRef<{ role: "user" | "assistant"; content: string }[]>([]);
   const activeChipRef = useRef<string | undefined>(undefined);
+  // sessionId는 훅 수명 동안 고정
+  const sessionId = useMemo(() => getSessionId(), []);
 
   const send = useCallback(
     async (text: string, chipLabel?: string) => {
@@ -63,6 +77,7 @@ export function useChatStream() {
           body: JSON.stringify({
             messages: historyRef.current.slice(-20),
             quickChip: activeChipRef.current,
+            sessionId,
           }),
         });
 
@@ -77,6 +92,7 @@ export function useChatStream() {
         let fullText = "";
         let pendingMemoItems: MemoAddedItem[] | undefined;
         let pendingCartItems: CartAddedItem[] | undefined;
+        let pendingIntents: ChatActionIntent[] | undefined;
 
         while (true) {
           const { done, value } = await reader.read();
@@ -126,6 +142,10 @@ export function useChatStream() {
                     ) {
                       pendingCartItems = output.addedItems as CartAddedItem[];
                     }
+                    // suggestIntents 결과 파싱 (F033)
+                    if (Array.isArray(output.intents) && output.intents.length > 0) {
+                      pendingIntents = output.intents as ChatActionIntent[];
+                    }
                   }
                   setCurrentTool(null);
                   break;
@@ -152,6 +172,9 @@ export function useChatStream() {
         if (pendingCartItems) {
           updateCartItems(aiId, pendingCartItems);
         }
+        if (pendingIntents) {
+          updateIntents(aiId, pendingIntents);
+        }
       } catch (err) {
         console.error("[useChatStream] error:", err);
         appendStream("\n\n죄송합니다. 잠시 오류가 발생했습니다. 다시 시도해 주세요.");
@@ -168,6 +191,8 @@ export function useChatStream() {
       setCurrentTool,
       updateMemoItems,
       updateCartItems,
+      updateIntents,
+      sessionId,
     ]
   );
 
