@@ -18,6 +18,7 @@ interface ItemDetailBottomBarProps {
 export function ItemDetailBottomBar({ item }: ItemDetailBottomBarProps) {
   const router = useRouter();
   const addBundle = useCartStore((s) => s.addBundle);
+  const remove = useCartStore((s) => s.remove);
   const [isAdding, setIsAdding] = useState(false);
   const [isBuying, setIsBuying] = useState(false);
 
@@ -28,7 +29,7 @@ export function ItemDetailBottomBar({ item }: ItemDetailBottomBarProps) {
     cartItemId: `item-${item.storeItemId}-${Date.now()}`,
     userId: "",
     cardId: "",
-    ingredientId: item.storeItemId,
+    ingredientId: undefined, // 카테고리 직접 담기: fp_dish_ingredient 연동 없음
     name: item.itemName,
     emoji: "🛒",
     qty: 1,
@@ -44,6 +45,7 @@ export function ItemDetailBottomBar({ item }: ItemDetailBottomBarProps) {
     addBundle("", [cartItem]);
     const result = await addBundleAction("", [cartItem]);
     if (result.error && result.error !== "로그인이 필요합니다.") {
+      remove(cartItem.cartItemId);
       toast.error("장바구니 저장 실패");
     } else {
       toast.success(`${item.itemName}을(를) 장바구니에 담았습니다!`);

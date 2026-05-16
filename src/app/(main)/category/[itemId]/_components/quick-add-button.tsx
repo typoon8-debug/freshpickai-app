@@ -14,6 +14,7 @@ interface QuickAddButtonProps {
 
 export function QuickAddButton({ storeItemId, itemName, price }: QuickAddButtonProps) {
   const addBundle = useCartStore((s) => s.addBundle);
+  const remove = useCartStore((s) => s.remove);
   const [isAdding, setIsAdding] = useState(false);
 
   const handleAdd = async (e: React.MouseEvent) => {
@@ -26,7 +27,7 @@ export function QuickAddButton({ storeItemId, itemName, price }: QuickAddButtonP
       cartItemId: `item-${storeItemId}-${Date.now()}`,
       userId: "",
       cardId: "",
-      ingredientId: storeItemId,
+      ingredientId: undefined, // 카테고리 직접 담기: fp_dish_ingredient 연동 없음
       name: itemName,
       emoji: "🛒",
       qty: 1,
@@ -36,8 +37,13 @@ export function QuickAddButton({ storeItemId, itemName, price }: QuickAddButtonP
     };
 
     addBundle("", [cartItem]);
-    await addBundleAction("", [cartItem]);
-    toast.success(`${itemName}을(를) 담았습니다!`);
+    const result = await addBundleAction("", [cartItem]);
+    if (result.error && result.error !== "로그인이 필요합니다.") {
+      remove(cartItem.cartItemId);
+      toast.error("장바구니 저장 실패");
+    } else {
+      toast.success(`${itemName}을(를) 담았습니다!`);
+    }
     setIsAdding(false);
   };
 

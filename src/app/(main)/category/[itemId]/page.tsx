@@ -1,23 +1,14 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ChevronLeft,
-  ShoppingCart,
-  Heart,
-  ChevronDown,
-  Star,
-  Bot,
-  ChefHat,
-  Sparkles,
-  FileText,
-} from "lucide-react";
+import { ChevronDown, Star, Bot, ChefHat, Sparkles, FileText } from "lucide-react";
 import {
   getItemByIdAction,
   getStoreInfoAction,
   getItemReviewsAction,
   getSimilarItemsAction,
 } from "@/lib/actions/category";
+import { ItemDetailHeader } from "./_components/item-detail-header";
 import { ItemDetailBottomBar } from "./_components/item-detail-bottom-bar";
 import { QuickAddButton } from "./_components/quick-add-button";
 import { parseDescriptionSections, parseCookingUsage } from "@/lib/utils/item-parsers";
@@ -77,16 +68,7 @@ export default async function ItemDetailPage({ params }: Props) {
   return (
     <div className="min-h-screen pb-28">
       {/* ─── 헤더 ─── */}
-      <header className="border-line bg-paper sticky top-0 z-30 flex h-14 items-center gap-3 border-b px-4">
-        <Link href="/category" aria-label="뒤로가기">
-          <ChevronLeft size={22} className="text-ink-700" />
-        </Link>
-        <span className="text-ink-800 flex-1 truncate text-sm font-semibold">상품상세</span>
-        <Heart size={20} className="text-ink-400" />
-        <Link href="/cart" aria-label="장바구니">
-          <ShoppingCart size={20} className="text-ink-400" />
-        </Link>
-      </header>
+      <ItemDetailHeader />
 
       {/* ─── 상품 이미지 ─── */}
       <div className="relative w-full bg-gray-50" style={{ aspectRatio: "1 / 1" }}>
