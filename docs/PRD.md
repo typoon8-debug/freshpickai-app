@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-17
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -263,6 +263,20 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | 포인트 | 내용 | 주의사항 |
 |--------|------|----------|
 | P11 PWA SW 이미지 캐싱 전략 | `src/sw.ts` — `/_next/image` `NetworkFirst` → `StaleWhileRevalidate` (7일) | 이미지 변경 시 최대 7일 구버전 노출 가능. 빈도 확인 후 `maxAgeSeconds` 조정 (7일 → 1일 단축 가능) |
+
+---
+
+### 10. PWA 설치 경험 개선 (2026-05-17)
+
+> 모바일 사용자가 홈 화면에 FreshPick AI를 설치하도록 유도하는 UX 개선
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **PWA-001** | `usePwaInstall` 훅 | `BeforeInstallPromptEvent` 캡처(Android Chrome) + iOS Safari 감지 + `display-mode: standalone` 설치 완료 감지 + localStorage 7일 닫기 기억 (`pwa-install-dismissed` 키) | `src/hooks/usePwaInstall.ts` |
+| **PWA-002** | `InstallBanner` 컴포넌트 | 모바일 하단 고정 배너 (z-50, safe-area-pb). Android: 네이티브 `prompt()` 설치 플로우. iOS: "Safari 공유 → 홈 화면에 추가 → 추가" 3단계 가이드 모달. 닫기 시 7일간 재노출 억제 | `src/components/pwa/install-banner.tsx` |
+| **PWA-003** | 레이아웃 전역 배치 | `layout.tsx`에 `<InstallBanner />` 추가 → 전체 페이지에서 설치 배너 노출 | `src/app/layout.tsx` |
+
+**노출 조건**: 모바일 UA (`/android|iphone|ipad|ipod|mobile/i`) + 미설치 + 미닫힘 + (Android `BeforeInstallPrompt` 이벤트 캡처 OR iOS 감지)
 
 ---
 
