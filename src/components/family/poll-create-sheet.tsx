@@ -38,7 +38,7 @@ interface PollCreateSheetProps {
   initialTitle?: string;
   initialOptions?: { label: string; emoji: string }[];
   onCreated?: () => void;
-  trigger?: React.ReactNode;
+  trigger?: React.ReactElement;
 }
 
 const EMOJI_DEFAULTS = ["🍽", "🎬", "🏕", "🎮", "🛒"];
@@ -104,14 +104,16 @@ export function PollCreateSheet({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger>
-        {trigger ?? (
-          <Button variant="outline" size="sm" className="gap-1.5">
-            <Vote className="h-4 w-4" />
-            투표 만들기
-          </Button>
-        )}
-      </SheetTrigger>
+      <SheetTrigger
+        render={
+          trigger ?? (
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Vote className="h-4 w-4" />
+              투표 만들기
+            </Button>
+          )
+        }
+      />
 
       <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-2xl pb-10">
         <SheetHeader className="mb-4">
