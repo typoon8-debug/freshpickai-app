@@ -2,6 +2,7 @@
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isValidInviteCode } from "@/lib/family/invite-code";
+import type { RelationshipType } from "@/lib/constants/relationship";
 
 export type JoinInviteError =
   | "AUTH_REQUIRED"
@@ -14,7 +15,11 @@ export type JoinInviteResult =
   | { success: true; groupId: string; alreadyMember: boolean }
   | { success: false; error: JoinInviteError; redirectTo?: string };
 
-export async function joinFamilyByInvite(code: string): Promise<JoinInviteResult> {
+/** 초대 코드로 가족 그룹에 합류. relationship은 초대 수락 UI에서 선택한 값. */
+export async function joinFamilyByInvite(
+  code: string,
+  relationship: RelationshipType = "other"
+): Promise<JoinInviteResult> {
   const normalized = code.trim().toUpperCase();
 
   if (!isValidInviteCode(normalized)) {
@@ -56,7 +61,7 @@ export async function joinFamilyByInvite(code: string): Promise<JoinInviteResult
 
   const { error: insertError } = await admin
     .from("fp_family_member")
-    .insert({ group_id: group.group_id, user_id: user.id });
+    .insert({ group_id: group.group_id, user_id: user.id, relationship });
 
   if (insertError) {
     return { success: false, error: "JOIN_FAILED" };

@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { joinFamilyByInvite } from "@/lib/actions/family/invite";
+import type { RelationshipType } from "@/lib/constants/relationship";
 
 export async function POST(req: Request) {
-  const { inviteCode } = (await req.json()) as { inviteCode?: string };
+  const body = (await req.json()) as { inviteCode?: string; relationship?: RelationshipType };
 
-  if (!inviteCode?.trim()) {
+  if (!body.inviteCode?.trim()) {
     return NextResponse.json({ error: "inviteCode is required" }, { status: 400 });
   }
 
-  const result = await joinFamilyByInvite(inviteCode.trim());
+  const result = await joinFamilyByInvite(body.inviteCode.trim(), body.relationship);
 
   if (!result.success) {
     const statusMap: Record<string, number> = {

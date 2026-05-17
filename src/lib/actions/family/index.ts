@@ -3,6 +3,7 @@
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { generateInviteCode } from "@/lib/family/invite-code";
 import type { FamilyGroup, FamilyMember } from "@/lib/types";
+import type { RelationshipType } from "@/lib/constants/relationship";
 
 export async function createFamilyGroup(name: string): Promise<FamilyGroup | null> {
   const supabase = await createClient();
@@ -156,12 +157,27 @@ export async function getFamilyMembers(): Promise<FamilyMember[]> {
       displayName: profile?.display_name ?? "멤버",
       avatarUrl: profile?.avatar_url ?? undefined,
       familyRole: (profile?.family_role ?? "parent") as FamilyMember["familyRole"],
+      relationship: (m.relationship ?? "other") as RelationshipType,
       level: profile?.level ?? 1,
       online: false,
       todayActivity: "",
       joinedAt: m.joined_at,
     };
   });
+}
+
+/** 초대 코드로 가족 그룹 이름만 조회 (가입 전 미리보기용) */
+export async function getFamilyGroupByCode(
+  code: string
+): Promise<{ groupId: string; name: string } | null> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("fp_family_group")
+    .select("group_id, name")
+    .eq("invite_code", code.trim().toUpperCase())
+    .single();
+  if (!data) return null;
+  return { groupId: data.group_id, name: data.name };
 }
 
 export type FamilyStats = {

@@ -5,19 +5,8 @@ import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { removeFamilyMember } from "@/lib/actions/family";
+import { RELATIONSHIP_CONFIG } from "@/lib/constants/relationship";
 import type { FamilyMember } from "@/lib/types";
-
-const ROLE_EMOJI: Record<FamilyMember["familyRole"], string> = {
-  parent: "👨‍👩‍",
-  teen: "🧑‍",
-  kid: "🧒",
-};
-
-const ROLE_LABEL: Record<FamilyMember["familyRole"], string> = {
-  parent: "부모",
-  teen: "청소년",
-  kid: "아이",
-};
 
 interface MemberGridProps {
   members: FamilyMember[];
@@ -77,7 +66,7 @@ export function MemberGrid({ members, currentUserId, hasGroup = true }: MemberGr
               {/* 아바타 */}
               <div className="relative">
                 <div className="bg-mocha-100 flex h-10 w-10 items-center justify-center rounded-full text-lg">
-                  {ROLE_EMOJI[member.familyRole]}
+                  {RELATIONSHIP_CONFIG[member.relationship].emoji}
                 </div>
                 <span
                   className={cn(
@@ -90,7 +79,9 @@ export function MemberGrid({ members, currentUserId, hasGroup = true }: MemberGr
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                   <span className="text-ink-900 text-sm font-semibold">{member.displayName}</span>
-                  <span className="text-ink-400 text-[10px]">{ROLE_LABEL[member.familyRole]}</span>
+                  <span className="text-ink-400 text-[10px]">
+                    {RELATIONSHIP_CONFIG[member.relationship].label}
+                  </span>
                   {isMe && (
                     <span className="bg-mocha-100 text-mocha-600 rounded px-1 text-[9px] font-medium">
                       나
