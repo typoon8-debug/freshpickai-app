@@ -1,6 +1,7 @@
 -- ================================================================
 -- Task 055 보완: fp_poll / fp_poll_vote 테이블 재생성
 -- (014 마이그레이션에서 result_card_id TEXT→UUID FK 오류로 실패한 부분)
+-- 멱등 실행 가능: DROP POLICY IF EXISTS로 중복 오류 방지
 -- ================================================================
 
 -- ── fp_poll 테이블 ─────────────────────────────────────────────
@@ -34,6 +35,11 @@ CREATE INDEX IF NOT EXISTS idx_fp_poll_ends_at
   ON fp_poll (ends_at) WHERE status = 'open';
 
 ALTER TABLE fp_poll ENABLE ROW LEVEL SECURITY;
+
+-- 기존 정책 제거 후 재생성 (중복 오류 방지)
+DROP POLICY IF EXISTS "가족 구성원만 투표 안건 조회"  ON fp_poll;
+DROP POLICY IF EXISTS "가족 구성원만 투표 안건 생성"  ON fp_poll;
+DROP POLICY IF EXISTS "생성자만 투표 안건 수정"       ON fp_poll;
 
 CREATE POLICY "가족 구성원만 투표 안건 조회"
   ON fp_poll FOR SELECT
@@ -80,6 +86,11 @@ CREATE INDEX IF NOT EXISTS idx_fp_poll_vote_group
 
 ALTER TABLE fp_poll_vote ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "가족 구성원만 투표 응답 조회"  ON fp_poll_vote;
+DROP POLICY IF EXISTS "본인 투표 응답 작성"           ON fp_poll_vote;
+DROP POLICY IF EXISTS "본인 투표 응답 수정"           ON fp_poll_vote;
+DROP POLICY IF EXISTS "본인 투표 응답 삭제"           ON fp_poll_vote;
+
 CREATE POLICY "가족 구성원만 투표 응답 조회"
   ON fp_poll_vote FOR SELECT
   USING (
@@ -110,9 +121,18 @@ CREATE POLICY "본인 투표 응답 삭제"
   ON fp_poll_vote FOR DELETE
   USING (auth.uid() = user_id);
 
--- ── Realtime 등록 ──────────────────────────────────────────────
-ALTER PUBLICATION supabase_realtime ADD TABLE fp_poll;
-ALTER PUBLICATION supabase_realtime ADD TABLE fp_poll_vote;
+-- ── Realtime 등록 (이미 등록된 경우 오류 무시) ─────────────────
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE fp_poll;
+EXCEPTION WHEN others THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE fp_poll_vote;
+EXCEPTION WHEN others THEN NULL;
+END $$;
 
 -- ── 투표 결과 집계 RPC ─────────────────────────────────────────
 CREATE OR REPLACE FUNCTION fp_get_poll_results(p_poll_id uuid)
