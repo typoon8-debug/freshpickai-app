@@ -201,6 +201,7 @@ export async function GET(_req: NextRequest) {
 
 사용자 페르소나: ${personaCtx.personaName}
 - 설명: ${personaCtx.personaDescription}
+- 가족 내 역할: ${personaCtx.familyRoleLabel}
 - 가족 인원: ${personaCtx.householdSize}명
 - 조리 가능 시간: ${personaCtx.cookTimeMin}분 이내
 - 예산: ${budgetLabel}

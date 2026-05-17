@@ -28,6 +28,7 @@ export function buildChatPrompt(ctx: PersonaContext): string {
 
 ## 사용자 프로필
 - 페르소나: ${ctx.personaName} — ${ctx.personaDescription}
+- 가족 내 역할: ${ctx.familyRoleLabel}
 - 가족 인원: ${ctx.householdSize}명
 - 조리 가능 시간: ${ctx.cookTimeMin}분 이내
 - 한 끼 예산: ${BUDGET_LABELS[ctx.budgetLevel] ?? ctx.budgetLevel} (${ctx.householdSize}인분)

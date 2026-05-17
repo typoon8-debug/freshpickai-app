@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { embedText, embeddingToSql } from "./embedding";
+import { buildRoleLabel, type GenderType, type FamilyRoleType } from "@/lib/constants/relationship";
 
 // ── 페르소나 ID (9종) ─────────────────────────────────────────
 export type PersonaId =
@@ -54,6 +55,12 @@ export type PersonaContext = {
   cookingSkill: CookingSkill;
   preferredShoppingTime: ShoppingTime;
   personaTags: string[];
+  /** fp_user_profile.family_role — parent·teen·kid */
+  familyRole: FamilyRoleType;
+  /** fp_user_profile.gender — male·female·other·null */
+  gender: GenderType | null;
+  /** gender + familyRole 조합 한국어 레이블 (예: "아빠", "엄마", "10대 남학생") */
+  familyRoleLabel: string;
 };
 
 // ── 페르소나 분류 입력 ────────────────────────────────────────
@@ -182,11 +189,10 @@ function parseTagValue(tags: string[], prefix: string): string | undefined {
 export async function buildPersonaContext(userId: string): Promise<PersonaContext> {
   const supabase = await createClient();
 
-  const { data: pref } = await supabase
-    .from("fp_user_preference")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
+  const [{ data: pref }, { data: profileRow }] = await Promise.all([
+    supabase.from("fp_user_preference").select("*").eq("user_id", userId).single(),
+    supabase.from("fp_user_profile").select("family_role, gender").eq("user_id", userId).single(),
+  ]);
 
   const personaTags: string[] = pref?.persona_tags ?? [];
   const dietaryTags: string[] = pref?.dietary_tags ?? [];
@@ -215,6 +221,9 @@ export async function buildPersonaContext(userId: string): Promise<PersonaContex
     personaTags,
   });
 
+  const familyRole = (profileRow?.family_role ?? "parent") as FamilyRoleType;
+  const gender = (profileRow?.gender ?? null) as GenderType | null;
+
   const ctx: PersonaContext = {
     personaId,
     personaName: PERSONA_NAMES[personaId],
@@ -228,6 +237,9 @@ export async function buildPersonaContext(userId: string): Promise<PersonaContex
     cookingSkill,
     preferredShoppingTime,
     personaTags,
+    familyRole,
+    gender,
+    familyRoleLabel: buildRoleLabel(familyRole, gender),
   };
 
   // 페르소나 컨텍스트 텍스트 임베딩 → fp_user_preference.embedding 비동기 저장 (논블로킹)
@@ -239,6 +251,7 @@ export async function buildPersonaContext(userId: string): Promise<PersonaContex
 function buildPersonaContextText(ctx: PersonaContext): string {
   return [
     `페르소나: ${ctx.personaName} — ${ctx.personaDescription}`,
+    `가족 내 역할: ${ctx.familyRoleLabel}`,
     `예산: ${ctx.budgetLevel}`,
     `조리 시간: ${ctx.cookTimeMin}분 이내`,
     `조리 실력: ${ctx.cookingSkill}`,

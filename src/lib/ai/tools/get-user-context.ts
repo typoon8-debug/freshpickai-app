@@ -13,7 +13,7 @@ export type GetUserContextResult =
 export function createGetUserContextTool(userId: string) {
   return tool({
     description:
-      "현재 사용자의 페르소나 컨텍스트(취향, 예산, 식이 제한, 조리 실력 등)를 조회합니다. 맞춤 추천을 위해 첫 번째로 호출하세요.",
+      "현재 사용자의 페르소나 컨텍스트(가족 내 역할·성별·취향·예산·식이 제한·조리 실력 등)를 조회합니다. 맞춤 추천을 위해 첫 번째로 호출하세요.",
     inputSchema: z.object({}),
     execute: async (): Promise<GetUserContextResult> => {
       try {
