@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -183,6 +183,7 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | **HOT-001** NotificationProvider 이중 구독 | `onAuthStateChange` 마운트 즉시 `SIGNED_IN` 발화 → `setup()` 동시 2회 호출 → 채널명 충돌 `.on()` 에러 | `subscribedUserId` 중복 가드 도입 + `onAuthStateChange` 단일 진입점 재설계 | `src/components/push/NotificationProvider.tsx` |
 | **HOT-002** PollCreateSheet `<button>` 중첩 | `SheetTrigger`(`@base-ui/react`) + `<Button>` 중첩 → Hydration 에러 | Base UI `render` prop 패턴 교체 + `trigger` 타입 `ReactNode → ReactElement` | `src/components/family/poll-create-sheet.tsx` |
 | **HOT-003** AI RAG 와이파이 아이콘 미반영 | `useRagStatus` 마운트 시 1회만 체크 + `currentTool` 미연동 → RAG 검색 중에도 와이파이 아이콘이 녹색으로 바뀌지 않음 | 30초 폴링 재확인 추가 + `currentTool !== null` 조건으로 RAG 툴 활성화 시 `text-green-500 animate-pulse` 적용 | `src/components/chat/chat-header.tsx` |
+| **HOT-004** RAG 상태 표시 폴링 제거 | HOT-003에서 도입한 30초 `/api/health` 폴링이 불필요한 API 요청 유발. 실제 스트림 오류와 무관한 연결 상태 체크 방식의 한계 | `useRagStatus()` 훅 완전 제거 → Zustand `ragError` 상태 직접 구독으로 교체. `useChatStream` 스트림 오류 시 `setRagError(true)`, 새 전송 시 자동 리셋 | `src/lib/store.ts`, `src/components/chat/chat-header.tsx`, `src/hooks/use-chat-stream.ts` |
 
 ---
 
