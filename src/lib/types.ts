@@ -10,6 +10,8 @@ export type FpUser = {
   displayName: string;
   avatarUrl?: string;
   familyRole: "parent" | "teen" | "kid";
+  /** fp_user_profile.gender — 마이페이지 선호설정에서 CRUD */
+  gender: "male" | "female" | "other" | null;
   level: number;
   onboardedAt?: string;
   /** public.customer.customer_id — 커머스 연동 시만 사용 */
@@ -44,6 +46,8 @@ export type FamilyMember = {
   displayName: string; // JOIN 결과
   avatarUrl?: string;
   familyRole: FpUser["familyRole"];
+  /** fp_family_member.relationship — 초대 수락 시 선택한 가족 관계 */
+  relationship: import("@/lib/constants/relationship").RelationshipType;
   level: number;
   online: boolean;
   todayActivity: string;
