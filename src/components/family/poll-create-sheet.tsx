@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Trash2, Vote } from "lucide-react";
@@ -70,12 +70,14 @@ export function PollCreateSheet({
     handleSubmit,
     reset,
     formState: { errors },
+    watch,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { title: initialTitle, options: defaultOptions, deadlineHours: "24" },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "options" });
+  const selectedDeadline = watch("deadlineHours");
 
   async function onSubmit(values: FormValues) {
     setLoading(true);
@@ -182,32 +184,38 @@ export function PollCreateSheet({
           {/* 마감 시간 */}
           <div className="space-y-2">
             <Label>마감 시간</Label>
-            <RadioGroup
-              defaultValue="24"
-              className="grid grid-cols-4 gap-2"
-              onValueChange={(v: string) => {
-                // RHF field array와 별개로 deadlineHours 수동 관리
-                const el = document.querySelector<HTMLInputElement>('input[name="deadlineHours"]');
-                if (el) el.value = v;
-              }}
-            >
-              {DEADLINE_OPTIONS.map((opt) => (
-                <div key={opt.value} className="flex items-center space-x-0">
-                  <RadioGroupItem
-                    value={opt.value}
-                    id={`deadline-${opt.value}`}
-                    className="sr-only"
-                    {...register("deadlineHours")}
-                  />
-                  <Label
-                    htmlFor={`deadline-${opt.value}`}
-                    className="border-input hover:bg-accent flex w-full cursor-pointer items-center justify-center rounded-lg border p-2 text-center text-xs"
-                  >
-                    {opt.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+            <Controller
+              control={control}
+              name="deadlineHours"
+              render={({ field }) => (
+                <RadioGroup
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  className="grid grid-cols-4 gap-2"
+                >
+                  {DEADLINE_OPTIONS.map((opt) => (
+                    <div key={opt.value} className="flex items-center">
+                      <RadioGroupItem
+                        value={opt.value}
+                        id={`deadline-${opt.value}`}
+                        className="sr-only"
+                      />
+                      <Label
+                        htmlFor={`deadline-${opt.value}`}
+                        className={[
+                          "flex w-full cursor-pointer items-center justify-center rounded-lg border p-2 text-center text-xs transition-colors",
+                          selectedDeadline === opt.value
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-input hover:bg-accent",
+                        ].join(" ")}
+                      >
+                        {opt.label}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              )}
+            />
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
