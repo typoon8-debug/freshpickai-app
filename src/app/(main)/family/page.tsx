@@ -8,6 +8,7 @@ import { KidsPreferenceSection } from "@/components/family/KidsPreferenceSection
 import { FamilyMission } from "@/components/family/family-mission";
 import { FamilyInvite } from "@/components/family/family-invite";
 import { MovieNightButton } from "@/components/family/movie-night-button";
+import { FamilyPollSection } from "@/components/family/family-poll-section";
 import { getFamilyGroup, getFamilyMembers, getFamilyStatsAction } from "@/lib/actions/family";
 import {
   getCurrentVoteSession,
@@ -16,7 +17,9 @@ import {
   getMyVotes,
   getMonthlyPopularCards,
 } from "@/lib/actions/family/vote";
+import { getActivePolls, getPollResults, getMyPollVote } from "@/lib/actions/family/poll";
 import { createClient } from "@/lib/supabase/server";
+import type { FpPoll, PollResult } from "@/lib/types";
 
 // 투표용 기본 카드 목록 — DB에 실제로 없을 경우 DinnerVote에 제목만 표시
 const DEFAULT_VOTE_CARDS = [
@@ -110,6 +113,32 @@ export default async function FamilyPage() {
         }))
       : undefined;
 
+  // 활성 투표 안건 + 결과 + 내 투표 조회
+  let activePolls: Array<{
+    poll: FpPoll;
+    results: PollResult[];
+    myVoteOptionId: string | null;
+    totalTargeted: number;
+  }> = [];
+
+  if (group && user) {
+    const polls = await getActivePolls(group.groupId);
+    activePolls = await Promise.all(
+      polls.map(async (poll) => {
+        const [{ results, totalTargeted }, myVote] = await Promise.all([
+          getPollResults(poll.pollId),
+          getMyPollVote(poll.pollId),
+        ]);
+        return {
+          poll,
+          results,
+          myVoteOptionId: myVote?.optionId ?? null,
+          totalTargeted,
+        };
+      })
+    );
+  }
+
   // 로그인 사용자 표시 이름 (FamilyInvite용)
   const { data: myProfile } = await supabase
     .from("fp_user_profile")
@@ -141,6 +170,13 @@ export default async function FamilyPage() {
         />
         <PopularRanking items={monthlyRanking.length > 0 ? monthlyRanking : undefined} />
         <TrendingCards items={monthlyRanking.length > 0 ? monthlyRanking : trendingFallback} />
+        {group && (
+          <FamilyPollSection
+            groupId={group.groupId}
+            currentUserId={user?.id ?? ""}
+            polls={activePolls}
+          />
+        )}
         {group && (
           <section className="px-4">
             <h3 className="text-ink-700 mb-3 text-sm font-semibold">무비나이트 🎬</h3>
