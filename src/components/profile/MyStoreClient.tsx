@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
-import { ChevronLeft, Store, MapPin, Phone, Clock, Plus, CheckCircle2 } from "lucide-react";
+import { Store, MapPin, Phone, Clock, Plus, CheckCircle2 } from "lucide-react";
+import { TopHeader } from "@/components/layout/top-header";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,21 +92,11 @@ export default function MyStoreClient({ initialShops, initialCurrentStoreId }: P
 
   return (
     <div className="min-h-screen pb-12">
-      {/* 헤더 */}
-      <header className="border-line bg-paper sticky top-0 z-30 flex h-14 items-center gap-3 border-b px-4">
-        {mode === "list" ? (
-          <Link href="/profile" aria-label="뒤로가기">
-            <ChevronLeft size={22} className="text-ink-700" />
-          </Link>
-        ) : (
-          <button onClick={() => setMode("list")} className="text-ink-700" aria-label="뒤로가기">
-            <ChevronLeft size={22} />
-          </button>
-        )}
-        <h1 className="text-ink-800 flex-1 text-base font-bold">
-          {mode === "list" ? "내가게" : "다른 가게 추가"}
-        </h1>
-      </header>
+      <TopHeader
+        title={mode === "list" ? "내가게" : "다른 가게 추가"}
+        backHref={mode === "list" ? "/profile" : undefined}
+        onBack={mode === "add" ? () => setMode("list") : undefined}
+      />
 
       {/* 목록 모드 */}
       {mode === "list" && (

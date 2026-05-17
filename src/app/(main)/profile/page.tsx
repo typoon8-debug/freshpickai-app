@@ -5,11 +5,13 @@ import { createClient } from "@/lib/supabase/server";
 import { buildPersonaContext, PERSONA_NAMES } from "@/lib/ai/persona-context";
 import { PreferenceAccordion } from "@/components/profile/preference-accordion";
 import { NotificationAccordion } from "@/components/profile/notification-accordion";
+import { TopHeader } from "@/components/layout/top-header";
 import { getProfileStatsAction } from "@/lib/actions/profile";
 import { getInboxNotifications, getUnreadCount } from "@/lib/actions/profile/notifications-inbox";
 import { signOutAction } from "@/lib/actions/auth/signout";
 import { resetOnboardingAction } from "@/lib/actions/auth/onboarding";
 import type { CookingSkill, ShoppingTime } from "@/lib/ai/persona-context";
+import type { FamilyRoleType, GenderType } from "@/lib/constants/relationship";
 
 const MENU_ITEMS = [
   { href: "/profile/my-store", label: "내가게" },
@@ -39,7 +41,7 @@ export default async function ProfilePage() {
       .single(),
     supabase
       .from("fp_user_profile")
-      .select("display_name, avatar_url")
+      .select("display_name, avatar_url, family_role, gender")
       .eq("user_id", user.id)
       .single(),
     getProfileStatsAction(),
@@ -63,8 +65,10 @@ export default async function ProfilePage() {
 
   return (
     <div className="min-h-screen pb-12">
+      <TopHeader title="마이프레시" backHref="/" />
+
       {/* 프로필 헤더 */}
-      <div className="bg-mocha-50 px-4 pt-12 pb-6">
+      <div className="bg-mocha-50 px-4 pt-6 pb-6">
         <div className="flex items-center gap-4">
           <div className="bg-mocha-200 flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full text-2xl">
             {profile.data?.avatar_url ? (
@@ -132,6 +136,8 @@ export default async function ProfilePage() {
             cookingSkill,
             preferredShoppingTime,
             householdSize,
+            familyRole: (profile.data?.family_role ?? "parent") as FamilyRoleType,
+            gender: (profile.data?.gender ?? null) as GenderType | null,
           }}
         />
       </div>

@@ -1,11 +1,61 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import type { GenderType, FamilyRoleType } from "@/lib/constants/relationship";
+import type { FpUser } from "@/lib/types";
 
 export type ProfileStats = {
   pointBalance: number;
   couponCount: number;
 };
+
+export type UpdateUserProfileInput = {
+  familyRole?: FamilyRoleType;
+  gender?: GenderType | null;
+};
+
+/** fp_user_profile의 familyRole·gender CRUD — 마이페이지 선호설정에서 호출 */
+export async function updateUserProfile(
+  input: UpdateUserProfileInput
+): Promise<{ ok: boolean; profile?: FpUser; error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "AUTH_REQUIRED" };
+
+  const updates: Record<string, unknown> = { modified_at: new Date().toISOString() };
+  if (input.familyRole !== undefined) updates.family_role = input.familyRole;
+  if ("gender" in input) updates.gender = input.gender ?? null;
+
+  const { data, error } = await supabase
+    .from("fp_user_profile")
+    .update(updates)
+    .eq("user_id", user.id)
+    .select(
+      "user_id, display_name, avatar_url, family_role, gender, level, onboarded_at, ref_customer_id"
+    )
+    .single();
+
+  if (error || !data) return { ok: false, error: error?.message ?? "UPDATE_FAILED" };
+
+  revalidatePath("/profile");
+
+  return {
+    ok: true,
+    profile: {
+      userId: data.user_id,
+      displayName: data.display_name,
+      avatarUrl: data.avatar_url ?? undefined,
+      familyRole: data.family_role as FpUser["familyRole"],
+      gender: (data.gender as GenderType | null) ?? null,
+      level: data.level,
+      onboardedAt: data.onboarded_at ?? undefined,
+      refCustomerId: data.ref_customer_id ?? undefined,
+    },
+  };
+}
 
 /** 사용자 보유 포인트 + 사용 가능 쿠폰 수 조회 */
 export async function getProfileStatsAction(): Promise<ProfileStats> {

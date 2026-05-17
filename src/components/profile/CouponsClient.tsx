@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, TicketPercent, Plus } from "lucide-react";
+import { TicketPercent, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { TopHeader } from "@/components/layout/top-header";
 import { getMyCouponsWithStatus, type MyCoupon } from "@/lib/actions/coupon/index";
 import CouponClaimSheet from "./CouponClaimSheet";
 
@@ -78,21 +78,19 @@ export default function CouponsClient({ initialCoupons, storeId }: Props) {
 
   return (
     <div className="min-h-screen pb-12">
-      {/* 헤더 */}
-      <header className="border-line bg-paper sticky top-0 z-30 flex h-14 items-center gap-3 border-b px-4">
-        <Link href="/profile" aria-label="뒤로가기">
-          <ChevronLeft size={22} className="text-ink-700" />
-        </Link>
-        <h1 className="text-ink-800 flex-1 text-base font-bold">쿠폰함</h1>
-        {storeId && (
+      <TopHeader title="쿠폰함" backHref="/profile" />
+
+      {/* 새 쿠폰받기 바 */}
+      {storeId && (
+        <div className="border-line flex items-center justify-end border-b bg-white px-4 py-2">
           <button
             onClick={() => setClaimOpen(true)}
-            className="text-mocha-700 flex items-center gap-1 text-sm font-medium"
+            className="text-mocha-700 flex items-center gap-1 text-sm font-semibold"
           >
-            <Plus size={16} />새 쿠폰 받기
+            <Plus size={15} />새 쿠폰 받기
           </button>
-        )}
-      </header>
+        </div>
+      )}
 
       {/* 탭 */}
       <div className="border-line grid grid-cols-2 border-b">

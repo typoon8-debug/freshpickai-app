@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
-import { ChevronLeft, MapPin, Star, MapPinOff, RefreshCw, Plus } from "lucide-react";
+import { MapPin, Star, MapPinOff, RefreshCw, Plus } from "lucide-react";
+import { TopHeader } from "@/components/layout/top-header";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import AddressForm, { type AddressFormValues } from "./AddressForm";
@@ -137,26 +137,18 @@ export default function AddressManageClient({ initialAddresses }: Props) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* 헤더 */}
-      <header className="border-line bg-paper sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b px-4">
-        {mode === "list" ? (
-          <Link href="/profile" aria-label="뒤로가기">
-            <ChevronLeft size={22} className="text-ink-700" />
-          </Link>
-        ) : (
-          <button
-            onClick={() => {
-              setMode("list");
-              setEditTarget(null);
-            }}
-            className="text-ink-700"
-            aria-label="뒤로가기"
-          >
-            <ChevronLeft size={22} />
-          </button>
-        )}
-        <h1 className="text-ink-800 flex-1 text-base font-bold">{title}</h1>
-      </header>
+      <TopHeader
+        title={title}
+        backHref={mode === "list" ? "/profile" : undefined}
+        onBack={
+          mode !== "list"
+            ? () => {
+                setMode("list");
+                setEditTarget(null);
+              }
+            : undefined
+        }
+      />
 
       {/* 목록 모드 */}
       {mode === "list" && (

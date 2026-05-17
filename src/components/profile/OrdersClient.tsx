@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { ChevronLeft, Package } from "lucide-react";
+import Link from "next/link";
+import { Package } from "lucide-react";
+import { TopHeader } from "@/components/layout/top-header";
 import OrderCard from "./OrderCard";
 import type { OrderWithDetails } from "@/lib/actions/orders/index";
 
@@ -24,13 +25,7 @@ export default function OrdersClient({ initialOrders }: Props) {
 
   return (
     <div className="min-h-screen pb-12">
-      {/* 헤더 */}
-      <header className="border-line bg-paper sticky top-0 z-30 flex h-14 items-center gap-3 border-b px-4">
-        <Link href="/profile" aria-label="뒤로가기">
-          <ChevronLeft size={22} className="text-ink-700" />
-        </Link>
-        <h1 className="text-ink-800 flex-1 text-base font-bold">주문 / 배송조회</h1>
-      </header>
+      <TopHeader title="주문/배송조회" backHref="/profile" />
 
       {/* 검색 */}
       <div className="border-line border-b px-4 py-2">

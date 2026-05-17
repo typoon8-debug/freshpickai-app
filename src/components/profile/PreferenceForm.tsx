@@ -3,6 +3,13 @@
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
 import { saveUserPreference } from "@/lib/ai/persona-inference";
+import { updateUserProfile } from "@/lib/actions/profile";
+import {
+  FAMILY_ROLE_CONFIG,
+  GENDER_CONFIG,
+  type FamilyRoleType,
+  type GenderType,
+} from "@/lib/constants/relationship";
 import type { CookingSkill, ShoppingTime } from "@/lib/ai/persona-context";
 
 // ── 프리셋 데이터 ──────────────────────────────────────────────
@@ -31,12 +38,24 @@ const SHOP_TIME_OPTIONS: { value: ShoppingTime; label: string; emoji: string }[]
   { value: "evening", label: "저녁", emoji: "🌙" },
 ];
 
+const FAMILY_ROLE_OPTIONS = Object.entries(FAMILY_ROLE_CONFIG) as [
+  FamilyRoleType,
+  { label: string; description: string },
+][];
+
+const GENDER_OPTIONS = Object.entries(GENDER_CONFIG) as [
+  GenderType,
+  { label: string; emoji: string },
+][];
+
 // ── Props ──────────────────────────────────────────────────────
 export interface PreferenceFormValues {
   dietaryTags: string[];
   cookingSkill: CookingSkill;
   preferredShoppingTime: ShoppingTime;
   householdSize: number;
+  familyRole?: FamilyRoleType;
+  gender?: GenderType | null;
 }
 
 interface PreferenceFormProps {
@@ -55,6 +74,10 @@ export function PreferenceForm({ initialValues, onSaved, className }: Preference
     initialValues?.preferredShoppingTime ?? "afternoon"
   );
   const [householdSize, setHouseholdSize] = useState<number>(initialValues?.householdSize ?? 3);
+  const [familyRole, setFamilyRole] = useState<FamilyRoleType>(
+    initialValues?.familyRole ?? "parent"
+  );
+  const [gender, setGender] = useState<GenderType | null>(initialValues?.gender ?? null);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -66,13 +89,13 @@ export function PreferenceForm({ initialValues, onSaved, className }: Preference
   const handleSubmit = () => {
     setError(null);
     startTransition(async () => {
-      const result = await saveUserPreference({
-        dietaryTags,
-        cookingSkill,
-        preferredShoppingTime,
-        householdSize,
-      });
-      if (result.success) {
+      // 선호 설정(페르소나 태그) + 프로필(familyRole·gender) 병렬 저장
+      const [prefResult, profileResult] = await Promise.all([
+        saveUserPreference({ dietaryTags, cookingSkill, preferredShoppingTime, householdSize }),
+        updateUserProfile({ familyRole, gender }),
+      ]);
+
+      if (prefResult.success && profileResult.ok) {
         setSaved(true);
         onSaved?.();
         setTimeout(() => setSaved(false), 2000);
@@ -84,6 +107,64 @@ export function PreferenceForm({ initialValues, onSaved, className }: Preference
 
   return (
     <div className={cn("flex flex-col gap-6", className)}>
+      {/* 가족 내 역할 */}
+      <section>
+        <p className="text-ink-700 mb-3 text-sm font-semibold">가족 내 역할</p>
+        <div className="grid grid-cols-3 gap-2">
+          {FAMILY_ROLE_OPTIONS.map(([value, { label, description }]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setFamilyRole(value)}
+              className={cn(
+                "flex flex-col items-center gap-1 rounded border py-3 text-sm transition",
+                familyRole === value
+                  ? "border-mocha-700 bg-mocha-50 text-mocha-700 font-semibold"
+                  : "border-line text-ink-500 hover:border-mocha-300"
+              )}
+            >
+              <span className="font-medium">{label}</span>
+              <span className="text-ink-300 text-xs">{description}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 성별 */}
+      <section>
+        <p className="text-ink-700 mb-3 text-sm font-semibold">성별</p>
+        <div className="flex gap-2">
+          {GENDER_OPTIONS.map(([value, { label, emoji }]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setGender((prev) => (prev === value ? null : value))}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded border py-3 text-sm transition",
+                gender === value
+                  ? "border-mocha-700 bg-mocha-50 text-mocha-700 font-semibold"
+                  : "border-line text-ink-500 hover:border-mocha-300"
+              )}
+            >
+              <span>{emoji}</span>
+              <span>{label}</span>
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setGender(null)}
+            className={cn(
+              "flex-1 rounded border py-3 text-sm transition",
+              gender === null
+                ? "border-mocha-700 bg-mocha-50 text-mocha-700 font-semibold"
+                : "border-line text-ink-500 hover:border-mocha-300"
+            )}
+          >
+            미설정
+          </button>
+        </div>
+      </section>
+
       {/* 가족 인원 */}
       <section>
         <p className="text-ink-700 mb-3 text-sm font-semibold">우리 가족은 몇 명인가요?</p>

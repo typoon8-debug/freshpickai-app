@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { ChevronLeft, Star } from "lucide-react";
+import { Star } from "lucide-react";
+import { TopHeader } from "@/components/layout/top-header";
 import { createClient } from "@/lib/supabase/server";
 
 type Review = {
@@ -36,12 +36,7 @@ export default async function ReviewsPage() {
 
   return (
     <div className="min-h-screen pb-12">
-      <header className="border-line bg-paper sticky top-0 z-30 flex h-14 items-center gap-3 border-b px-4">
-        <Link href="/profile" aria-label="뒤로가기">
-          <ChevronLeft size={22} className="text-ink-700" />
-        </Link>
-        <h1 className="text-ink-800 flex-1 text-base font-bold">구매후기</h1>
-      </header>
+      <TopHeader title="구매후기" backHref="/profile" />
 
       {reviews.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
+import { MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
+import { TopHeader } from "@/components/layout/top-header";
 import { getSessionMessages } from "@/lib/actions/chat/session-list";
 import type { ChatSessionSummary, ChatSessionMessage } from "@/lib/actions/chat/session-list";
 
@@ -16,7 +16,6 @@ interface ExpandedSession {
 }
 
 export function ChatHistoryClient({ sessions }: ChatHistoryClientProps) {
-  const router = useRouter();
   const [expanded, setExpanded] = useState<Record<string, ExpandedSession>>({});
 
   const toggleSession = async (sessionId: string) => {
@@ -36,16 +35,7 @@ export function ChatHistoryClient({ sessions }: ChatHistoryClientProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* 헤더 */}
-      <div className="flex items-center gap-3 border-b px-4 py-3">
-        <button type="button" onClick={() => router.back()} className="text-ink-600 p-1">
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex flex-1 items-center gap-2">
-          <MessageSquare size={18} className="text-mocha-500" />
-          <h1 className="text-ink-900 text-base font-semibold">대화 히스토리</h1>
-        </div>
-      </div>
+      <TopHeader title="대화 히스토리" backHref="/profile" />
 
       {/* 세션 목록 */}
       <div className="flex-1 divide-y px-4">

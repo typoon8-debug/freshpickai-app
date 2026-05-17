@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Brain, Trash2 } from "lucide-react";
+import { Brain, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { TopHeader } from "@/components/layout/top-header";
 import { deleteMemoryItem, clearAllMemoryItems } from "@/lib/actions/chat/memory-manage";
 import type { MemoryItem } from "@/lib/actions/chat/memory-manage";
 
@@ -13,7 +13,6 @@ interface AiMemoryClientProps {
 }
 
 export function AiMemoryClient({ initialItems }: AiMemoryClientProps) {
-  const router = useRouter();
   const [items, setItems] = useState<MemoryItem[]>(initialItems);
   const [isPending, startTransition] = useTransition();
 
@@ -43,16 +42,11 @@ export function AiMemoryClient({ initialItems }: AiMemoryClientProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* 헤더 */}
-      <div className="flex items-center gap-3 border-b px-4 py-3">
-        <button type="button" onClick={() => router.back()} className="text-ink-600 p-1">
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex flex-1 items-center gap-2">
-          <Brain size={18} className="text-mocha-500" />
-          <h1 className="text-ink-900 text-base font-semibold">AI 기억 관리</h1>
-        </div>
-        {items.length > 0 && (
+      <TopHeader title="AI 기억 관리" backHref="/profile" />
+
+      {/* 전체 초기화 서브바 */}
+      {items.length > 0 && (
+        <div className="border-line flex items-center justify-end border-b bg-white px-4 py-2">
           <Button
             variant="ghost"
             size="sm"
@@ -62,8 +56,8 @@ export function AiMemoryClient({ initialItems }: AiMemoryClientProps) {
           >
             전체 초기화
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* 안내 배너 */}
       <div className="bg-mocha-50 border-mocha-100 mx-4 mt-4 rounded-xl border p-4">
