@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-17
-> **📊 진행 상황**: v0.3a 보완 완료 (신규 기능 4종 + F014 + 버그수정 3종 + v0.3a 보완 스프린트 8건)
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 2건
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -162,18 +162,42 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 
 ---
 
-### 5. MVP 이후 기능 (Phase 5~6 유지)
+### 6. Sprint 6 구현 완료 기능 및 핫픽스 (2026-05-17)
 
-| ID | 기능명 | Phase |
-|----|--------|-------|
-| F023 | FCM 푸시 알림 | Phase 5 |
-| F024 | 검색 고도화 | Phase 5 |
-| F025 | 영양 분석 차트 | Phase 5 |
-| F026 | 운영자 검수 큐 | Phase 5 |
-| F027 | OCR 장보기 메모 | Phase 5 |
-| F028 | 멀티 매장 가격 비교 | Phase 5 |
-| F029 | 정기 배송 구독 | Phase 6 |
-| F031 | 운영자 대시보드 | Phase 6 |
+> Task 055/056/057/059 완료 + 인앱 알림함(Task 055 보강) + 런타임 버그 2건 수정
+
+**Sprint 6 완료 기능**
+
+| ID | 기능명 | 완료 Task | 주요 구현 |
+|----|--------|----------|----------|
+| **F023** | FCM 푸시 알림 | Task 055 | firebase-admin, upsertFcmToken, sendPollCreatedNotification/sendMovieNightNotification/sendDeliveryNotification, Service Worker push 핸들러 |
+| **F023b** | 인앱 알림 수신함 | Sprint 6 보강 | `fp_notifications` 테이블 · Realtime 배지 · `useNotificationStore` · `getUnreadCount()` Server Action |
+| **F024** | 검색 고도화 | Task 056 | `/api/search` pg_trgm+pgvector 병렬 검색 · `SearchAutoComplete` 200ms 디바운스 · `FilterPanel` URL params 동기화 |
+| **F025** | 영양 분석 차트 | Task 057 | `getWeeklyNutritionSummary` 7종 집계 · Recharts BarChart+RadarChart · `/profile/nutrition` 주차 탐색 |
+| **F027** | OCR 장보기 메모 | Task 059 | Claude Haiku 4.5 Vision · `OCRCaptureButton` 카메라 캡처·미리보기 · `/memo` 페이지 통합 |
+
+**Sprint 6 핫픽스**
+
+| 항목 | 현상 | 수정 내용 | 영향 파일 |
+|------|------|----------|----------|
+| **HOT-001** NotificationProvider 이중 구독 | `onAuthStateChange` 마운트 즉시 `SIGNED_IN` 발화 → `setup()` 동시 2회 호출 → 채널명 충돌 `.on()` 에러 | `subscribedUserId` 중복 가드 도입 + `onAuthStateChange` 단일 진입점 재설계 | `src/components/push/NotificationProvider.tsx` |
+| **HOT-002** PollCreateSheet `<button>` 중첩 | `SheetTrigger`(`@base-ui/react`) + `<Button>` 중첩 → Hydration 에러 | Base UI `render` prop 패턴 교체 + `trigger` 타입 `ReactNode → ReactElement` | `src/components/family/poll-create-sheet.tsx` |
+
+---
+
+### 7. MVP 이후 기능 (Phase 5~6 잔여)
+
+| ID | 기능명 | Phase | 상태 |
+|----|--------|-------|------|
+| F023 | FCM 푸시 알림 | Phase 5 | ✅ 완료 (Task 055) |
+| F023b | 인앱 알림 수신함 | Phase 5 | ✅ 완료 (Sprint 6 보강) |
+| F024 | 검색 고도화 | Phase 5 | ✅ 완료 (Task 056) |
+| F025 | 영양 분석 차트 | Phase 5 | ✅ 완료 (Task 057) |
+| F026 | 운영자 검수 큐 | Phase 5 | 🔜 Task 058 |
+| F027 | OCR 장보기 메모 | Phase 5 | ✅ 완료 (Task 059) |
+| F028 | 멀티 매장 가격 비교 | Phase 5 | 🔜 Task 060 |
+| F029 | 정기 배송 구독 | Phase 6 | 🔜 Task 061 |
+| F031 | 운영자 대시보드 | Phase 6 | 🔜 Task 063 |
 
 ---
 
@@ -352,6 +376,10 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | nutrition_log | log_id, customer_id, card_id, calories, protein, carbs, fat | F025 영양 이력 |
 | search_log | log_id, customer_id, query, result_count, created_at | F024 검색 분석 |
 | push_subscription | sub_id, customer_id, endpoint, keys | F023 FCM 구독 |
+| fp_notifications | id, user_id, type(vote\|movie_night\|delivery\|system), title, body, link_url, is_read, read_at | F023b 인앱 알림 수신함 · Realtime 배지 |
+| fp_poll | poll_id, group_id, title, options JSONB, ends_at, poll_type, status | F023 가족 투표 |
+| fp_poll_vote | vote_id, poll_id, voter_id, option_id | F023 투표 참여 |
+| fp_user_notification_settings | user_id, vote_enabled, movie_night_enabled, delivery_enabled | F023 알림 설정 |
 
 ---
 
