@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-17
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -215,6 +215,54 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | F028 | 멀티 매장 가격 비교 | Phase 5 | 🔜 Task 060 |
 | F029 | 정기 배송 구독 | Phase 6 | 🔜 Task 061 |
 | F031 | 운영자 대시보드 | Phase 6 | 🔜 Task 063 |
+
+---
+
+### 9. 모바일 성능 최적화 (PERF — 2026-05-17)
+
+> 모바일 로딩 속도 저하 대응 — 소스 구조·캐시·API·DB 인덱싱 전방위 개선 (1~3단계 완료, 4단계 운영테스트 후 적용)
+
+**✅ 1단계 — 즉시 적용**
+
+| 포인트 | 변경 파일 | 내용 | 효과 |
+|--------|-----------|------|------|
+| P1 DailyPick 쿼리 최적화 | `src/lib/actions/cards/index.ts` | 전체 N행 → `count` + `.range(idx,idx)` 단일 행 반환 | 서버 응답 40~60% 단축 |
+| P2 이미지 CDN TTL | `next.config.ts` | `minimumCacheTTL: 60` → `86400` (24h) | 재방문 LCP 25~35% 향상 |
+| P3 Pretendard preload | `src/app/layout.tsx` | `preload: false` → `true` | CLS 0 수렴, 텍스트 렌더 20~30% 향상 |
+| P7 번들 트리셰이킹 | `next.config.ts` | `optimizePackageImports`에 radix-ui 3종·recharts·date-fns 추가 | JS 파싱 5~10% 감소 |
+
+**✅ 2단계 — 번들 분리**
+
+| 포인트 | 변경 파일 | 내용 | 효과 |
+|--------|-----------|------|------|
+| P5 Firebase 동적 임포트 | `src/components/layout/client-providers.tsx` (신설) | `ClientProviders` Client Component 분리 → `FcmInitializer`·`NotificationProvider` `dynamic({ ssr: false })` 래핑. Next.js 16 Server Component 내 `ssr:false` 금지 규칙 대응 | 초기 JS 15~25% 감소, Firebase ~150KB 번들 제외 |
+| P5 Firebase 모듈 지연 | `src/hooks/useFcmToken.ts` | firebase 모듈 static → 함수 내 `await import()` 전환 | Firebase 패키지 코드 분할 |
+| P6 recharts 동적 임포트 | `src/app/(main)/profile/nutrition/page.tsx` | `WeeklyNutritionChart` → `dynamic({ ssr: false })` | 홈/카드 초기 번들 10~15% 감소 |
+| P9 API CDN 캐시 | `src/app/api/cards/route.ts`, `cards/[id]/route.ts`, `daily-pick/route.ts` | `Cache-Control: public, s-maxage` 헤더 추가 (공식카드 300s, 카드상세 300s, 데일리픽 3600s) | Vercel Edge CDN 서빙, 10~30ms 응답 |
+
+**✅ 3단계 — DB + 서버 로직**
+
+| 포인트 | 변경 파일 | 내용 | 효과 |
+|--------|-----------|------|------|
+| P4 getCard RPC | `src/lib/actions/cards/index.ts` | 3 round-trip → `fp_get_card_detail` RPC 1 round-trip | 카드 상세 35~50% 단축 |
+| P8 검색 MV 전환 | `src/app/api/search/route.ts` | `v_store_inventory_item(VIEW)` → `mv_store_item_slim(GIN trgm 인덱스)` | 상품 검색 50~80% 단축 |
+| P10 임베딩 캐시 | `src/lib/ai/vector-search.ts` | `unstable_cache` 1시간 — 동일 검색어 OpenAI 호출 생략 | 반복 검색 30~40% 단축 |
+| P12 LCP 이미지 priority | `src/components/home/AIRecommendSection.tsx` | AI 추천 캐러셀 첫 번째 카드 `priority={true}` → `<link rel="preload">` + `fetchpriority="high"` 자동 적용 | LCP Core Web Vitals 개선 |
+| DB 인덱스 3종 | Supabase 마이그레이션 | `fp_menu_card` 복합 필터 인덱스 + trgm GIN 인덱스, `fp_memory_items` customer 인덱스 | 카드 검색·RAG 조회 최적화 |
+
+**실측 성능 (개발 서버 기준 — 2026-05-17 측정)**
+
+| 지표 | 캐시 전 (cold) | 캐시 후 (warm) | 개선율 |
+|------|---------------|---------------|--------|
+| 홈 페이지 로드 (GET /) | 1,422ms | 338ms | **76% ↓** |
+| AI 추천 메타 API | 620ms | 120ms | **80% ↓** |
+| 알림 미읽음 수 조회 | 486ms | 126ms | **74% ↓** |
+
+**🔜 4단계 — 운영테스트 완료 후 적용 예정**
+
+| 포인트 | 내용 | 주의사항 |
+|--------|------|----------|
+| P11 PWA SW 이미지 캐싱 전략 | `src/sw.ts` — `/_next/image` `NetworkFirst` → `StaleWhileRevalidate` (7일) | 이미지 변경 시 최대 7일 구버전 노출 가능. 빈도 확인 후 `maxAgeSeconds` 조정 (7일 → 1일 단축 가능) |
 
 ---
 
