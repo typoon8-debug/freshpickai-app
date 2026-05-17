@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
-> **📅 최종 업데이트**: 2026-05-17
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선
+> **📅 최종 업데이트**: 2026-05-18
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -199,6 +199,24 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | **MEM-005** | 페이지 이탈 메모리 플러시 | `useChatStream`에 `beforeunload` 이벤트 리스너 추가 → `navigator.sendBeacon("/api/ai/memory/flush")` 호출. 탭 닫기·새로고침 시 미저장 대화 자동 플러시 | `src/hooks/use-chat-stream.ts` |
 | **MEM-006** | `initMessages()` 스토어 액션 | `useChatStore`에 `initMessages(messages)` 추가. DB 기록을 sessionStorage보다 우선 복원 (탭 재진입 시 최신 DB 기록 표시) | `src/lib/store.ts` |
 | **MEM-007** | 프로필 AI 메뉴 추가 | 프로필 페이지에 "AI 기억 관리" (`/profile/ai-memory`) + "대화 히스토리" (`/profile/chat-history`) 메뉴 항목 추가 | `src/app/(main)/profile/page.tsx` |
+
+---
+
+### 11. gender·relationship 설계 변경 (FIX-010 — 2026-05-18)
+
+> AI 페르소나 추천 정확도 향상 + 초대 수락 시 가족 관계 선택 UX
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **DB-001** | `fp_user_profile.gender` 추가 | `male·female·other` TEXT, NULL 허용. 마이페이지 선호설정에서 CRUD, AI 페르소나 분류에 반영 | `supabase/migrations/20260518_018_gender_relationship.sql` |
+| **DB-002** | `fp_family_member.relationship` 추가 | 13종 관계 Enum (`dad·mom·husband·wife·son·daughter·elder_brother·elder_sister·younger_brother·younger_sister·grandfather·grandmother·other`). 초대 수락 시 사용자 직접 선택. `NOT NULL DEFAULT 'other'` | `supabase/migrations/20260518_018_gender_relationship.sql` |
+| **CONST-001** | 공통 상수 모듈 신설 | `RelationshipType`(13종), `GenderType`(3종), `FamilyRoleType`(3종), `RELATIONSHIP_CONFIG·GENDER_CONFIG·FAMILY_ROLE_CONFIG` 레이블+이모지 맵, `buildRoleLabel(familyRole, gender)` 조합 함수 | `src/lib/constants/relationship.ts` |
+| **UX-001** | `RelationshipSelector` 컴포넌트 | 13종 관계 2열 그리드 UI. 선택 시 Mocha Mousse 하이라이트. 이모지+레이블 표시 | `src/components/family/relationship-selector.tsx` |
+| **UX-002** | 초대 수락 관계 선택 | `InviteAcceptClient`: 관계 선택 → `joinFamilyByInvite(code, relationship)` → `/family?welcome=new|existing` 이동 | `src/app/(main)/family/invite/[code]/_components/invite-accept-client.tsx` |
+| **UX-003** | 가족 보드 관계 표시 | `MemberGrid`: 멤버 아바타 하단에 관계 이모지+레이블 표시 | `src/components/family/member-grid.tsx` |
+| **AI-001** | `PersonaContext` 보강 | `familyRole: FamilyRoleType`, `gender: GenderType \| null`, `familyRoleLabel: string` 추가. `buildPersonaContext()`에서 `buildRoleLabel()` 호출하여 "아빠", "엄마", "10대 남학생" 등 레이블 생성 | `src/lib/ai/persona-context.ts` |
+| **AI-002** | AI 프롬프트·도구 업데이트 | 시스템 프롬프트에 `familyRoleLabel` 삽입. `get-user-context` 도구 응답에 `gender·familyRole` 포함. `recommend` 라우트에서 페르소나 정확도 강화 | `src/lib/ai/prompts.ts`, `src/lib/ai/tools/get-user-context.ts`, `src/app/api/ai/recommend/route.ts` |
+| **PREF-001** | `PreferenceForm` gender/familyRole 추가 | 선호설정 폼에 성별(남성/여성/기타) + 가족 역할(부모/10대/아이) 선택 UI 추가. `updateUserProfile` Server Action에서 `gender·family_role` 저장 | `src/components/profile/PreferenceForm.tsx`, `src/lib/actions/profile/index.ts` |
 
 ---
 
@@ -429,7 +447,7 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | order / order_detail | order_id, customer_id, status, delivered_at | 주문 |
 | tenant_item_master | tenant_item_id, item_name, category, base_price, is_seasonal | 상품 마스터 |
 | tenant_item_ai_detail | ai_detail_id, chunk_type, content, embedding, persona_tags | 상품 측 RAG |
-| family_group / family_member | group_id, group_name, member_id, role | 가족 그룹 |
+| family_group / family_member | group_id, group_name, member_id, role, **relationship** (13종) | 가족 그룹 |
 | family_vote | vote_id, group_id, card_id, vote_type | 투표 |
 | card_note | note_id, note_type, helpful_count, ai_consent | BP1 자기보강 입력 |
 | card_section / card_section_item | section_id, ai_auto_fill, display_order | F015 탭 구성 |
@@ -447,6 +465,13 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | chat_message_raw | message_id, customer_id, session_id, role, content, created_at | 최근 원문 TTL 30일 |
 | chat_session_summary | summary_id, customer_id, session_id, summary_text, keywords, created_at | 대화별 요약 압축 |
 | memory_items | memory_id, customer_id, content, embedding, source_session_id, importance_score, created_at | 장기 기억 벡터 저장 |
+
+### FIX-010 스키마 변경 (2026-05-18)
+
+| 테이블 | 변경 내용 | 비고 |
+|--------|---------|------|
+| fp_user_profile | `gender TEXT CHECK(male\|female\|other) DEFAULT NULL` 추가 | AI 페르소나 분류, 마이페이지 선호설정 |
+| fp_family_member | `relationship TEXT NOT NULL DEFAULT 'other' CHECK(13종)` 추가 | 초대 수락 시 관계 선택, 가족 보드 표시 |
 
 ### Phase 5 신규 테이블
 
