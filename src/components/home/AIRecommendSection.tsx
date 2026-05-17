@@ -265,13 +265,14 @@ export function AIRecommendSection({ initialCards }: AIRecommendSectionProps) {
           className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [&::-webkit-scrollbar]:hidden"
           data-testid="recommend-carousel"
         >
-          {activeRec.cards.map((rec) => {
+          {activeRec.cards.map((rec, idx) => {
             const card = cardMap.get(rec.cardId);
             return (
               <RecommendCard
                 key={rec.cardId}
                 rec={rec}
                 card={card}
+                priority={idx === 0}
                 onClick={() => router.push(`/cards/${rec.cardId}`)}
               />
             );
@@ -291,10 +292,11 @@ interface RecommendCardItemProps {
     discountPct?: number;
   };
   card?: MenuCard;
+  priority?: boolean;
   onClick: () => void;
 }
 
-function RecommendCard({ rec, card, onClick }: RecommendCardItemProps) {
+function RecommendCard({ rec, card, priority, onClick }: RecommendCardItemProps) {
   const confidencePct = Math.round(rec.confidence * 100);
 
   return (
@@ -311,6 +313,7 @@ function RecommendCard({ rec, card, onClick }: RecommendCardItemProps) {
             fill
             sizes="160px"
             className="object-cover"
+            priority={priority}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-4xl">
