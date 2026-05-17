@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-17
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 2건
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -182,10 +182,27 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 |------|------|----------|----------|
 | **HOT-001** NotificationProvider 이중 구독 | `onAuthStateChange` 마운트 즉시 `SIGNED_IN` 발화 → `setup()` 동시 2회 호출 → 채널명 충돌 `.on()` 에러 | `subscribedUserId` 중복 가드 도입 + `onAuthStateChange` 단일 진입점 재설계 | `src/components/push/NotificationProvider.tsx` |
 | **HOT-002** PollCreateSheet `<button>` 중첩 | `SheetTrigger`(`@base-ui/react`) + `<Button>` 중첩 → Hydration 에러 | Base UI `render` prop 패턴 교체 + `trigger` 타입 `ReactNode → ReactElement` | `src/components/family/poll-create-sheet.tsx` |
+| **HOT-003** AI RAG 와이파이 아이콘 미반영 | `useRagStatus` 마운트 시 1회만 체크 + `currentTool` 미연동 → RAG 검색 중에도 와이파이 아이콘이 녹색으로 바뀌지 않음 | 30초 폴링 재확인 추가 + `currentTool !== null` 조건으로 RAG 툴 활성화 시 `text-green-500 animate-pulse` 적용 | `src/components/chat/chat-header.tsx` |
 
 ---
 
-### 7. MVP 이후 기능 (Phase 5~6 잔여)
+### 7. F032 AI 채팅 메모리 시스템 보강 (2026-05-17)
+
+> AI 채팅 서버 컴포넌트 전환 + 3계층 메모리 자동화 + 이전 세션 요약 UI
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **MEM-001** | ChatPage 서버 컴포넌트 전환 | `chat/page.tsx`를 서버 컴포넌트로 전환. `getRecentChatHistory(30)` SSR 로드 → `ChatShell` 클라이언트 컴포넌트에 `messages` + `latestSummary` 전달. 탭 재진입·새로고침 시 DB 최신 기록 표시 | `src/app/(main)/chat/page.tsx`, `src/components/chat/chat-shell.tsx` |
+| **MEM-002** | Layer 2+3 자동 트리거 (8턴 주기) | `ai/chat/route.ts`에서 대화 8턴마다 `saveAndExtractMemory()` fire-and-forget 호출 → 세션 요약(Layer 2) + 장기 기억 추출(Layer 3) 자동화 | `src/app/api/ai/chat/route.ts`, `src/lib/chat/memory/store.ts` |
+| **MEM-003** | `saveAndExtractMemory()` 통합 함수 | `saveSessionSummary()` + `upsertMemoryItems()` 두 단계를 단일 함수로 래핑. 오류 발생 시 throw하지 않고 `console.error`만 기록 | `src/lib/chat/memory/store.ts` |
+| **MEM-004** | 이전 세션 요약 배너 | `MessageList`에 `latestSummary` props 추가. DB에서 복원된 대화가 있고 요약이 존재할 때 Mocha Mousse 배너 표시 + 키워드 칩 렌더링 | `src/components/chat/message-list.tsx` |
+| **MEM-005** | 페이지 이탈 메모리 플러시 | `useChatStream`에 `beforeunload` 이벤트 리스너 추가 → `navigator.sendBeacon("/api/ai/memory/flush")` 호출. 탭 닫기·새로고침 시 미저장 대화 자동 플러시 | `src/hooks/use-chat-stream.ts` |
+| **MEM-006** | `initMessages()` 스토어 액션 | `useChatStore`에 `initMessages(messages)` 추가. DB 기록을 sessionStorage보다 우선 복원 (탭 재진입 시 최신 DB 기록 표시) | `src/lib/store.ts` |
+| **MEM-007** | 프로필 AI 메뉴 추가 | 프로필 페이지에 "AI 기억 관리" (`/profile/ai-memory`) + "대화 히스토리" (`/profile/chat-history`) 메뉴 항목 추가 | `src/app/(main)/profile/page.tsx` |
+
+---
+
+### 8. MVP 이후 기능 (Phase 5~6 잔여)
 
 | ID | 기능명 | Phase | 상태 |
 |----|--------|-------|------|

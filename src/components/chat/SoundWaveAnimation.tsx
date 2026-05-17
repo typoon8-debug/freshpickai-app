@@ -22,15 +22,16 @@ const barVariants = {
 
 interface SoundWaveAnimationProps {
   isActive: boolean;
+  size?: number;
 }
 
-export function SoundWaveAnimation({ isActive }: SoundWaveAnimationProps) {
+export function SoundWaveAnimation({ isActive, size = 16 }: SoundWaveAnimationProps) {
   return (
     <div
       className="flex items-center gap-0.5"
       aria-hidden="true"
       data-testid="sound-wave"
-      style={{ height: 16 }}
+      style={{ height: size }}
     >
       {BARS.map((i) => (
         <motion.span
@@ -40,7 +41,7 @@ export function SoundWaveAnimation({ isActive }: SoundWaveAnimationProps) {
           animate={isActive ? "listening" : "idle"}
           style={{ originY: 0.5 }}
           className="block w-0.5 rounded-full bg-red-500"
-          initial={{ scaleY: 0.4, height: 16 }}
+          initial={{ scaleY: 0.4, height: size }}
         />
       ))}
     </div>

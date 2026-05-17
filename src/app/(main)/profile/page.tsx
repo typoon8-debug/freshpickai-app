@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, Coins, TicketPercent, LogOut } from "lucide-react";
+import { ChevronRight, Coins, TicketPercent, LogOut, Brain, MessageSquare } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { buildPersonaContext, PERSONA_NAMES } from "@/lib/ai/persona-context";
 import { PreferenceAccordion } from "@/components/profile/preference-accordion";
@@ -162,6 +162,30 @@ export default async function ProfilePage() {
             <ChevronRight size={15} className="text-ink-300" />
           </button>
         </form>
+      </div>
+
+      {/* AI 기능 */}
+      <div className="border-line mx-4 mt-4 overflow-hidden rounded-xl border bg-white">
+        <Link
+          href="/profile/ai-memory"
+          className="hover:bg-mocha-50 flex items-center justify-between border-b px-4 py-3.5 transition"
+        >
+          <div className="flex items-center gap-2">
+            <Brain size={15} className="text-mocha-500" />
+            <span className="text-ink-700 text-sm">AI 기억 관리</span>
+          </div>
+          <ChevronRight size={15} className="text-ink-300" />
+        </Link>
+        <Link
+          href="/profile/chat-history"
+          className="hover:bg-mocha-50 flex items-center justify-between px-4 py-3.5 transition"
+        >
+          <div className="flex items-center gap-2">
+            <MessageSquare size={15} className="text-mocha-500" />
+            <span className="text-ink-700 text-sm">대화 히스토리</span>
+          </div>
+          <ChevronRight size={15} className="text-ink-300" />
+        </Link>
       </div>
 
       {/* 로그아웃 */}

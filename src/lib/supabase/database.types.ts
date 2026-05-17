@@ -104,6 +104,13 @@ export type Database = {
             foreignKeyName: "ad_campaign_item_store_item_id_fkey";
             columns: ["store_item_id"];
             isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "ad_campaign_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
             referencedRelation: "store_item";
             referencedColumns: ["store_item_id"];
           },
@@ -695,6 +702,13 @@ export type Database = {
             foreignKeyName: "cart_store_item_id_fkey";
             columns: ["store_item_id"];
             isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "cart_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
             referencedRelation: "store_item";
             referencedColumns: ["store_item_id"];
           },
@@ -752,6 +766,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "cart";
             referencedColumns: ["cart_id"];
+          },
+          {
+            foreignKeyName: "cart_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
           },
           {
             foreignKeyName: "cart_item_store_item_id_fkey";
@@ -1148,6 +1169,7 @@ export type Database = {
       };
       customer: {
         Row: {
+          ai_recommend_generated_at: string | null;
           birthdate: string | null;
           building_name: string | null;
           building_no: string | null;
@@ -1175,6 +1197,7 @@ export type Database = {
           zipcode: string | null;
         };
         Insert: {
+          ai_recommend_generated_at?: string | null;
           birthdate?: string | null;
           building_name?: string | null;
           building_no?: string | null;
@@ -1202,6 +1225,7 @@ export type Database = {
           zipcode?: string | null;
         };
         Update: {
+          ai_recommend_generated_at?: string | null;
           birthdate?: string | null;
           building_name?: string | null;
           building_no?: string | null;
@@ -1645,6 +1669,89 @@ export type Database = {
           },
         ];
       };
+      fp_chat_message_raw: {
+        Row: {
+          content: string;
+          created_at: string | null;
+          customer_id: string | null;
+          message_id: string;
+          role: string;
+          session_id: string;
+        };
+        Insert: {
+          content: string;
+          created_at?: string | null;
+          customer_id?: string | null;
+          message_id?: string;
+          role: string;
+          session_id: string;
+        };
+        Update: {
+          content?: string;
+          created_at?: string | null;
+          customer_id?: string | null;
+          message_id?: string;
+          role?: string;
+          session_id?: string;
+        };
+        Relationships: [];
+      };
+      fp_chat_session_summary: {
+        Row: {
+          created_at: string | null;
+          customer_id: string | null;
+          keywords: string[] | null;
+          session_id: string;
+          summary_id: string;
+          summary_text: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          customer_id?: string | null;
+          keywords?: string[] | null;
+          session_id: string;
+          summary_id?: string;
+          summary_text: string;
+        };
+        Update: {
+          created_at?: string | null;
+          customer_id?: string | null;
+          keywords?: string[] | null;
+          session_id?: string;
+          summary_id?: string;
+          summary_text?: string;
+        };
+        Relationships: [];
+      };
+      fp_customer_card_bookmark: {
+        Row: {
+          bookmark_id: string;
+          card_id: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          bookmark_id?: string;
+          card_id: string;
+          created_at?: string;
+          user_id: string;
+        };
+        Update: {
+          bookmark_id?: string;
+          card_id?: string;
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_customer_card_bookmark_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_menu_card";
+            referencedColumns: ["card_id"];
+          },
+        ];
+      };
       fp_dish: {
         Row: {
           cook_time: number | null;
@@ -1752,6 +1859,7 @@ export type Database = {
           embedding: string | null;
           modified_at: string;
           recipe_id: string;
+          source: string;
           status: string;
           title: string;
         };
@@ -1763,6 +1871,7 @@ export type Database = {
           embedding?: string | null;
           modified_at?: string;
           recipe_id?: string;
+          source?: string;
           status?: string;
           title: string;
         };
@@ -1774,6 +1883,7 @@ export type Database = {
           embedding?: string | null;
           modified_at?: string;
           recipe_id?: string;
+          source?: string;
           status?: string;
           title?: string;
         };
@@ -1879,6 +1989,54 @@ export type Database = {
           },
         ];
       };
+      fp_family_vote: {
+        Row: {
+          card_id: string;
+          created_at: string;
+          group_id: string;
+          session_id: string;
+          updated_at: string;
+          user_id: string;
+          vote_id: string;
+          vote_type: string;
+        };
+        Insert: {
+          card_id: string;
+          created_at?: string;
+          group_id: string;
+          session_id: string;
+          updated_at?: string;
+          user_id: string;
+          vote_id?: string;
+          vote_type: string;
+        };
+        Update: {
+          card_id?: string;
+          created_at?: string;
+          group_id?: string;
+          session_id?: string;
+          updated_at?: string;
+          user_id?: string;
+          vote_id?: string;
+          vote_type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_family_vote_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_family_vote_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_vote_session";
+            referencedColumns: ["session_id"];
+          },
+        ];
+      };
       fp_ingredient_meta: {
         Row: {
           created_at: string;
@@ -1969,6 +2127,36 @@ export type Database = {
           },
         ];
       };
+      fp_memory_items: {
+        Row: {
+          content: string;
+          created_at: string | null;
+          customer_id: string | null;
+          embedding: string | null;
+          importance_score: number | null;
+          memory_id: string;
+          source_session_id: string | null;
+        };
+        Insert: {
+          content: string;
+          created_at?: string | null;
+          customer_id?: string | null;
+          embedding?: string | null;
+          importance_score?: number | null;
+          memory_id?: string;
+          source_session_id?: string | null;
+        };
+        Update: {
+          content?: string;
+          created_at?: string | null;
+          customer_id?: string | null;
+          embedding?: string | null;
+          importance_score?: number | null;
+          memory_id?: string;
+          source_session_id?: string | null;
+        };
+        Relationships: [];
+      };
       fp_menu_card: {
         Row: {
           card_id: string;
@@ -2050,6 +2238,50 @@ export type Database = {
           },
         ];
       };
+      fp_notifications: {
+        Row: {
+          body: string | null;
+          created_at: string;
+          id: string;
+          is_read: boolean;
+          link_url: string | null;
+          read_at: string | null;
+          title: string;
+          type: string;
+          user_id: string;
+        };
+        Insert: {
+          body?: string | null;
+          created_at?: string;
+          id?: string;
+          is_read?: boolean;
+          link_url?: string | null;
+          read_at?: string | null;
+          title: string;
+          type: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string | null;
+          created_at?: string;
+          id?: string;
+          is_read?: boolean;
+          link_url?: string | null;
+          read_at?: string | null;
+          title?: string;
+          type?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_notifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
       fp_order: {
         Row: {
           address_full: string | null;
@@ -2114,6 +2346,146 @@ export type Database = {
             referencedColumns: ["user_id"];
           },
         ];
+      };
+      fp_poll: {
+        Row: {
+          closed_at: string | null;
+          created_at: string;
+          creator_id: string;
+          description: string | null;
+          ends_at: string;
+          group_id: string;
+          options: Json;
+          poll_id: string;
+          poll_type: string;
+          result_card_id: string | null;
+          status: string;
+          target_member_ids: Json | null;
+          title: string;
+        };
+        Insert: {
+          closed_at?: string | null;
+          created_at?: string;
+          creator_id: string;
+          description?: string | null;
+          ends_at: string;
+          group_id: string;
+          options?: Json;
+          poll_id?: string;
+          poll_type?: string;
+          result_card_id?: string | null;
+          status?: string;
+          target_member_ids?: Json | null;
+          title: string;
+        };
+        Update: {
+          closed_at?: string | null;
+          created_at?: string;
+          creator_id?: string;
+          description?: string | null;
+          ends_at?: string;
+          group_id?: string;
+          options?: Json;
+          poll_id?: string;
+          poll_type?: string;
+          result_card_id?: string | null;
+          status?: string;
+          target_member_ids?: Json | null;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_poll_creator_id_fkey";
+            columns: ["creator_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_result_card_id_fkey";
+            columns: ["result_card_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_menu_card";
+            referencedColumns: ["card_id"];
+          },
+        ];
+      };
+      fp_poll_vote: {
+        Row: {
+          created_at: string;
+          group_id: string;
+          option_id: string;
+          poll_id: string;
+          user_id: string;
+          vote_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          group_id: string;
+          option_id: string;
+          poll_id: string;
+          user_id: string;
+          vote_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          group_id?: string;
+          option_id?: string;
+          poll_id?: string;
+          user_id?: string;
+          vote_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_poll_vote_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_vote_poll_id_fkey";
+            columns: ["poll_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_poll";
+            referencedColumns: ["poll_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_vote_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_rate_limit: {
+        Row: {
+          created_at: string;
+          hit_count: number;
+          user_id: string;
+          window_key: string;
+        };
+        Insert: {
+          created_at?: string;
+          hit_count?: number;
+          user_id: string;
+          window_key: string;
+        };
+        Update: {
+          created_at?: string;
+          hit_count?: number;
+          user_id?: string;
+          window_key?: string;
+        };
+        Relationships: [];
       };
       fp_semantic_cache: {
         Row: {
@@ -2200,6 +2572,38 @@ export type Database = {
           store_item_id?: string;
         };
         Relationships: [];
+      };
+      fp_user_notification_settings: {
+        Row: {
+          delivery_notify: boolean;
+          movie_night_notify: boolean;
+          updated_at: string;
+          user_id: string;
+          vote_notify: boolean;
+        };
+        Insert: {
+          delivery_notify?: boolean;
+          movie_night_notify?: boolean;
+          updated_at?: string;
+          user_id: string;
+          vote_notify?: boolean;
+        };
+        Update: {
+          delivery_notify?: boolean;
+          movie_night_notify?: boolean;
+          updated_at?: string;
+          user_id?: string;
+          vote_notify?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_user_notification_settings_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       fp_user_preference: {
         Row: {
@@ -2293,150 +2697,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      fp_user_notification_settings: {
-        Row: {
-          user_id: string;
-          vote_notify: boolean;
-          movie_night_notify: boolean;
-          delivery_notify: boolean;
-          updated_at: string;
-        };
-        Insert: {
-          user_id: string;
-          vote_notify?: boolean;
-          movie_night_notify?: boolean;
-          delivery_notify?: boolean;
-          updated_at?: string;
-        };
-        Update: {
-          user_id?: string;
-          vote_notify?: boolean;
-          movie_night_notify?: boolean;
-          delivery_notify?: boolean;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fp_user_notification_settings_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: true;
-            referencedRelation: "fp_user_profile";
-            referencedColumns: ["user_id"];
-          },
-        ];
-      };
-      fp_poll: {
-        Row: {
-          poll_id: string;
-          group_id: string;
-          creator_id: string;
-          title: string;
-          description: string | null;
-          options: Json;
-          target_member_ids: Json | null;
-          ends_at: string;
-          status: string;
-          poll_type: string;
-          result_card_id: string | null;
-          created_at: string;
-          closed_at: string | null;
-        };
-        Insert: {
-          poll_id?: string;
-          group_id: string;
-          creator_id: string;
-          title: string;
-          description?: string | null;
-          options: Json;
-          target_member_ids?: Json | null;
-          ends_at: string;
-          status?: string;
-          poll_type?: string;
-          result_card_id?: string | null;
-          created_at?: string;
-          closed_at?: string | null;
-        };
-        Update: {
-          poll_id?: string;
-          group_id?: string;
-          creator_id?: string;
-          title?: string;
-          description?: string | null;
-          options?: Json;
-          target_member_ids?: Json | null;
-          ends_at?: string;
-          status?: string;
-          poll_type?: string;
-          result_card_id?: string | null;
-          created_at?: string;
-          closed_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fp_poll_group_id_fkey";
-            columns: ["group_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_family_group";
-            referencedColumns: ["group_id"];
-          },
-          {
-            foreignKeyName: "fp_poll_creator_id_fkey";
-            columns: ["creator_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_user_profile";
-            referencedColumns: ["user_id"];
-          },
-        ];
-      };
-      fp_poll_vote: {
-        Row: {
-          vote_id: string;
-          poll_id: string;
-          group_id: string;
-          user_id: string;
-          option_id: string;
-          created_at: string;
-        };
-        Insert: {
-          vote_id?: string;
-          poll_id: string;
-          group_id: string;
-          user_id: string;
-          option_id: string;
-          created_at?: string;
-        };
-        Update: {
-          vote_id?: string;
-          poll_id?: string;
-          group_id?: string;
-          user_id?: string;
-          option_id?: string;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fp_poll_vote_poll_id_fkey";
-            columns: ["poll_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_poll";
-            referencedColumns: ["poll_id"];
-          },
-          {
-            foreignKeyName: "fp_poll_vote_group_id_fkey";
-            columns: ["group_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_family_group";
-            referencedColumns: ["group_id"];
-          },
-          {
-            foreignKeyName: "fp_poll_vote_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_user_profile";
-            referencedColumns: ["user_id"];
-          },
-        ];
-      };
       fp_vote: {
         Row: {
           card_id: string;
@@ -2483,26 +2743,43 @@ export type Database = {
           },
         ];
       };
-      fp_customer_card_bookmark: {
+      fp_vote_session: {
         Row: {
-          bookmark_id: string;
-          user_id: string;
-          card_id: string;
+          card_ids: Json;
           created_at: string;
+          ends_at: string;
+          group_id: string;
+          session_id: string;
+          status: string;
+          title: string;
         };
         Insert: {
-          bookmark_id?: string;
-          user_id: string;
-          card_id: string;
+          card_ids?: Json;
           created_at?: string;
+          ends_at: string;
+          group_id: string;
+          session_id?: string;
+          status?: string;
+          title?: string;
         };
         Update: {
-          bookmark_id?: string;
-          user_id?: string;
-          card_id?: string;
+          card_ids?: Json;
           created_at?: string;
+          ends_at?: string;
+          group_id?: string;
+          session_id?: string;
+          status?: string;
+          title?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fp_vote_session_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+        ];
       };
       fp_wishlist: {
         Row: {
@@ -2533,92 +2810,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "fp_user_profile";
             referencedColumns: ["user_id"];
-          },
-        ];
-      };
-      fp_vote_session: {
-        Row: {
-          session_id: string;
-          group_id: string;
-          title: string;
-          card_ids: Json;
-          ends_at: string;
-          status: string;
-          created_at: string;
-        };
-        Insert: {
-          session_id?: string;
-          group_id: string;
-          title?: string;
-          card_ids?: Json;
-          ends_at: string;
-          status?: string;
-          created_at?: string;
-        };
-        Update: {
-          session_id?: string;
-          group_id?: string;
-          title?: string;
-          card_ids?: Json;
-          ends_at?: string;
-          status?: string;
-          created_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fp_vote_session_group_id_fkey";
-            columns: ["group_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_family_group";
-            referencedColumns: ["group_id"];
-          },
-        ];
-      };
-      fp_family_vote: {
-        Row: {
-          vote_id: string;
-          session_id: string;
-          group_id: string;
-          card_id: string;
-          user_id: string;
-          vote_type: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          vote_id?: string;
-          session_id: string;
-          group_id: string;
-          card_id: string;
-          user_id: string;
-          vote_type: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          vote_id?: string;
-          session_id?: string;
-          group_id?: string;
-          card_id?: string;
-          user_id?: string;
-          vote_type?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fp_family_vote_session_id_fkey";
-            columns: ["session_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_vote_session";
-            referencedColumns: ["session_id"];
-          },
-          {
-            foreignKeyName: "fp_family_vote_group_id_fkey";
-            columns: ["group_id"];
-            isOneToOne: false;
-            referencedRelation: "fp_family_group";
-            referencedColumns: ["group_id"];
           },
         ];
       };
@@ -2743,6 +2934,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "store";
             referencedColumns: ["store_id"];
+          },
+          {
+            foreignKeyName: "inventory_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
           },
           {
             foreignKeyName: "inventory_store_item_id_fkey";
@@ -3375,6 +3573,13 @@ export type Database = {
             foreignKeyName: "order_item_store_item_id_fkey";
             columns: ["store_item_id"];
             isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "order_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
             referencedRelation: "store_item";
             referencedColumns: ["store_item_id"];
           },
@@ -3842,6 +4047,13 @@ export type Database = {
             foreignKeyName: "promotion_item_reward_store_item_id_fkey";
             columns: ["reward_store_item_id"];
             isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "promotion_item_reward_store_item_id_fkey";
+            columns: ["reward_store_item_id"];
+            isOneToOne: false;
             referencedRelation: "store_item";
             referencedColumns: ["store_item_id"];
           },
@@ -3857,6 +4069,13 @@ export type Database = {
             columns: ["reward_store_item_id"];
             isOneToOne: false;
             referencedRelation: "v_store_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "promotion_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
             referencedColumns: ["store_item_id"];
           },
           {
@@ -3967,6 +4186,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "store";
             referencedColumns: ["store_id"];
+          },
+          {
+            foreignKeyName: "review_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
           },
           {
             foreignKeyName: "review_store_item_id_fkey";
@@ -5897,6 +6123,13 @@ export type Database = {
             foreignKeyName: "wishlist_store_item_id_fkey";
             columns: ["store_item_id"];
             isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "wishlist_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
             referencedRelation: "store_item";
             referencedColumns: ["store_item_id"];
           },
@@ -5959,6 +6192,41 @@ export type Database = {
       };
     };
     Views: {
+      mv_store_item_slim: {
+        Row: {
+          ai_ad_copy: string | null;
+          ai_calories: Json | null;
+          ai_confidence: number | null;
+          ai_cooking_usage: string | null;
+          ai_nutrition_summary: Json | null;
+          ai_status: string | null;
+          ai_tags: string[] | null;
+          available_quantity: number | null;
+          description_markup: string | null;
+          discount_pct: number | null;
+          effective_sale_price: number | null;
+          is_in_stock: boolean | null;
+          item_name: string | null;
+          item_thumbnail_big: string | null;
+          item_thumbnail_small: string | null;
+          list_price: number | null;
+          promo_id: string | null;
+          promo_name: string | null;
+          promo_type: string | null;
+          sale_price: number | null;
+          store_id: string | null;
+          store_item_id: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_item_store_id_fkey";
+            columns: ["store_id"];
+            isOneToOne: false;
+            referencedRelation: "store";
+            referencedColumns: ["store_id"];
+          },
+        ];
+      };
       v_store_inventory_item: {
         Row: {
           ai_ad_copy: string | null;
@@ -6133,6 +6401,13 @@ export type Database = {
             foreignKeyName: "promotion_item_store_item_id_fkey";
             columns: ["store_item_id"];
             isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "promotion_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
             referencedRelation: "store_item";
             referencedColumns: ["store_item_id"];
           },
@@ -6271,13 +6546,51 @@ export type Database = {
           card_id: string;
         }[];
       };
+      fp_cards_by_diet_tags: {
+        Args: { p_tags: string[] };
+        Returns: {
+          card_id: string;
+        }[];
+      };
+      fp_check_rate_limit: {
+        Args: {
+          p_max_count?: number;
+          p_user_id: string;
+          p_window_minutes?: number;
+        };
+        Returns: boolean;
+      };
       fp_cleanup_expired_cache: { Args: never; Returns: number };
+      fp_cleanup_rate_limits: { Args: never; Returns: number };
+      fp_get_card_detail: { Args: { p_card_id: string }; Returns: Json };
+      fp_get_poll_results: {
+        Args: { p_poll_id: string };
+        Returns: {
+          option_id: string;
+          vote_count: number;
+        }[];
+      };
+      fp_get_vote_results: {
+        Args: { p_session_id: string };
+        Returns: {
+          card_id: string;
+          dislike_count: number;
+          like_count: number;
+        }[];
+      };
       fp_match_cache: {
         Args: { query_embedding: string; similarity_threshold?: number };
         Returns: {
           cache_id: string;
           response: string;
           similarity: number;
+        }[];
+      };
+      fp_monthly_popular_cards: {
+        Args: { p_group_id: string; p_limit?: number };
+        Returns: {
+          card_id: string;
+          like_count: number;
         }[];
       };
       fp_recommend_cards: {
@@ -6299,27 +6612,39 @@ export type Database = {
           similarity: number;
         }[];
       };
+      fp_search_ingredient: {
+        Args: {
+          match_count?: number;
+          query_embedding?: string;
+          query_text: string;
+        };
+        Returns: {
+          item_name: string;
+          match_source: string;
+          similarity: number;
+          store_item_id: string;
+        }[];
+      };
+      fp_search_memory_items: {
+        Args: {
+          p_customer_id: string;
+          p_embedding: string;
+          p_limit?: number;
+          p_threshold?: number;
+        };
+        Returns: {
+          content: string;
+          distance: number;
+          importance_score: number;
+          memory_id: string;
+        }[];
+      };
       fp_semantic_cache_lookup: {
         Args: { p_query_embedding: string; p_similarity_threshold?: number };
         Returns: {
           cache_id: string;
           response_text: string;
           similarity: number;
-        }[];
-      };
-      fp_get_vote_results: {
-        Args: { p_session_id: string };
-        Returns: {
-          card_id: string;
-          like_count: number;
-          dislike_count: number;
-        }[];
-      };
-      fp_monthly_popular_cards: {
-        Args: { p_group_id: string; p_limit?: number };
-        Returns: {
-          card_id: string;
-          like_count: number;
         }[];
       };
       fp_vector_search_dish: {

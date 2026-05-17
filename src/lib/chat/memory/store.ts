@@ -9,6 +9,30 @@ import { z } from "zod";
 const DUPLICATE_THRESHOLD = 0.95;
 
 /**
+ * Layer 2 + Layer 3 통합 메모리 저장 (fire-and-forget용)
+ * 세션 요약 생성 → 장기 기억 항목 추출까지 한번에 처리
+ * 실패해도 throw하지 않고 오류를 무시합니다.
+ */
+export async function saveAndExtractMemory(
+  customerId: string,
+  sessionId: string,
+  messages: { role: "user" | "assistant"; content: string }[]
+): Promise<void> {
+  try {
+    await saveSessionSummary(customerId, sessionId, messages);
+    // 요약 텍스트를 다시 조회하지 않고 대화에서 직접 요약 재활용
+    // — 짧게: 마지막 몇 턴을 압축 요약 텍스트로 사용
+    const briefContext = messages
+      .slice(-10)
+      .map((m) => `${m.role === "user" ? "사용자" : "AI"}: ${m.content}`)
+      .join("\n");
+    await upsertMemoryItems(customerId, sessionId, briefContext);
+  } catch (e) {
+    console.error("[saveAndExtractMemory] 실패:", e);
+  }
+}
+
+/**
  * fp_chat_message_raw에 원문 메시지를 저장합니다.
  * INSERT 실패 시 오류를 throw하지 않고 console.error로만 기록합니다.
  */

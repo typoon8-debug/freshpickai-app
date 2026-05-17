@@ -15,7 +15,7 @@ import { createSuggestIntentsTool } from "@/lib/ai/tools/suggest-intents";
 import { checkCache, saveCache, createCacheHitResponse } from "@/lib/ai/semantic-cache";
 import { getAiModelId, AI_MODEL_KEYS } from "@/lib/ai/model-config";
 import { retrieveMemoryContext, formatMemoryContext } from "@/lib/chat/memory/retrieve";
-import { saveRawMessage } from "@/lib/chat/memory/store";
+import { saveRawMessage, saveAndExtractMemory } from "@/lib/chat/memory/store";
 
 // ── 레이트 리밋 (30 req/min per userId) — Supabase RPC 기반 ──
 async function checkRateLimit(
@@ -191,11 +191,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // AI 응답 저장 (fire-and-forget, F032)
+    // AI 응답 저장 + Layer 2/3 메모리 트리거 (fire-and-forget, F032)
     if (sessionId) {
-      void Promise.resolve(result.text).then((text) => {
-        if (text.trim().length > 0) {
-          saveRawMessage(user.id, sessionId!, "assistant", text).catch(() => {});
+      void Promise.resolve(result.text).then(async (text) => {
+        if (text.trim().length === 0) return;
+        await saveRawMessage(user.id, sessionId!, "assistant", text).catch(() => {});
+
+        // 8턴(사용자+AI 합산)마다 세션 요약 및 장기 기억 추출 (Layer 2+3)
+        const totalTurns = messages.length + 1; // +1 for this assistant reply
+        if (totalTurns % 8 === 0) {
+          const allMessages: { role: "user" | "assistant"; content: string }[] = [
+            ...messages,
+            { role: "assistant" as const, content: text },
+          ];
+          void saveAndExtractMemory(user.id, sessionId!, allMessages).catch(() => {});
         }
       });
     }

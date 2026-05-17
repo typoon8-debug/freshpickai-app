@@ -128,7 +128,7 @@ export default function CartPage() {
         <div className="flex flex-col items-center gap-4 py-20 text-center">
           <ShoppingCart size={48} className="text-ink-200" />
           <p className="text-ink-400 text-sm">장바구니가 비어있어요</p>
-          <Link href="/" className="btn-primary px-8">
+          <Link href="/" className="btn-primary flex items-center justify-center px-8">
             홈으로
           </Link>
         </div>

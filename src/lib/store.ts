@@ -84,6 +84,8 @@ type ChatState = {
   updateCartItems: (msgId: string, items: CartAddedItem[]) => void;
   updateIntents: (msgId: string, intents: ChatActionIntent[]) => void;
   reset: () => void;
+  /** DB 기록 복원 — sessionStorage가 비어있을 때만 호출 */
+  initMessages: (messages: ChatMessage[]) => void;
 };
 const MAX_CHAT_MESSAGES = 30;
 
@@ -121,6 +123,8 @@ export const useChatStore = create<ChatState>()(
           messages: s.messages.map((m) => (m.id === msgId ? { ...m, intents } : m)),
         })),
       reset: () => set({ messages: [], currentTool: null }),
+      /** DB 기록 복원 — 항상 덮어쓰기 (탭 재진입·새로고침 모두 최신 DB 기록 표시) */
+      initMessages: (messages) => set(() => ({ messages: messages.slice(-MAX_CHAT_MESSAGES) })),
     }),
     {
       name: "fp-chat",

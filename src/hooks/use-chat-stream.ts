@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useMemo } from "react";
+import { useCallback, useEffect, useRef, useMemo } from "react";
 import { useChatStore } from "@/lib/store";
 import type { MemoAddedItem, CartAddedItem, ChatActionIntent } from "@/lib/types";
 
@@ -48,6 +48,21 @@ export function useChatStream() {
   const activeChipRef = useRef<string | undefined>(undefined);
   // sessionId는 훅 수명 동안 고정
   const sessionId = useMemo(() => getSessionId(), []);
+
+  // 페이지 이탈 시 대화 내용을 메모리 플러시 엔드포인트로 전송
+  useEffect(() => {
+    const handleUnload = () => {
+      const history = historyRef.current;
+      if (history.length < 2) return;
+      const payload = JSON.stringify({ sessionId, messages: history.slice(-20) });
+      navigator.sendBeacon(
+        "/api/ai/memory/flush",
+        new Blob([payload], { type: "application/json" })
+      );
+    };
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, [sessionId]);
 
   const send = useCallback(
     async (text: string, chipLabel?: string) => {

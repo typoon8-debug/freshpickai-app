@@ -8,9 +8,10 @@ import type { ChatActionIntent } from "@/lib/types";
 
 interface MessageListProps {
   onActionSelect?: (intent: ChatActionIntent) => Promise<void> | void;
+  latestSummary?: { summaryText: string; keywords: string[] } | null;
 }
 
-export function MessageList({ onActionSelect }: MessageListProps) {
+export function MessageList({ onActionSelect, latestSummary }: MessageListProps) {
   const messages = useChatStore((s) => s.messages);
   const isStreaming = useChatStore((s) => s.isStreaming);
   const currentTool = useChatStore((s) => s.currentTool);
@@ -38,6 +39,25 @@ export function MessageList({ onActionSelect }: MessageListProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+      {/* 이전 세션 요약 배너 — DB에서 복원된 대화가 있고 요약이 있을 때만 표시 */}
+      {latestSummary && messages.length > 0 && (
+        <div className="bg-mocha-50 border-mocha-200 rounded-xl border px-4 py-3">
+          <p className="text-mocha-600 mb-1 text-xs font-semibold">이전 대화 요약</p>
+          <p className="text-ink-700 text-sm leading-relaxed">{latestSummary.summaryText}</p>
+          {latestSummary.keywords.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {latestSummary.keywords.map((kw) => (
+                <span
+                  key={kw}
+                  className="bg-mocha-100 text-mocha-700 rounded-full px-2 py-0.5 text-xs"
+                >
+                  #{kw}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {messages.map((msg, idx) => {
         const isLastAi = idx === messages.length - 1 && msg.role === "ai";
         const isLastStreaming = isStreaming && isLastAi;
