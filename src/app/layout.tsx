@@ -5,6 +5,7 @@ import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
+import { InstallBanner } from "@/components/pwa/install-banner";
 import "./globals.css";
 
 const breeSerif = Bree_Serif({
@@ -64,6 +65,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col antialiased">
         <Providers>{children}</Providers>
+        <InstallBanner />
         <Analytics />
         <SpeedInsights />
         {kakaoKey && (
