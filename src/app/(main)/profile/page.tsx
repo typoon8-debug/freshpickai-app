@@ -4,7 +4,9 @@ import { ChevronRight, Coins, TicketPercent, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { buildPersonaContext, PERSONA_NAMES } from "@/lib/ai/persona-context";
 import { PreferenceAccordion } from "@/components/profile/preference-accordion";
+import { NotificationAccordion } from "@/components/profile/notification-accordion";
 import { getProfileStatsAction } from "@/lib/actions/profile";
+import { getInboxNotifications, getUnreadCount } from "@/lib/actions/profile/notifications-inbox";
 import { signOutAction } from "@/lib/actions/auth/signout";
 import { resetOnboardingAction } from "@/lib/actions/auth/onboarding";
 import type { CookingSkill, ShoppingTime } from "@/lib/ai/persona-context";
@@ -28,7 +30,7 @@ export default async function ProfilePage() {
 
   if (!user) redirect("/login");
 
-  const [ctx, prefData, profile, stats] = await Promise.all([
+  const [ctx, prefData, profile, stats, notifications, unreadCount] = await Promise.all([
     buildPersonaContext(user.id),
     supabase
       .from("fp_user_preference")
@@ -41,6 +43,8 @@ export default async function ProfilePage() {
       .eq("user_id", user.id)
       .single(),
     getProfileStatsAction(),
+    getInboxNotifications(),
+    getUnreadCount(),
   ]);
 
   const personaTags: string[] = prefData.data?.persona_tags ?? [];
@@ -88,6 +92,11 @@ export default async function ProfilePage() {
           <p className="text-mocha-700 text-base font-bold">{PERSONA_NAMES[ctx.personaId]}</p>
           <p className="text-ink-500 mt-0.5 text-xs">{ctx.personaDescription}</p>
         </div>
+      </div>
+
+      {/* 알림 아코디언 */}
+      <div className="px-4 pt-4">
+        <NotificationAccordion initialItems={notifications} initialUnread={unreadCount} />
       </div>
 
       {/* 포인트 / 쿠폰 카드 */}

@@ -108,25 +108,70 @@ export async function createPoll(input: {
   return { ok: true, poll };
 }
 
-// ── 활성 투표 안건 목록 조회 ──────────────────────────────────
+// ── 활성 일반 투표 목록 조회 (movie_night 제외, 만료된 open 포함) ─
+// fp_poll RLS가 fp_family_member 순환 의존으로 실패하므로 admin client 사용
 export async function getActivePolls(groupId: string): Promise<FpPoll[]> {
-  const supabase = await createClient();
+  const admin = createAdminClient();
 
-  const { data } = await supabase
+  const { data } = await admin
     .from("fp_poll")
     .select("*")
     .eq("group_id", groupId)
     .eq("status", "open")
-    .gt("ends_at", new Date().toISOString())
-    .order("created_at", { ascending: false });
+    .neq("poll_type", "movie_night")
+    .order("created_at", { ascending: false })
+    .limit(20);
 
   return (data ?? []).map(rowToPoll);
 }
 
+// ── 최근 완료된 일반 투표 목록 (movie_night 제외) ─────────────
+// fp_poll RLS 순환 의존으로 admin client 사용
+export async function getClosedPolls(groupId: string): Promise<FpPoll[]> {
+  const admin = createAdminClient();
+
+  const { data } = await admin
+    .from("fp_poll")
+    .select("*")
+    .eq("group_id", groupId)
+    .eq("status", "closed")
+    .neq("poll_type", "movie_night")
+    .order("closed_at", { ascending: false })
+    .limit(10);
+
+  return (data ?? []).map(rowToPoll);
+}
+
+// ── 최신 무비나이트 투표 조회 (ends_at 무관, 가장 최근 1건) ──
+// fp_poll RLS 순환 의존으로 admin client 사용
+export async function getLatestMovieNightPoll(groupId: string): Promise<{
+  poll: FpPoll;
+  results: PollResult[];
+  totalVoted: number;
+  totalTargeted: number;
+} | null> {
+  const admin = createAdminClient();
+
+  const { data } = await admin
+    .from("fp_poll")
+    .select("*")
+    .eq("group_id", groupId)
+    .eq("poll_type", "movie_night")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!data) return null;
+
+  const poll = rowToPoll(data);
+  const { results, totalVoted, totalTargeted } = await getPollResults(poll.pollId);
+  return { poll, results, totalVoted, totalTargeted };
+}
+
 // ── 투표 안건 단건 조회 ────────────────────────────────────────
 export async function getPoll(pollId: string): Promise<FpPoll | null> {
-  const supabase = await createClient();
-  const { data } = await supabase.from("fp_poll").select("*").eq("poll_id", pollId).single();
+  const admin = createAdminClient();
+  const { data } = await admin.from("fp_poll").select("*").eq("poll_id", pollId).single();
   return data ? rowToPoll(data) : null;
 }
 
@@ -142,8 +187,9 @@ export async function castPollVote(input: {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "AUTH_REQUIRED" };
 
-  // 투표 마감 여부 확인
-  const { data: poll } = await supabase
+  // fp_poll RLS 순환 의존으로 admin client로 마감 여부 확인
+  const admin = createAdminClient();
+  const { data: poll } = await admin
     .from("fp_poll")
     .select("status, ends_at")
     .eq("poll_id", input.pollId)

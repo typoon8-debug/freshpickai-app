@@ -7,6 +7,7 @@ import { useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
+import { useNotificationStore } from "@/lib/store/notification-store";
 
 interface TopHeaderProps {
   title: string;
@@ -28,6 +29,7 @@ export function TopHeader({ title, onBack, backHref, className }: TopHeaderProps
   const mounted = useIsMounted();
   const cartCount = useCartStore((s) => s.items.length);
   const wishCount = useWishlistStore((s) => s.ids.size);
+  const notifCount = useNotificationStore((s) => s.unreadCount);
 
   const handleBack = () => {
     if (onBack) {
@@ -86,10 +88,15 @@ export function TopHeader({ title, onBack, backHref, className }: TopHeaderProps
 
         <Link
           href="/profile"
-          className="flex min-h-11 min-w-11 items-center justify-center"
+          className="relative flex min-h-11 min-w-11 items-center justify-center"
           aria-label="마이프레시"
         >
           <User className="text-ink-500 h-5 w-5" />
+          {mounted && notifCount > 0 && (
+            <span className="bg-terracotta absolute top-2 right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white">
+              {notifCount > 99 ? "99+" : notifCount}
+            </span>
+          )}
         </Link>
       </div>
     </header>

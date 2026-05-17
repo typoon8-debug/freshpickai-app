@@ -17,16 +17,17 @@ import {
   getMyVotes,
   getMonthlyPopularCards,
 } from "@/lib/actions/family/vote";
-import { getActivePolls, getPollResults, getMyPollVote } from "@/lib/actions/family/poll";
+import {
+  getActivePolls,
+  getClosedPolls,
+  getLatestMovieNightPoll,
+  getPollResults,
+  getMyPollVote,
+} from "@/lib/actions/family/poll";
+import { getAIMenuRecommendations } from "@/lib/actions/family/ai-menu-recommend";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import type { FpPoll, PollResult } from "@/lib/types";
-
-// 투표용 기본 카드 목록 — DB에 실제로 없을 경우 DinnerVote에 제목만 표시
-const DEFAULT_VOTE_CARDS = [
-  { cardId: "c01", name: "셰프의 갈비찜 정식", emoji: "🥩" },
-  { cardId: "c07", name: "제철 봄나물 비빔밥", emoji: "🌿" },
-  { cardId: "c03", name: "홈시네마 나이트", emoji: "🍿" },
-];
 
 export default async function FamilyPage() {
   const supabase = await createClient();
@@ -40,8 +41,9 @@ export default async function FamilyPage() {
     getFamilyStatsAction(),
   ]);
 
-  // 투표 세션 (없으면 자동 생성)
+  // 투표 세션 (없으면 AI 추천으로 자동 생성)
   let session = null;
+  let voteItems: { cardId: string; name: string; emoji: string }[] = [];
   let voteResults: { cardId: string; likeCount: number; dislikeCount: number }[] = [];
   let myVotes: Record<string, "like" | "dislike"> = {};
   let monthlyRanking: Array<{
@@ -54,11 +56,35 @@ export default async function FamilyPage() {
 
   if (group) {
     session = await getCurrentVoteSession(group.groupId);
+
     if (!session) {
-      session = await ensureVoteSession(
-        group.groupId,
-        DEFAULT_VOTE_CARDS.map((c) => c.cardId)
-      );
+      // AI가 이번 주 메뉴 3가지를 추천 → 새 세션 생성
+      const { cards: aiCards, title: aiTitle } = await getAIMenuRecommendations(group.groupId);
+      if (aiCards.length > 0) {
+        session = await ensureVoteSession(
+          group.groupId,
+          aiCards.map((c) => c.cardId),
+          aiTitle
+        );
+        voteItems = aiCards;
+      }
+    }
+
+    // 기존 세션이 있으면 실제 카드 정보를 DB에서 조회
+    if (session && voteItems.length === 0) {
+      const adminForCards = createAdminClient();
+      const { data: sessionCards } = await adminForCards
+        .from("fp_menu_card")
+        .select("card_id, name, emoji")
+        .in("card_id", session.cardIds);
+
+      const cardMap = new Map((sessionCards ?? []).map((c) => [c.card_id, c]));
+      voteItems = session.cardIds
+        .map((id) => cardMap.get(id))
+        .filter(
+          (c): c is { card_id: string; name: string; emoji: string | null } => c !== undefined
+        )
+        .map((c) => ({ cardId: c.card_id, name: c.name, emoji: c.emoji ?? "🍽️" }));
     }
 
     if (session && user) {
@@ -113,7 +139,7 @@ export default async function FamilyPage() {
         }))
       : undefined;
 
-  // 활성 투표 안건 + 결과 + 내 투표 조회
+  // 활성 투표 안건 + 결과 + 내 투표 조회 (일반 투표, movie_night 제외)
   let activePolls: Array<{
     poll: FpPoll;
     results: PollResult[];
@@ -121,20 +147,48 @@ export default async function FamilyPage() {
     totalTargeted: number;
   }> = [];
 
+  // 최근 완료된 일반 투표
+  let closedPolls: Array<{
+    poll: FpPoll;
+    results: PollResult[];
+    myVoteOptionId: string | null;
+    totalTargeted: number;
+  }> = [];
+
+  // 최신 무비나이트 투표 (가장 최근 1건, ends_at 무관)
+  let movieNightPollData: {
+    poll: FpPoll;
+    results: PollResult[];
+    totalVoted: number;
+    totalTargeted: number;
+  } | null = null;
+
   if (group && user) {
-    const polls = await getActivePolls(group.groupId);
+    const [rawActive, rawClosed, movieNight] = await Promise.all([
+      getActivePolls(group.groupId),
+      getClosedPolls(group.groupId),
+      getLatestMovieNightPoll(group.groupId),
+    ]);
+
+    movieNightPollData = movieNight;
+
     activePolls = await Promise.all(
-      polls.map(async (poll) => {
+      rawActive.map(async (poll) => {
         const [{ results, totalTargeted }, myVote] = await Promise.all([
           getPollResults(poll.pollId),
           getMyPollVote(poll.pollId),
         ]);
-        return {
-          poll,
-          results,
-          myVoteOptionId: myVote?.optionId ?? null,
-          totalTargeted,
-        };
+        return { poll, results, myVoteOptionId: myVote?.optionId ?? null, totalTargeted };
+      })
+    );
+
+    closedPolls = await Promise.all(
+      rawClosed.map(async (poll) => {
+        const [{ results, totalTargeted }, myVote] = await Promise.all([
+          getPollResults(poll.pollId),
+          getMyPollVote(poll.pollId),
+        ]);
+        return { poll, results, myVoteOptionId: myVote?.optionId ?? null, totalTargeted };
       })
     );
   }
@@ -164,7 +218,7 @@ export default async function FamilyPage() {
         <MemberGrid members={members} currentUserId={user?.id} hasGroup={!!group} />
         <DinnerVote
           session={session}
-          voteItems={DEFAULT_VOTE_CARDS}
+          voteItems={voteItems}
           initialResults={voteResults}
           initialMyVotes={myVotes}
         />
@@ -175,6 +229,7 @@ export default async function FamilyPage() {
             groupId={group.groupId}
             currentUserId={user?.id ?? ""}
             polls={activePolls}
+            closedPolls={closedPolls}
           />
         )}
         {group && (
@@ -184,6 +239,7 @@ export default async function FamilyPage() {
               groupId={group.groupId}
               currentUserId={user?.id ?? ""}
               totalFamilyMembers={members.length}
+              initialActivePoll={movieNightPollData}
             />
           </section>
         )}

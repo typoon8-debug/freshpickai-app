@@ -3,6 +3,25 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { getFirebaseMessaging } from "./firebase";
 
+type NotificationType = "vote" | "movie_night" | "delivery" | "system";
+
+/** fp_notifications 테이블에 인앱 알림 저장 */
+async function saveInboxNotifications(
+  userIds: string[],
+  payload: { type: NotificationType; title: string; body: string; linkUrl?: string }
+) {
+  if (userIds.length === 0) return;
+  const admin = createAdminClient();
+  const rows = userIds.map((uid) => ({
+    user_id: uid,
+    type: payload.type,
+    title: payload.title,
+    body: payload.body,
+    link_url: payload.linkUrl ?? null,
+  }));
+  await admin.from("fp_notifications").insert(rows);
+}
+
 type MulticastPayload = {
   tokens: string[];
   title: string;
@@ -111,13 +130,35 @@ export async function sendPollCreatedNotification(input: {
   pollTitle: string;
   targetMemberIds?: string[];
 }) {
-  const tokens = await getGroupFcmTokens(input.groupId, input.targetMemberIds);
+  const admin = createAdminClient();
+  let targetUserIds: string[];
+  if (input.targetMemberIds && input.targetMemberIds.length > 0) {
+    targetUserIds = input.targetMemberIds;
+  } else {
+    const { data: members } = await admin
+      .from("fp_family_member")
+      .select("user_id")
+      .eq("group_id", input.groupId);
+    targetUserIds = (members ?? []).map((m) => m.user_id);
+  }
+
+  const title = `${input.creatorName}님이 투표를 만들었어요 🗳`;
+  const linkUrl = `/family?tab=poll&id=${input.pollId}`;
+  const [tokens] = await Promise.all([
+    getGroupFcmTokens(input.groupId, input.targetMemberIds),
+    saveInboxNotifications(targetUserIds, {
+      type: "vote",
+      title,
+      body: input.pollTitle,
+      linkUrl,
+    }),
+  ]);
   await sendMulticast({
     tokens,
-    title: `${input.creatorName}님이 투표를 만들었어요 🗳`,
+    title,
     body: input.pollTitle,
     data: { type: "poll", pollId: input.pollId },
-    link: `/family?tab=poll&id=${input.pollId}`,
+    link: linkUrl,
   });
 }
 
@@ -133,39 +174,55 @@ export async function sendMovieNightNotification(input: {
     .select("user_id")
     .eq("group_id", input.groupId);
   const userIds = (members ?? []).map((m) => m.user_id);
-  const tokens = await getMemberFcmTokens(userIds, "movie_night_notify");
 
+  const title = "🎬 무비나이트 메뉴 완성!";
+  const body = `오늘 밤 [${input.cardTitle}] 어때요?`;
+  const linkUrl = `/cards/${input.cardId}`;
+  const [tokens] = await Promise.all([
+    getMemberFcmTokens(userIds, "movie_night_notify"),
+    saveInboxNotifications(userIds, { type: "movie_night", title, body, linkUrl }),
+  ]);
   await sendMulticast({
     tokens,
-    title: "🎬 무비나이트 메뉴 완성!",
-    body: `오늘 밤 [${input.cardTitle}] 어때요?`,
+    title,
+    body,
     data: { type: "movie_night", cardId: input.cardId },
-    link: `/cards/${input.cardId}`,
+    link: linkUrl,
   });
 }
 
 // ── 배송 상태 알림 (단일 사용자) ─────────────────────────────
 export async function sendDeliveryNotification(input: {
+  userId: string;
   token: string;
   title: string;
   body: string;
   fpOrderId: string;
 }) {
+  const linkUrl = "/profile/orders";
   const messaging = getFirebaseMessaging();
-  await messaging.send({
-    token: input.token,
-    notification: { title: input.title, body: input.body },
-    data: { type: "delivery", fpOrderId: input.fpOrderId, link: `/profile/orders` },
-    webpush: {
-      notification: {
-        title: input.title,
-        body: input.body,
-        icon: "/icons/icon-192x192.png",
-        badge: "/icons/badge-72x72.png",
+  await Promise.all([
+    messaging.send({
+      token: input.token,
+      notification: { title: input.title, body: input.body },
+      data: { type: "delivery", fpOrderId: input.fpOrderId, link: linkUrl },
+      webpush: {
+        notification: {
+          title: input.title,
+          body: input.body,
+          icon: "/icons/icon-192x192.png",
+          badge: "/icons/badge-72x72.png",
+        },
+        fcmOptions: { link: linkUrl },
       },
-      fcmOptions: { link: `/profile/orders` },
-    },
-  });
+    }),
+    saveInboxNotifications([input.userId], {
+      type: "delivery",
+      title: input.title,
+      body: input.body,
+      linkUrl,
+    }),
+  ]);
 }
 
 // ── 미투표 독려 알림 ──────────────────────────────────────────
@@ -174,12 +231,18 @@ export async function sendVoteReminderNotification(input: {
   pollTitle: string;
   pendingMemberIds: string[];
 }) {
-  const tokens = await getMemberFcmTokens(input.pendingMemberIds, "vote_notify");
+  const title = "⏰ 아직 투표 안 하셨나요?";
+  const body = `마감 임박! "${input.pollTitle}"`;
+  const linkUrl = `/family?tab=poll&id=${input.pollId}`;
+  const [tokens] = await Promise.all([
+    getMemberFcmTokens(input.pendingMemberIds, "vote_notify"),
+    saveInboxNotifications(input.pendingMemberIds, { type: "vote", title, body, linkUrl }),
+  ]);
   await sendMulticast({
     tokens,
-    title: "⏰ 아직 투표 안 하셨나요?",
-    body: `마감 임박! "${input.pollTitle}"`,
+    title,
+    body,
     data: { type: "poll_reminder", pollId: input.pollId },
-    link: `/family?tab=poll&id=${input.pollId}`,
+    link: linkUrl,
   });
 }

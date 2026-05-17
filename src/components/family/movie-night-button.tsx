@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Film, Sparkles, Loader2, ChevronRight, Vote } from "lucide-react";
+import { Film, Sparkles, Loader2, ChevronRight, Vote, BarChart2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -15,22 +15,39 @@ interface MovieNightButtonProps {
   groupId: string;
   currentUserId: string;
   totalFamilyMembers?: number;
+  initialActivePoll?: {
+    poll: FpPoll;
+    results: PollResult[];
+    totalVoted: number;
+    totalTargeted: number;
+  } | null;
 }
 
-type Step = "idle" | "mode" | "genre" | "poll" | "generating" | "done";
+type Step = "idle" | "mode" | "genre" | "poll" | "results" | "generating" | "done";
 
 export function MovieNightButton({
   groupId,
   currentUserId,
   totalFamilyMembers = 1,
+  initialActivePoll = null,
 }: MovieNightButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [step, setStep] = useState<Step>("idle");
+  const [step, setStep] = useState<Step>(() => {
+    if (!initialActivePoll) return "idle";
+    const isClosed =
+      initialActivePoll.poll.status !== "open" ||
+      new Date(initialActivePoll.poll.endsAt) < new Date();
+    return isClosed ? "results" : "poll";
+  });
   const [selectedGenre, setSelectedGenre] = useState<MovieGenre | null>(null);
   const [generatedCards, setGeneratedCards] = useState<MovieNightCard[]>([]);
-  const [activePoll, setActivePoll] = useState<FpPoll | null>(null);
-  const [pollResults, setPollResults] = useState<PollResult[]>([]);
+  const [activePoll, setActivePoll] = useState<FpPoll | null>(
+    () => initialActivePoll?.poll ?? null
+  );
+  const [pollResults, setPollResults] = useState<PollResult[]>(
+    () => initialActivePoll?.results ?? []
+  );
 
   // ── 빠른 장르 선택 → 즉시 카드 생성 ───────────────────────
   function handleGenreSelect(genre: MovieGenre) {
@@ -134,6 +151,36 @@ export function MovieNightButton({
         </div>
         <ChevronRight size={16} className="text-ink-300" />
       </button>
+    );
+  }
+
+  // ── 투표 결과 조회 (완료된 movie_night 투표) ──────────────
+  if (step === "results" && activePoll) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 px-0.5">
+          <BarChart2 size={14} className="text-mocha-500" />
+          <p className="text-ink-500 text-xs">최근 무비나이트 투표 결과</p>
+        </div>
+        <PollCard
+          poll={activePoll}
+          initialResults={pollResults}
+          initialMyVoteOptionId={null}
+          totalTargeted={initialActivePoll?.totalTargeted ?? totalFamilyMembers}
+          currentUserId={currentUserId}
+        />
+        <button
+          type="button"
+          onClick={() => {
+            setStep("idle");
+            setActivePoll(null);
+            setPollResults([]);
+          }}
+          className="border-line hover:bg-mocha-50 flex w-full items-center justify-center gap-2 rounded-xl border bg-white py-3 text-sm font-medium transition"
+        >
+          <Film size={14} className="text-mocha-600" />새 무비나이트 시작
+        </button>
+      </div>
     );
   }
 

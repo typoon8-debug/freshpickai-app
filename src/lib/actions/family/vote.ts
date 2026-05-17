@@ -1,13 +1,15 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import type { VoteSessionRecord, VoteResult } from "@/lib/types";
 
 // ── 현재 활성 투표 세션 조회 ──────────────────────────────────
+// fp_vote_session SELECT RLS가 fp_family_member 순환 의존으로 실패하므로 admin client 사용
 export async function getCurrentVoteSession(groupId: string): Promise<VoteSessionRecord | null> {
-  const supabase = await createClient();
+  const admin = createAdminClient();
 
-  const { data } = await supabase
+  const { data } = await admin
     .from("fp_vote_session")
     .select("*")
     .eq("group_id", groupId)
@@ -15,7 +17,7 @@ export async function getCurrentVoteSession(groupId: string): Promise<VoteSessio
     .gt("ends_at", new Date().toISOString())
     .order("created_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (!data) return null;
 
@@ -31,6 +33,7 @@ export async function getCurrentVoteSession(groupId: string): Promise<VoteSessio
 }
 
 // ── 투표 세션 생성 (없을 때 자동 생성) ───────────────────────
+// fp_vote_session INSERT RLS도 fp_family_member 순환 의존 → admin client 사용
 export async function ensureVoteSession(
   groupId: string,
   cardIds: string[],
@@ -39,10 +42,10 @@ export async function ensureVoteSession(
   const existing = await getCurrentVoteSession(groupId);
   if (existing) return existing;
 
-  const supabase = await createClient();
+  const admin = createAdminClient();
   const endsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  const { data, error } = await supabase
+  const { data, error } = await admin
     .from("fp_vote_session")
     .insert({
       group_id: groupId,
@@ -68,6 +71,7 @@ export async function ensureVoteSession(
 }
 
 // ── 투표 캐스팅 (upsert) ────────────────────────────────────
+// fp_family_vote INSERT RLS가 fp_family_member 순환 의존 → admin client 사용
 export async function castVote(
   groupId: string,
   sessionId: string,
@@ -80,7 +84,8 @@ export async function castVote(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "AUTH_REQUIRED" };
 
-  const { error } = await supabase.from("fp_family_vote").upsert(
+  const admin = createAdminClient();
+  const { error } = await admin.from("fp_family_vote").upsert(
     {
       session_id: sessionId,
       group_id: groupId,
@@ -118,6 +123,7 @@ export async function removeVote(sessionId: string, cardId: string): Promise<{ o
 }
 
 // ── 현재 사용자의 투표 내역 조회 ──────────────────────────────
+// fp_family_vote SELECT RLS가 fp_family_member 순환 의존 → admin client 사용
 export async function getMyVotes(sessionId: string): Promise<Record<string, "like" | "dislike">> {
   const supabase = await createClient();
   const {
@@ -125,7 +131,8 @@ export async function getMyVotes(sessionId: string): Promise<Record<string, "lik
   } = await supabase.auth.getUser();
   if (!user) return {};
 
-  const { data } = await supabase
+  const admin = createAdminClient();
+  const { data } = await admin
     .from("fp_family_vote")
     .select("card_id, vote_type")
     .eq("session_id", sessionId)

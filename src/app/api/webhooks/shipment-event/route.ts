@@ -113,6 +113,7 @@ export async function POST(req: Request) {
 
   try {
     await sendDeliveryNotification({
+      userId: fpOrder.user_id,
       token: profile.fcm_token,
       title: msg.title,
       body: body_text,
