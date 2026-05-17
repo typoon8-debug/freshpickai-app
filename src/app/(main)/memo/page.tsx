@@ -9,6 +9,7 @@ import { MemoInput } from "@/components/memo/memo-input";
 import { ParsePreview } from "@/components/memo/parse-preview";
 import { MemoList } from "@/components/memo/memo-list";
 import { MemoFooter } from "@/components/memo/memo-footer";
+import { OCRCaptureButton } from "@/components/memo/OCRCaptureButton";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
 import { parsedToMemoItems } from "@/lib/memo-adapter";
@@ -124,6 +125,7 @@ export default function MemoPage() {
         {tab === "new" ? (
           <div className="flex flex-col gap-4 px-4">
             <MemoInput onParsed={handleParsed} />
+            <OCRCaptureButton onParsed={handleParsed} />
 
             {memoItems.length > 0 && (
               <>

@@ -54,7 +54,20 @@ export async function createPoll(input: {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "AUTH_REQUIRED" };
 
-  const { data, error } = await supabase
+  // fp_family_member SELECT RLS가 순환 정책으로 fp_poll INSERT RLS 검사 시 실패함
+  // getFamilyGroup()과 동일하게 admin client로 멤버십을 직접 검증 후 INSERT
+  const admin = createAdminClient();
+
+  const { data: membership } = await admin
+    .from("fp_family_member")
+    .select("member_id")
+    .eq("group_id", input.groupId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!membership) return { ok: false, error: "FAMILY_REQUIRED" };
+
+  const { data, error } = await admin
     .from("fp_poll")
     .insert({
       group_id: input.groupId,
@@ -69,7 +82,10 @@ export async function createPoll(input: {
     .select()
     .single();
 
-  if (error || !data) return { ok: false, error: error?.message };
+  if (error || !data) {
+    console.error("[createPoll] INSERT 실패:", error?.message, error?.code);
+    return { ok: false, error: error?.message };
+  }
 
   const poll = rowToPoll(data);
 

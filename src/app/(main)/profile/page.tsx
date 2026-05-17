@@ -13,6 +13,7 @@ const MENU_ITEMS = [
   { href: "/profile/my-store", label: "내가게" },
   { href: "/wishlist", label: "찜 목록" },
   { href: "/profile/orders", label: "주문/배송조회" },
+  { href: "/profile/nutrition", label: "영양 분석" },
   { href: "/profile/reviews", label: "구매후기" },
   { href: "/profile/addresses", label: "주소관리" },
   { href: "/profile/coupons", label: "쿠폰함" },

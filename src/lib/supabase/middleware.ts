@@ -43,6 +43,7 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/api/ai") ||
     pathname.startsWith("/api/cards") ||
+    pathname.startsWith("/api/search") ||
     pathname === "/api/daily-pick" ||
     pathname === "/api/health" ||
     pathname.startsWith("/api/onboarding") ||
