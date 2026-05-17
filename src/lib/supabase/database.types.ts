@@ -2257,6 +2257,8 @@ export type Database = {
           created_at: string;
           display_name: string;
           family_role: string;
+          fcm_token: string | null;
+          fcm_updated_at: string | null;
           level: number;
           modified_at: string;
           onboarded_at: string | null;
@@ -2268,6 +2270,8 @@ export type Database = {
           created_at?: string;
           display_name?: string;
           family_role?: string;
+          fcm_token?: string | null;
+          fcm_updated_at?: string | null;
           level?: number;
           modified_at?: string;
           onboarded_at?: string | null;
@@ -2279,6 +2283,8 @@ export type Database = {
           created_at?: string;
           display_name?: string;
           family_role?: string;
+          fcm_token?: string | null;
+          fcm_updated_at?: string | null;
           level?: number;
           modified_at?: string;
           onboarded_at?: string | null;
@@ -2286,6 +2292,150 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      fp_user_notification_settings: {
+        Row: {
+          user_id: string;
+          vote_notify: boolean;
+          movie_night_notify: boolean;
+          delivery_notify: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          vote_notify?: boolean;
+          movie_night_notify?: boolean;
+          delivery_notify?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          vote_notify?: boolean;
+          movie_night_notify?: boolean;
+          delivery_notify?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_user_notification_settings_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_poll: {
+        Row: {
+          poll_id: string;
+          group_id: string;
+          creator_id: string;
+          title: string;
+          description: string | null;
+          options: Json;
+          target_member_ids: Json | null;
+          ends_at: string;
+          status: string;
+          poll_type: string;
+          result_card_id: string | null;
+          created_at: string;
+          closed_at: string | null;
+        };
+        Insert: {
+          poll_id?: string;
+          group_id: string;
+          creator_id: string;
+          title: string;
+          description?: string | null;
+          options: Json;
+          target_member_ids?: Json | null;
+          ends_at: string;
+          status?: string;
+          poll_type?: string;
+          result_card_id?: string | null;
+          created_at?: string;
+          closed_at?: string | null;
+        };
+        Update: {
+          poll_id?: string;
+          group_id?: string;
+          creator_id?: string;
+          title?: string;
+          description?: string | null;
+          options?: Json;
+          target_member_ids?: Json | null;
+          ends_at?: string;
+          status?: string;
+          poll_type?: string;
+          result_card_id?: string | null;
+          created_at?: string;
+          closed_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_poll_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_creator_id_fkey";
+            columns: ["creator_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      fp_poll_vote: {
+        Row: {
+          vote_id: string;
+          poll_id: string;
+          group_id: string;
+          user_id: string;
+          option_id: string;
+          created_at: string;
+        };
+        Insert: {
+          vote_id?: string;
+          poll_id: string;
+          group_id: string;
+          user_id: string;
+          option_id: string;
+          created_at?: string;
+        };
+        Update: {
+          vote_id?: string;
+          poll_id?: string;
+          group_id?: string;
+          user_id?: string;
+          option_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fp_poll_vote_poll_id_fkey";
+            columns: ["poll_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_poll";
+            referencedColumns: ["poll_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_vote_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_family_group";
+            referencedColumns: ["group_id"];
+          },
+          {
+            foreignKeyName: "fp_poll_vote_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "fp_user_profile";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       fp_vote: {
         Row: {

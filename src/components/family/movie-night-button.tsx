@@ -1,28 +1,41 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Film, Sparkles, Loader2, ChevronRight } from "lucide-react";
+import { Film, Sparkles, Loader2, ChevronRight, Vote } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { triggerMovieNight, MOVIE_GENRES, type MovieGenre } from "@/lib/actions/family/movie-night";
-import type { MovieNightCard } from "@/lib/types";
+import { triggerMovieNight } from "@/lib/actions/family/movie-night";
+import { createPoll, closePoll } from "@/lib/actions/family/poll";
+import { MOVIE_GENRES, type MovieGenre } from "@/lib/constants/family";
+import { PollCard } from "@/components/family/poll-card";
+import type { MovieNightCard, FpPoll, PollResult } from "@/lib/types";
 
 interface MovieNightButtonProps {
   groupId: string;
+  currentUserId: string;
+  totalFamilyMembers?: number;
 }
 
-export function MovieNightButton({ groupId }: MovieNightButtonProps) {
+type Step = "idle" | "mode" | "genre" | "poll" | "generating" | "done";
+
+export function MovieNightButton({
+  groupId,
+  currentUserId,
+  totalFamilyMembers = 1,
+}: MovieNightButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [step, setStep] = useState<"idle" | "genre" | "generating" | "done">("idle");
+  const [step, setStep] = useState<Step>("idle");
   const [selectedGenre, setSelectedGenre] = useState<MovieGenre | null>(null);
   const [generatedCards, setGeneratedCards] = useState<MovieNightCard[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [activePoll, setActivePoll] = useState<FpPoll | null>(null);
+  const [pollResults, setPollResults] = useState<PollResult[]>([]);
 
-  const handleGenreSelect = (genre: MovieGenre) => {
+  // ── 빠른 장르 선택 → 즉시 카드 생성 ───────────────────────
+  function handleGenreSelect(genre: MovieGenre) {
     setSelectedGenre(genre);
     setStep("generating");
-    setError(null);
 
     startTransition(async () => {
       const result = await triggerMovieNight(groupId, genre);
@@ -30,18 +43,84 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
         setGeneratedCards(result.cards);
         setStep("done");
       } else {
-        setError("카드 생성에 실패했어요. 다시 시도해주세요.");
+        toast.error("카드 생성에 실패했어요. 다시 시도해주세요.");
         setStep("genre");
       }
     });
-  };
+  }
 
+  // ── 투표 모드 → Poll 생성 ────────────────────────────────
+  function handleStartPoll() {
+    startTransition(async () => {
+      const endsAt = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4시간 후
+      const options = MOVIE_GENRES.map((g, i) => ({
+        id: g,
+        label: g,
+        emoji: GENRE_EMOJI[i] ?? "🎬",
+      }));
+
+      const result = await createPoll({
+        groupId,
+        title: "오늘 밤 무슨 장르 볼까? 🎬",
+        options,
+        endsAt,
+        pollType: "movie_night",
+      });
+
+      if (!result.ok || !result.poll) {
+        toast.error("투표 생성 실패");
+        return;
+      }
+
+      const initialResults: PollResult[] = options.map((o) => ({
+        optionId: o.id,
+        label: o.label,
+        emoji: o.emoji,
+        count: 0,
+        voterNames: [],
+      }));
+
+      setActivePoll(result.poll);
+      setPollResults(initialResults);
+      setStep("poll");
+      toast.success("투표가 시작됐어요! 가족에게 알림을 보냈어요 🎬");
+    });
+  }
+
+  // ── 투표 마감 → 최다 장르로 카드 생성 ───────────────────
+  function handleClosePollAndGenerate() {
+    if (!activePoll) return;
+
+    startTransition(async () => {
+      const { ok, winnerId, winnerLabel } = await closePoll(activePoll.pollId);
+      if (!ok) {
+        toast.error("투표 마감 실패");
+        return;
+      }
+
+      const genre = (winnerId as MovieGenre) ?? "가족";
+      setSelectedGenre(genre);
+      setStep("generating");
+      toast.info(`"${winnerLabel ?? genre}" 장르로 카드를 만들고 있어요…`);
+
+      const result = await triggerMovieNight(groupId, genre, { pollId: activePoll.pollId });
+      if (result.ok && result.cards) {
+        setGeneratedCards(result.cards);
+        setStep("done");
+      } else {
+        toast.error("카드 생성 실패");
+        setStep("poll");
+      }
+    });
+  }
+
+  // ── Idle ─────────────────────────────────────────────────
   if (step === "idle") {
     return (
       <button
         type="button"
         data-testid="movie-night-trigger"
-        onClick={() => setStep("genre")}
+        onClick={() => setStep("mode")}
         className="border-line flex w-full items-center gap-3 rounded-xl border bg-white p-4 transition active:scale-[0.98]"
       >
         <div className="bg-mocha-100 flex h-10 w-10 items-center justify-center rounded-full">
@@ -58,6 +137,49 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
     );
   }
 
+  // ── 모드 선택 ─────────────────────────────────────────────
+  if (step === "mode") {
+    return (
+      <div className="border-line space-y-3 rounded-xl border bg-white p-4">
+        <div className="mb-1 flex items-center gap-2">
+          <Film size={16} className="text-mocha-600" />
+          <p className="text-ink-900 text-sm font-semibold">무비나이트 시작하기</p>
+        </div>
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={handleStartPoll}
+          className="border-line bg-mocha-50 hover:bg-mocha-100 flex w-full items-center gap-3 rounded-lg border p-3 text-left transition active:scale-[0.98]"
+        >
+          <Vote size={18} className="text-mocha-600 shrink-0" />
+          <div>
+            <p className="text-ink-900 text-sm font-semibold">가족 투표로 장르 선택</p>
+            <p className="text-ink-400 text-[11px]">가족 모두에게 알림 → 4시간 투표 후 자동 생성</p>
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep("genre")}
+          className="border-line flex w-full items-center gap-3 rounded-lg border p-3 text-left transition hover:bg-gray-50 active:scale-[0.98]"
+        >
+          <Sparkles size={18} className="text-honey shrink-0" />
+          <div>
+            <p className="text-ink-900 text-sm font-semibold">내가 바로 선택</p>
+            <p className="text-ink-400 text-[11px]">장르 선택 후 즉시 카드 생성</p>
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep("idle")}
+          className="text-ink-400 w-full text-[11px]"
+        >
+          취소
+        </button>
+      </div>
+    );
+  }
+
+  // ── 빠른 장르 선택 ───────────────────────────────────────
   if (step === "genre") {
     return (
       <div className="border-line rounded-xl border bg-white p-4">
@@ -65,9 +187,8 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
           <Film size={16} className="text-mocha-600" />
           <p className="text-ink-900 text-sm font-semibold">오늘 어떤 장르 볼까요?</p>
         </div>
-        {error && <p className="text-terracotta mb-3 text-[11px]">{error}</p>}
         <div className="grid grid-cols-4 gap-2">
-          {MOVIE_GENRES.map((genre) => (
+          {MOVIE_GENRES.map((genre, i) => (
             <button
               key={genre}
               type="button"
@@ -80,14 +201,45 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
                   : "border-line text-ink-700 hover:bg-mocha-50"
               )}
             >
-              {genre}
+              {GENRE_EMOJI[i]} {genre}
             </button>
           ))}
         </div>
         <button
           type="button"
-          onClick={() => setStep("idle")}
+          onClick={() => setStep("mode")}
           className="text-ink-400 mt-3 w-full text-[11px]"
+        >
+          뒤로
+        </button>
+      </div>
+    );
+  }
+
+  // ── 투표 진행 중 ──────────────────────────────────────────
+  if (step === "poll" && activePoll) {
+    return (
+      <div className="space-y-3">
+        <PollCard
+          poll={activePoll}
+          initialResults={pollResults}
+          initialMyVoteOptionId={null}
+          totalTargeted={totalFamilyMembers}
+          currentUserId={currentUserId}
+        />
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={handleClosePollAndGenerate}
+          className="border-line bg-mocha-600 flex w-full items-center justify-center gap-2 rounded-xl border py-3 text-sm font-semibold text-white transition active:scale-[0.98] disabled:opacity-60"
+        >
+          {isPending ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+          마감하고 카드 만들기
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep("idle")}
+          className="text-ink-400 w-full text-[11px]"
         >
           취소
         </button>
@@ -95,7 +247,8 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
     );
   }
 
-  if (step === "generating" || isPending) {
+  // ── 카드 생성 중 ──────────────────────────────────────────
+  if (step === "generating" || (isPending && step !== "done")) {
     return (
       <div className="border-line flex items-center gap-3 rounded-xl border bg-white p-4">
         <Loader2 size={20} className="text-mocha-600 animate-spin" />
@@ -109,6 +262,7 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
     );
   }
 
+  // ── 완료 ─────────────────────────────────────────────────
   if (step === "done" && generatedCards.length > 0) {
     return (
       <div className="border-line rounded-xl border bg-white p-4">
@@ -145,6 +299,7 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
             setStep("idle");
             setSelectedGenre(null);
             setGeneratedCards([]);
+            setActivePoll(null);
           }}
           className="text-ink-400 mt-3 w-full text-[11px]"
         >
@@ -156,3 +311,5 @@ export function MovieNightButton({ groupId }: MovieNightButtonProps) {
 
   return null;
 }
+
+const GENRE_EMOJI = ["🎬", "💕", "👻", "🚀", "😂", "🏃", "🔍", "👨‍👩‍👧"];

@@ -16,6 +16,7 @@ const MENU_ITEMS = [
   { href: "/profile/reviews", label: "구매후기" },
   { href: "/profile/addresses", label: "주소관리" },
   { href: "/profile/coupons", label: "쿠폰함" },
+  { href: "/profile/notifications", label: "알림 설정" },
 ] as const;
 
 export default async function ProfilePage() {

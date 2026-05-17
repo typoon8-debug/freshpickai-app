@@ -241,6 +241,55 @@ export type MovieNightCard = {
   isKidsVersion: boolean;
 };
 
+// ── 일반 투표 안건 (Task 055) ────────────────────────────────
+export type PollOption = {
+  id: string;
+  label: string;
+  emoji?: string;
+};
+
+export type PollType = "general" | "movie_night" | "dinner" | "activity";
+export type PollStatus = "open" | "closed" | "cancelled";
+
+export type FpPoll = {
+  pollId: string;
+  groupId: string;
+  creatorId: string;
+  title: string;
+  description?: string;
+  options: PollOption[];
+  targetMemberIds?: string[];
+  endsAt: string;
+  status: PollStatus;
+  pollType: PollType;
+  resultCardId?: string;
+  createdAt: string;
+  closedAt?: string;
+};
+
+export type FpPollVote = {
+  voteId: string;
+  pollId: string;
+  groupId: string;
+  userId: string;
+  optionId: string;
+  createdAt: string;
+};
+
+export type PollResult = {
+  optionId: string;
+  label: string;
+  emoji?: string;
+  count: number;
+  voterNames: string[];
+};
+
+export type NotificationSettings = {
+  voteNotify: boolean;
+  movieNightNotify: boolean;
+  deliveryNotify: boolean;
+};
+
 // ── 장보기 메모 (F012) ─────────────────────────────────────
 /** fp_shopping_memo */
 export type ShoppingMemo = {
@@ -494,6 +543,15 @@ export type MemoryItem = {
   sourceSessionId?: string;
   importanceScore: number;
   createdAt: string;
+};
+
+// ── 키즈 별점 (F014) ──────────────────────────────────────
+export type KidsPreferredCard = {
+  cardId: string;
+  name: string;
+  emoji: string;
+  avgRating: number;
+  ratingCount: number;
 };
 
 /** AI 채팅 Route Handler에 주입되는 3계층 메모리 컨텍스트 (F032) */
