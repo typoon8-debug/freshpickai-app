@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { embedText, embeddingToSql } from "./embedding";
 
@@ -22,14 +23,19 @@ export interface VectorSearchResult {
   dishId?: string;
 }
 
-async function generateEmbeddingOrNull(query: string): Promise<string | null> {
-  try {
-    const embedding = await embedText(query);
-    return embeddingToSql(embedding);
-  } catch {
-    return null;
-  }
-}
+// 동일 검색어 임베딩 1시간 캐시 — OpenAI API 중복 호출 제거
+const getCachedEmbeddingStr = unstable_cache(
+  async (query: string): Promise<string | null> => {
+    try {
+      const embedding = await embedText(query);
+      return embeddingToSql(embedding);
+    } catch {
+      return null;
+    }
+  },
+  ["vector-search-embedding"],
+  { revalidate: 3600 }
+);
 
 export async function searchByVector(
   query: string,
@@ -38,7 +44,7 @@ export async function searchByVector(
   const supabase = await createClient();
   const { limit = 10, threshold = 0.5, filters } = options;
 
-  const embeddingStr = await generateEmbeddingOrNull(query);
+  const embeddingStr = await getCachedEmbeddingStr(query);
 
   if (options.table === "dish") {
     const { data, error } = await supabase.rpc("fp_vector_search_dish", {

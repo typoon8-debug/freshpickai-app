@@ -1,11 +1,20 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TopHeader } from "@/components/layout/top-header";
-import { WeeklyNutritionChart } from "@/components/nutrition/WeeklyNutritionChart";
 import { getWeeklyNutritionSummary } from "@/lib/actions/nutrition/weekly";
 import type { WeeklyNutritionSummary } from "@/lib/actions/nutrition/weekly";
+
+// recharts(~200KB)를 영양 분석 페이지 진입 시에만 로드 — 홈/카드 번들에서 제외
+const WeeklyNutritionChart = dynamic(
+  () =>
+    import("@/components/nutrition/WeeklyNutritionChart").then((m) => ({
+      default: m.WeeklyNutritionChart,
+    })),
+  { ssr: false }
+);
 
 export default function NutritionPage() {
   const [weekOffset, setWeekOffset] = useState(0);

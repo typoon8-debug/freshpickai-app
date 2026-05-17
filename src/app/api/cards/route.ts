@@ -17,5 +17,16 @@ export async function GET(req: Request) {
     aiTags,
   });
 
-  return NextResponse.json(cards);
+  // 공개 공식 카드: Vercel Edge CDN에 5분 캐시 (서버 측 unstable_cache와 동일 TTL)
+  // AI 태그 필터 조합: 120초 캐시 (URL별로 CDN 슬롯 분리되어 안전)
+  const cacheControl =
+    official === "true" && !aiTags
+      ? "public, s-maxage=300, stale-while-revalidate=60"
+      : aiTags
+        ? "public, s-maxage=120, stale-while-revalidate=30"
+        : "no-store";
+
+  return NextResponse.json(cards, {
+    headers: { "Cache-Control": cacheControl },
+  });
 }

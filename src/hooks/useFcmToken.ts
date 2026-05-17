@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { initializeApp, getApps } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { upsertFcmToken } from "@/lib/actions/push/fcm";
 
 const firebaseConfig = {
@@ -29,6 +27,10 @@ export function useFcmToken() {
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") return;
+
+        // Firebase 모듈을 사용 시점에 동적 로드 — 초기 번들에서 제외
+        const { initializeApp, getApps } = await import("firebase/app");
+        const { getMessaging, getToken, onMessage } = await import("firebase/messaging");
 
         if (!getApps().length) {
           initializeApp(firebaseConfig);

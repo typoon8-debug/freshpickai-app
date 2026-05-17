@@ -94,72 +94,80 @@ export async function getCards(filter?: CardFilter): Promise<MenuCard[]> {
   return data.map(mapCard);
 }
 
+// fp_get_card_detail RPC 반환 타입 (card/dishes/ingredients 단일 round-trip)
+type RpcCardDetailResult = {
+  card: import("@/lib/supabase/database.types").Database["public"]["Tables"]["fp_menu_card"]["Row"];
+  cardDishes: Array<{ dishId: string; role: string; sortOrder: number }>;
+  dishes: import("@/lib/supabase/database.types").Database["public"]["Tables"]["fp_dish"]["Row"][];
+  ingredients: import("@/lib/supabase/database.types").Database["public"]["Tables"]["fp_dish_ingredient"]["Row"][];
+};
+
 export async function getCard(cardId: string): Promise<CardWithDishes | null> {
   const supabase = createAdminClient();
 
-  const { data: cardData, error: cardError } = await supabase
-    .from("fp_menu_card")
-    .select("*")
-    .eq("card_id", cardId)
-    .single();
+  // fp_get_card_detail RPC: card + cardDishes + dishes + ingredients를 1 round-trip으로 반환
+  const { data, error } = await supabase.rpc("fp_get_card_detail", { p_card_id: cardId });
 
-  if (cardError || !cardData) return null;
+  if (error || !data) return null;
 
-  const { data: cardDishes } = await supabase
-    .from("fp_card_dish")
-    .select("dish_id, role, sort_order")
-    .eq("card_id", cardId)
-    .order("sort_order");
+  const detail = data as unknown as RpcCardDetailResult;
+  if (!detail.card) return null;
 
-  if (!cardDishes || cardDishes.length === 0) {
-    return { ...mapCard(cardData), dishes: [] };
-  }
+  const dishMap = new Map((detail.dishes ?? []).map((d) => [d.dish_id, d]));
 
-  const dishIds = cardDishes.map((cd) => cd.dish_id);
+  const ingredientsByDish = (detail.ingredients ?? []).reduce<Record<string, Ingredient[]>>(
+    (acc, ing) => {
+      if (!acc[ing.dish_id]) acc[ing.dish_id] = [];
+      acc[ing.dish_id].push(mapIngredient(ing));
+      return acc;
+    },
+    {}
+  );
 
-  const [{ data: dishes }, { data: ingredients }] = await Promise.all([
-    supabase.from("fp_dish").select("*").in("dish_id", dishIds),
-    supabase.from("fp_dish_ingredient").select("*").in("dish_id", dishIds).order("sort_order"),
-  ]);
-
-  const dishMap = new Map((dishes ?? []).map((d) => [d.dish_id, d]));
-  const ingredientsByDish = (ingredients ?? []).reduce<Record<string, Ingredient[]>>((acc, ing) => {
-    if (!acc[ing.dish_id]) acc[ing.dish_id] = [];
-    acc[ing.dish_id].push(mapIngredient(ing));
-    return acc;
-  }, {});
-
-  const dishesWithIngredients = cardDishes
+  const dishesWithIngredients = (detail.cardDishes ?? [])
     .map((cd) => {
-      const dish = dishMap.get(cd.dish_id);
+      const dish = dishMap.get(cd.dishId);
       if (!dish) return null;
       return {
         ...mapDish(dish),
-        ingredients: ingredientsByDish[cd.dish_id] ?? [],
+        ingredients: ingredientsByDish[cd.dishId] ?? [],
       };
     })
     .filter((d): d is Dish & { ingredients: Ingredient[] } => d !== null);
 
-  return { ...mapCard(cardData), dishes: dishesWithIngredients };
+  return { ...mapCard(detail.card), dishes: dishesWithIngredients };
 }
 
 // 데일리픽 — 날짜 단위 캐시 (자정마다 자동 만료)
+// count → 단일 행 2-round-trip이지만 24h 캐시로 하루 1회만 실행됨
 const _fetchDailyPick = unstable_cache(
   async (): Promise<MenuCard | null> => {
     const supabase = createAdminClient();
+
+    const { count, error: countError } = await supabase
+      .from("fp_menu_card")
+      .select("*", { count: "exact", head: true })
+      .eq("is_official", true)
+      .eq("review_status", "approved")
+      .eq("category", "meal");
+
+    if (countError || !count || count === 0) return null;
+
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    const idx = seed % count;
+
     const { data, error } = await supabase
       .from("fp_menu_card")
       .select("*")
       .eq("is_official", true)
       .eq("review_status", "approved")
-      .eq("category", "meal");
+      .eq("category", "meal")
+      .range(idx, idx)
+      .single();
 
-    if (error || !data || data.length === 0) return null;
-
-    const today = new Date();
-    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-    const idx = seed % data.length;
-    return mapCard(data[idx]);
+    if (error || !data) return null;
+    return mapCard(data);
   },
   ["daily-pick"],
   { revalidate: 86400, tags: ["daily-pick"] } // 24시간 캐시

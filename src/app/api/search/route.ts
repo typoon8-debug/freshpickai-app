@@ -134,15 +134,15 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // 상품 검색
+  // 상품 검색 — mv_store_item_slim(GIN trgm 인덱스) 사용으로 ILIKE full scan 제거
   if (type === "item" || type === "all") {
     tasks.push(
       (async () => {
         const { data: storeRows } = await supabase
-          .from("v_store_inventory_item")
+          .from("mv_store_item_slim")
           .select("store_item_id, item_name, item_thumbnail_small, effective_sale_price, ai_tags")
           .ilike("item_name", `%${q}%`)
-          .eq("status", "active")
+          .eq("is_in_stock", true)
           .order("effective_sale_price", { ascending: true })
           .limit(limit);
 
