@@ -1,0 +1,39 @@
+[     835ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[     935ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1980ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/icon-192x192.png:0
+[    1984ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3000/icon-192x192.png (Download error or resource isn't a valid image) @ http://localhost:3000/login:0
+[  146293ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  148054ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/login?_rsc=1i457:0
+[  148124ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/login?_rsc=1i457:0
+[  148184ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/login:0
+[  148285ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  148305ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  148371ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/icon-192x192.png:0
+[  148376ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3000/icon-192x192.png (Download error or resource isn't a valid image) @ http://localhost:3000/login:0
+[  151417ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  151449ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/login?_rsc=60c5r:0
+[  151568ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/login?_rsc=60c5r:0
+[  151599ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/login:0
+[  151636ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  151650ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  151726ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/icon-192x192.png:0
+[  151733ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3000/icon-192x192.png (Download error or resource isn't a valid image) @ http://localhost:3000/login:0
+[  187142ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  205324ms] [LOG] [Fast Refresh] done in 18289ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  205427ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  220127ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=8lfO4QCUX-CG2Jk4hP-zo' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13299
+[  241024ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[  244136ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/login:0
+[  244649ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_react-dom_0bruynb._.js:15305
+[  244697ms] Error: Could not parse module '[project]/src/middleware.ts', file not found
+    at module evaluation (file://D:\freshpickai-app\.next\dev\server\edge\chunks\[root-of-the-server]__0or5e-2._.js:122:11)
+    at <unknown> (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1307:27)
+    at runModuleExecutionHooks (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1649:9)
+    at instantiateModuleShared (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1305:9)
+    at instantiateModule (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1621:12)
+    at getOrInstantiateModuleFromParent (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1604:12)
+    at DevContext.esmImport [as i] (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:278:20)
+    at module evaluation (file://D:\freshpickai-app\.next\dev\server\edge\chunks\node_modules_next_dist_0c4kteq._.js:17458:151)
+    at <unknown> (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1307:27)
+    at runModuleExecutionHooks (file://D:\freshpickai-app\.next\dev\server\edge\chunks\turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_0_p~s9j.js:1649:9)
+[  244698ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226

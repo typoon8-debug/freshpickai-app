@@ -1,0 +1,45 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e5]
+        - generic [ref=e8]:
+          - heading "결제 완료!" [level=2] [ref=e9]
+          - paragraph [ref=e10]: 주문이 성공적으로 접수되었습니다.
+        - generic [ref=e11]:
+          - generic [ref=e12]:
+            - img [ref=e13]
+            - generic [ref=e17]: 주문 번호
+          - paragraph [ref=e18]: FPA-20260513-ABC123
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - img [ref=e21]
+            - generic [ref=e26]: 배송 예약 확인
+          - paragraph [ref=e27]: 5월 14일(목) 오전 6시 이전 도착 예정
+          - paragraph [ref=e28]: ※ 스토어 배송 정책에 따라 배송 시간은 변동될 수 있습니다
+        - button "홈으로 이동" [ref=e29]
+    - navigation [ref=e30]:
+      - link "홈" [ref=e31] [cursor=pointer]:
+        - /url: /
+        - img [ref=e32]
+        - generic [ref=e35]: 홈
+      - link "AI" [ref=e36] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e37]
+        - generic [ref=e39]: AI
+      - link "가족" [ref=e40] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e41]
+        - generic [ref=e46]: 가족
+      - link "메모" [ref=e47] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e48]
+        - generic [ref=e51]: 메모
+      - link "장바구니" [ref=e52] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e53]
+        - generic [ref=e57]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e63] [cursor=pointer]:
+    - img [ref=e64]
+  - alert [ref=e67]

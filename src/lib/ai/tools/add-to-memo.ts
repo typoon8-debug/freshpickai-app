@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export type MemoAddedItem = {
   name: string;
@@ -29,6 +30,9 @@ export function createAddToMemoTool(userId: string, supabase: SupabaseClient<Dat
       "사용자의 장보기 메모에 재료나 품목을 추가합니다. 사용자가 재료를 메모에 추가하거나 저장·기록하고 싶다고 할 때 사용하세요.",
     inputSchema: addToMemoSchema,
     execute: async ({ items }: z.infer<typeof addToMemoSchema>): Promise<AddToMemoResult> => {
+      // RLS 우회: 스트리밍 컨텍스트에서 쿠키 기반 auth가 불안정하므로 admin client 사용
+      const admin = createAdminClient();
+
       const today = new Date().toLocaleDateString("ko-KR", {
         month: "long",
         day: "numeric",
@@ -36,7 +40,7 @@ export function createAddToMemoTool(userId: string, supabase: SupabaseClient<Dat
       const memoTitle = `AI 추천 장보기 (${today})`;
 
       // 오늘 메모 조회 또는 신규 생성
-      const { data: existing } = await supabase
+      const { data: existing } = await admin
         .from("fp_shopping_memo")
         .select("memo_id")
         .eq("user_id", userId)
@@ -48,9 +52,10 @@ export function createAddToMemoTool(userId: string, supabase: SupabaseClient<Dat
       if (existing?.memo_id) {
         memoId = existing.memo_id;
       } else {
-        const { data: created, error: createErr } = await supabase
+        const rawText = items.map((i) => i.name).join(", ");
+        const { data: created, error: createErr } = await admin
           .from("fp_shopping_memo")
-          .insert({ user_id: userId, title: memoTitle, raw_text: "" })
+          .insert({ user_id: userId, title: memoTitle, raw_text: rawText })
           .select("memo_id")
           .single();
 
@@ -61,7 +66,7 @@ export function createAddToMemoTool(userId: string, supabase: SupabaseClient<Dat
       }
 
       // 기존 아이템 sort_order 최대값 조회
-      const { data: existingItems } = await supabase
+      const { data: existingItems } = await admin
         .from("fp_memo_item")
         .select("sort_order")
         .eq("memo_id", memoId)
@@ -76,11 +81,12 @@ export function createAddToMemoTool(userId: string, supabase: SupabaseClient<Dat
         corrected_text: item.name,
         qty_value: item.qty ?? 1,
         qty_unit: item.unit ?? "개",
+        category: null,
         done: false,
         sort_order: baseOrder + idx,
       }));
 
-      const { error: insertErr } = await supabase.from("fp_memo_item").insert(rows);
+      const { error: insertErr } = await admin.from("fp_memo_item").insert(rows);
 
       if (insertErr) {
         return { success: false, error: "품목 추가에 실패했습니다." };

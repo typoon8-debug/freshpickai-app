@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { TopHeader } from "@/components/layout/top-header";
@@ -20,7 +21,8 @@ import type { SearchStoreItem } from "@/app/api/memo/search-items/route";
 type Tab = "new" | "saved";
 
 export default function MemoPage() {
-  const [tab, setTab] = useState<Tab>("new");
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<Tab>(searchParams.get("tab") === "saved" ? "saved" : "new");
   const [memoItems, setMemoItems] = useState<MemoItem[]>([]);
   const [parseMeta, setParseMeta] = useState<Record<string, ParseMeta>>({});
   const [parsedRaw, setParsedRaw] = useState<ParsedItem[]>([]);

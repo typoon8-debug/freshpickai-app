@@ -1,0 +1,99 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e48]:
+        - button "부모 모드 복귀" [ref=e49]:
+          - img [ref=e50]
+          - generic [ref=e52]: 부모 모드 복귀
+        - paragraph [ref=e53]: 하준의 음식 선택
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - paragraph [ref=e57]: 오늘 뭐 먹고 싶어? 골라봐! 🥰
+          - generic [ref=e59]: 🐰
+        - generic [ref=e60]:
+          - paragraph [ref=e61]: 좋아하는 음식을 탭하세요!
+          - generic [ref=e62]:
+            - button "🍗 치킨" [ref=e63]:
+              - generic [ref=e64]: 🍗
+              - generic [ref=e65]: 치킨
+            - button "🍕 피자" [ref=e66]:
+              - generic [ref=e67]: 🍕
+              - generic [ref=e68]: 피자
+            - button "🍜 라면" [ref=e69]:
+              - generic [ref=e70]: 🍜
+              - generic [ref=e71]: 라면
+            - button "🍱 도시락" [ref=e72]:
+              - generic [ref=e73]: 🍱
+              - generic [ref=e74]: 도시락
+            - button "🌮 타코" [ref=e75]:
+              - generic [ref=e76]: 🌮
+              - generic [ref=e77]: 타코
+            - button "🍔 버거" [ref=e78]:
+              - generic [ref=e79]: 🍔
+              - generic [ref=e80]: 버거
+        - generic [ref=e81]:
+          - heading "연령별 추천 카드 🎯" [level=2] [ref=e82]
+          - generic [ref=e84]:
+            - tablist [ref=e85]:
+              - tab "🍭 초등 (간식·디저트)" [ref=e86]:
+                - generic [ref=e87]: 🍭
+                - text: 초등 (간식·디저트)
+              - tab "🌍 청소년 (트렌드·글로벌)" [active] [selected] [ref=e88]:
+                - generic [ref=e89]: 🌍
+                - text: 청소년 (트렌드·글로벌)
+            - tabpanel "🌍 청소년 (트렌드·글로벌)" [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: 🍽️
+                - paragraph [ref=e139]: 이 섹션에 카드가 없어요
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - generic [ref=e106]: 🥦
+            - generic [ref=e107]:
+              - paragraph [ref=e108]: 오늘 채소 도전!
+              - paragraph [ref=e109]: 채소 요리 3가지 선택하기
+          - paragraph [ref=e112]: 2/3
+        - generic [ref=e113]:
+          - paragraph [ref=e114]: 내 뱃지 🏅
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: 🥗
+              - generic [ref=e118]: 채소왕
+            - generic [ref=e119]:
+              - generic [ref=e120]: 🍳
+              - generic [ref=e121]: 요리사
+            - generic [ref=e122]:
+              - generic [ref=e123]: 🌟
+              - generic [ref=e124]: 건강왕
+            - generic [ref=e125]:
+              - generic [ref=e126]: 🏆
+              - generic [ref=e127]: 미션마스터
+      - generic [ref=e129]:
+        - paragraph [ref=e131]: 음식을 골라주세요!
+        - button "엄마한테 보내기" [disabled] [ref=e132]:
+          - img [ref=e133]
+          - text: 엄마한테 보내기
+    - navigation [ref=e9]:
+      - link "홈" [ref=e10] [cursor=pointer]:
+        - /url: /
+        - img [ref=e11]
+        - generic [ref=e14]: 홈
+      - link "AI" [ref=e15] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e16]
+        - generic [ref=e18]: AI
+      - link "카테고리" [ref=e19] [cursor=pointer]:
+        - /url: /category
+        - img [ref=e20]
+        - generic [ref=e25]: 카테고리
+      - link "가족" [ref=e26] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e27]
+        - generic [ref=e32]: 가족
+      - link "메모" [ref=e33] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e34]
+        - generic [ref=e37]: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e43] [cursor=pointer]:
+    - img [ref=e44]
+  - alert [ref=e47]

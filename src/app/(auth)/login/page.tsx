@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Leaf } from "lucide-react";
 import { SocialButtons } from "@/components/auth/social-buttons";
 import { EmailLoginForm } from "@/components/auth/email-login-form";
@@ -16,6 +16,10 @@ const STATS = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // 상대 경로만 허용 (오픈 리다이렉트 방지)
+  const rawNext = searchParams.get("next") ?? "";
+  const nextUrl = rawNext.startsWith("/") ? rawNext : "/";
   const [view, setView] = useState<View>("login");
 
   return (
@@ -56,7 +60,7 @@ export default function LoginPage() {
         {/* 로그인 폼 영역 */}
         {view === "login" ? (
           <div className="flex flex-col gap-6">
-            <SocialButtons onEmailClick={() => setView("email")} />
+            <SocialButtons onEmailClick={() => setView("email")} nextUrl={nextUrl} />
             <p className="text-ink-700 text-center text-xs">
               로그인 시{" "}
               <button type="button" className="text-ink-700 underline">
@@ -70,7 +74,7 @@ export default function LoginPage() {
             </p>
           </div>
         ) : (
-          <EmailLoginForm onBack={() => setView("login")} />
+          <EmailLoginForm onBack={() => setView("login")} nextUrl={nextUrl} />
         )}
       </div>
 

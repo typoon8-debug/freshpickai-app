@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "장보기 메모" [level=1] [ref=e5]
+      - generic [ref=e6]:
+        - button "새 메모" [ref=e7]
+        - button "저장된 메모" [ref=e8]
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]:
+            - textbox "계란2판 새우깡3봉지 저녁찬거리 (자유롭게 입력하세요)" [ref=e13]:
+              - /placeholder: "계란2판 새우깡3봉지 저녁찬거리\n(자유롭게 입력하세요)"
+              - text: 계란2판 새우깡3봉지
+            - generic [ref=e15]: 11/500
+          - button "AI로 파싱하기" [ref=e16]:
+            - img [ref=e17]
+            - text: AI로 파싱하기
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - paragraph [ref=e60]: 파싱 결과
+            - generic [ref=e61]: 0/1개 매칭됨
+          - generic [ref=e63]:
+            - img [ref=e64]
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - button "체크 해제" [ref=e68]:
+                  - img [ref=e69]
+                - paragraph [ref=e71]: 계란2판 새우깡3봉지
+                - generic [ref=e72]:
+                  - button [disabled] [ref=e73]:
+                    - img [ref=e74]
+                  - generic [ref=e75]: "1"
+                  - button [ref=e76]:
+                    - img [ref=e77]
+                - generic [ref=e78]: 개
+              - paragraph [ref=e79]: 매칭 실패 — 수동 입력 필요
+            - generic [ref=e80]: 과자
+        - button "메모 저장하기" [ref=e81]:
+          - img [ref=e82]
+          - text: 메모 저장하기
+      - button "1개 항목 장바구니에 추가" [ref=e87]:
+        - img [ref=e88]
+        - text: 1개 항목 장바구니에 추가
+    - navigation [ref=e20]:
+      - link "홈" [ref=e21] [cursor=pointer]:
+        - /url: /
+        - img [ref=e22]
+        - generic [ref=e25]: 홈
+      - link "AI" [ref=e26] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e27]
+        - generic [ref=e29]: AI
+      - link "가족" [ref=e30] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e31]
+        - generic [ref=e36]: 가족
+      - link "메모" [ref=e37] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e38]
+        - generic [ref=e41]: 메모
+      - link "장바구니" [ref=e42] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e43]
+        - generic [ref=e47]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e53] [cursor=pointer]:
+    - img [ref=e54]
+  - alert [ref=e57]

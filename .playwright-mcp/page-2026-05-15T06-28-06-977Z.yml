@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - button "뒤로가기" [ref=e5]:
+          - img [ref=e6]
+        - heading "결제" [level=1] [ref=e8]
+        - generic [ref=e9]:
+          - link "찜 목록" [ref=e10] [cursor=pointer]:
+            - /url: /wishlist
+            - img [ref=e11]
+          - link "장바구니" [ref=e13] [cursor=pointer]:
+            - /url: /cart
+            - img [ref=e14]
+            - generic [ref=e18]: "2"
+          - link "마이프레시" [ref=e19] [cursor=pointer]:
+            - /url: /profile
+            - img [ref=e20]
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 주문 상품 (2개)
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]: 🥩
+              - generic [ref=e29]: 소갈비
+              - generic [ref=e30]: ×1
+            - generic [ref=e31]:
+              - generic [ref=e32]: 🍐
+              - generic [ref=e33]: 배
+              - generic [ref=e34]: ×1
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]:
+              - img [ref=e38]
+              - generic [ref=e41]: 배송지
+            - button "변경" [ref=e42]:
+              - text: 변경
+              - img [ref=e43]
+          - generic [ref=e45]:
+            - paragraph [ref=e157]: 우리집
+            - paragraph [ref=e158]: 경기 구리시 동구릉로85번길 45 1층
+            - paragraph [ref=e159]: 홍점장 · 010-5713-2525
+            - generic [ref=e47]:
+              - img [ref=e48]
+              - paragraph [ref=e53]: 배송 방식은 스토어 정책에 따라 다릅니다
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e58]: 결제 수단
+          - generic [ref=e59]:
+            - button "💛 카카오페이" [ref=e60]:
+              - generic [ref=e61]: 💛
+              - text: 카카오페이
+            - button "💚 네이버페이" [ref=e62]:
+              - generic [ref=e63]: 💚
+              - text: 네이버페이
+            - button "💳 신용카드" [ref=e64]:
+              - generic [ref=e65]: 💳
+              - text: 신용카드
+            - button "🏦 계좌이체" [ref=e66]:
+              - generic [ref=e67]: 🏦
+              - text: 계좌이체
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - img [ref=e70]
+            - generic [ref=e74]: 혜택 적용
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - img [ref=e78]
+                - generic [ref=e81]: 포인트
+                - generic [ref=e82]: 0원 보유
+              - generic [ref=e83]: 포인트 없음
+            - generic [ref=e84]:
+              - generic [ref=e85]:
+                - img [ref=e86]
+                - generic [ref=e88]: 쿠폰
+              - generic [ref=e89]:
+                - button "쿠폰 사용 안 함" [ref=e90]
+                - button "첫가입 쿠폰(구리인창점) 5,000원 할인 50,000원 이상 구매 시 5월 17일까지" [disabled] [ref=e160]:
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: 첫가입 쿠폰(구리인창점)
+                    - generic [ref=e163]: 5,000원 할인
+                  - paragraph [ref=e164]: 50,000원 이상 구매 시
+                  - paragraph [ref=e165]: 5월 17일까지
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - paragraph [ref=e99]: 스토어 배송정책에 따라 배송됩니다
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - generic [ref=e103]: 상품 합계
+              - generic [ref=e104]: 40,000원
+            - generic [ref=e105]:
+              - generic [ref=e106]: 배송비
+              - generic [ref=e107]: 무료
+            - generic [ref=e109]:
+              - generic [ref=e110]: 최종 결제금액
+              - generic [ref=e111]: 40,000원
+      - generic [ref=e112]:
+        - button "40,000원 결제하기" [disabled] [ref=e113]:
+          - img [ref=e114]
+          - text: 40,000원 결제하기
+        - paragraph [ref=e117]: 주문 내용을 확인하였으며 결제에 동의합니다
+    - navigation [ref=e118]:
+      - link "홈" [ref=e119] [cursor=pointer]:
+        - /url: /
+        - img [ref=e120]
+        - generic [ref=e123]: 홈
+      - link "AI" [ref=e124] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e125]
+        - generic [ref=e127]: AI
+      - link "카테고리" [ref=e128] [cursor=pointer]:
+        - /url: /category
+        - img [ref=e129]
+        - generic [ref=e134]: 카테고리
+      - link "가족" [ref=e135] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e136]
+        - generic [ref=e141]: 가족
+      - link "메모" [ref=e142] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e143]
+        - generic [ref=e146]: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e152] [cursor=pointer]:
+    - img [ref=e153]
+  - alert [ref=e156]

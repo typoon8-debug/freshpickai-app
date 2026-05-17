@@ -7,6 +7,9 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
+  // 오픈 리다이렉트 방지: 상대 경로만 허용
+  const rawNext = searchParams.get("next") ?? "";
+  const nextPath = rawNext.startsWith("/") ? rawNext : "/";
 
   const forwardedHost = request.headers.get("x-forwarded-host");
   const isLocalEnv = process.env.NODE_ENV === "development";
@@ -23,7 +26,7 @@ export async function GET(request: NextRequest) {
   if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     if (!error) {
-      return NextResponse.redirect(buildRedirectUrl("/"));
+      return NextResponse.redirect(buildRedirectUrl(nextPath));
     }
     return NextResponse.redirect(
       buildRedirectUrl(`/login?error=${encodeURIComponent(error.message)}`)
@@ -86,7 +89,8 @@ export async function GET(request: NextRequest) {
 
       if (isOnboarded || isSkipped) {
         const cookieValue = isOnboarded ? "done" : "skipped";
-        const response = NextResponse.redirect(buildRedirectUrl("/"));
+        // next 파라미터가 있으면 해당 URL로, 없으면 홈으로
+        const response = NextResponse.redirect(buildRedirectUrl(nextPath));
         response.cookies.set("fp_onboarded", cookieValue, {
           maxAge: 365 * 24 * 60 * 60,
           path: "/",
@@ -96,11 +100,13 @@ export async function GET(request: NextRequest) {
         return response;
       }
 
-      // 온보딩 미완료 → /onboarding
-      return NextResponse.redirect(buildRedirectUrl("/onboarding"));
+      // 온보딩 미완료 → /onboarding (완료 후 nextPath로 이동하도록 쿼리 전달)
+      const onboardingUrl =
+        nextPath !== "/" ? `/onboarding?next=${encodeURIComponent(nextPath)}` : "/onboarding";
+      return NextResponse.redirect(buildRedirectUrl(onboardingUrl));
     }
 
-    return NextResponse.redirect(buildRedirectUrl("/"));
+    return NextResponse.redirect(buildRedirectUrl(nextPath));
   }
 
   return NextResponse.redirect(buildRedirectUrl("/login?error=missing_params"));

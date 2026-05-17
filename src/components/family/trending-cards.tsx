@@ -5,7 +5,8 @@ interface TrendingItem {
   cardId: string;
   name: string;
   emoji: string;
-  pct: number;
+  pct?: number;
+  count?: number;
 }
 
 const FALLBACK_TRENDING: TrendingItem[] = [
@@ -35,13 +36,18 @@ export function TrendingCards({ items }: TrendingCardsProps) {
             key={item.cardId}
             href={`/cards/${item.cardId}`}
             data-testid={`trending-card-${item.cardId}`}
-            className="border-line flex flex-shrink-0 items-center gap-3 rounded-lg border bg-white px-3 py-2.5"
+            className="border-line flex shrink-0 items-center gap-3 rounded-lg border bg-white px-3 py-2.5"
             style={{ minWidth: 180 }}
           >
             <span className="text-2xl">{item.emoji}</span>
             <div className="min-w-0 flex-1">
               <p className="text-ink-800 truncate text-xs font-semibold">{item.name}</p>
-              <p className="text-terracotta mt-0.5 text-[11px] font-medium">+{item.pct}% 상승</p>
+              {item.pct != null && (
+                <p className="text-terracotta mt-0.5 text-[11px] font-medium">+{item.pct}% 상승</p>
+              )}
+              {item.count != null && item.pct == null && (
+                <p className="text-terracotta mt-0.5 text-[11px] font-medium">👍 {item.count}회</p>
+              )}
             </div>
           </Link>
         ))}

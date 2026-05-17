@@ -40,4 +40,7 @@ export const qk = {
 
   // 가족 투표 세션
   voteSession: (sessionId: string) => ["vote", sessionId] as const,
+
+  // 키즈 선호 카드 (평균 별점 ≥ 4.0)
+  kidsPreferred: (groupId: string) => ["kids-preferred", groupId] as const,
 } as const;

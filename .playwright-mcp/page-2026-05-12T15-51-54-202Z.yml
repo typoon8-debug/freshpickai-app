@@ -1,0 +1,119 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "결제" [level=1] [ref=e183]
+      - generic [ref=e184]:
+        - generic [ref=e185]:
+          - paragraph [ref=e186]: 주문 상품 (5개)
+          - generic [ref=e187]:
+            - generic [ref=e188]:
+              - generic [ref=e189]: 🥩
+              - generic [ref=e190]: 소갈비
+              - generic [ref=e191]: ×2
+            - generic [ref=e192]:
+              - generic [ref=e193]: 🫙
+              - generic [ref=e194]: 간장
+              - generic [ref=e195]: ×1
+            - generic [ref=e196]:
+              - generic [ref=e197]: 🍐
+              - generic [ref=e198]: 배
+              - generic [ref=e199]: ×1
+            - paragraph [ref=e200]: 외 2개
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - img [ref=e204]
+              - generic [ref=e207]: 배송지
+            - button "변경" [ref=e208]:
+              - text: 변경
+              - img [ref=e209]
+          - generic [ref=e211]:
+            - paragraph [ref=e212]: 집
+            - paragraph [ref=e213]: 서울특별시 마포구 합정동 000-00
+            - paragraph [ref=e214]: 010-0000-0000
+            - generic [ref=e215]:
+              - img [ref=e216]
+              - paragraph [ref=e221]: 배송 방식은 스토어 정책에 따라 다릅니다
+        - generic [ref=e222]:
+          - generic [ref=e223]:
+            - img [ref=e224]
+            - generic [ref=e226]: 결제 수단
+          - generic [ref=e227]:
+            - button "💛 카카오페이" [ref=e228]:
+              - generic [ref=e229]: 💛
+              - text: 카카오페이
+            - button "💚 네이버페이" [ref=e230]:
+              - generic [ref=e231]: 💚
+              - text: 네이버페이
+            - button "💳 신용카드" [ref=e232]:
+              - generic [ref=e233]: 💳
+              - text: 신용카드
+            - button "🏦 계좌이체" [ref=e234]:
+              - generic [ref=e235]: 🏦
+              - text: 계좌이체
+        - generic [ref=e236]:
+          - generic [ref=e237]:
+            - img [ref=e238]
+            - generic [ref=e242]: 혜택 적용
+          - generic [ref=e243]:
+            - generic [ref=e244]:
+              - generic [ref=e245]:
+                - img [ref=e246]
+                - generic [ref=e249]: 포인트
+                - generic [ref=e250]: 1,200원 보유
+              - button "전액 사용" [ref=e251]
+            - generic [ref=e252]:
+              - generic [ref=e253]:
+                - img [ref=e254]
+                - generic [ref=e256]: 쿠폰
+              - generic [ref=e257]:
+                - button "쿠폰 사용 안 함" [ref=e258]
+                - button "5,000원 할인(30,000원 이상 구매 시)" [disabled] [ref=e259]:
+                  - text: 5,000원 할인
+                  - generic [ref=e260]: (30,000원 이상 구매 시)
+                - button "신선식품 10% 할인 (최대 3,000원)" [ref=e261]
+                - button "배송비 할인쿠폰" [ref=e262]
+        - generic [ref=e263]:
+          - generic [ref=e264]:
+            - img [ref=e265]
+            - paragraph [ref=e270]: 스토어 배송정책에 따라 배송됩니다
+          - generic [ref=e272]:
+            - generic [ref=e273]:
+              - generic [ref=e274]: 상품 합계
+              - generic [ref=e275]: 27,400원
+            - generic [ref=e276]:
+              - generic [ref=e277]: 배송비
+              - generic [ref=e278]: 3,000원
+            - generic [ref=e280]:
+              - generic [ref=e281]: 최종 결제금액
+              - generic [ref=e282]: 30,400원
+      - generic [ref=e283]:
+        - button "30,400원 결제하기" [disabled] [ref=e284]:
+          - img [ref=e285]
+          - text: 30,400원 결제하기
+        - paragraph [ref=e288]: 주문 내용을 확인하였으며 결제에 동의합니다
+    - navigation [ref=e144]:
+      - link "홈" [ref=e145] [cursor=pointer]:
+        - /url: /
+        - img [ref=e146]
+        - generic [ref=e149]: 홈
+      - link "AI" [ref=e150] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e151]
+        - generic [ref=e153]: AI
+      - link "가족" [ref=e154] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e155]
+        - generic [ref=e160]: 가족
+      - link "메모" [ref=e161] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e162]
+        - generic [ref=e165]: 메모
+      - link "장바구니" [ref=e166] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e167]
+        - generic [ref=e171]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e177] [cursor=pointer]:
+    - img [ref=e178]
+  - alert [ref=e181]

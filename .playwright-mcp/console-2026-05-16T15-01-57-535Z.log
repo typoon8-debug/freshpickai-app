@@ -1,0 +1,360 @@
+[     141ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[     576ms] [LOG] [Fast Refresh] done in 540ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[     604ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[     606ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[     720ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[     820ms] [LOG] [HMR] connected @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[     980ms] [LOG] [analytics] PostHog key 없음 — 개발 모드 console.log 폴백 @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    1125ms] Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+      <RedirectBoundary>
+        <RedirectErrorBoundary router={{...}}>
+          <InnerLayoutRouter url="/chat" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+            <SegmentViewNode type="page" pagePath="(main)/cha...">
+              <SegmentTrieNode>
+              <ClientPageRoot Component={function ChatPage} serverProvidedParams={{...}}>
+                <ChatPage params={Promise} searchParams={Promise}>
+                  <div className="flex h-[ca...">
+                    <ChatHeader>
+                    <MessageList>
+                    <div>
+                    <QuickChips>
+                    <ChatInput onSend={function useChatStream.useCallback[send]} disabled={false}>
+                      <div className="border-lin...">
+                        <div className="border-lin...">
+                          <textarea>
+                          <VoiceChatButton state="idle" isSupported={true} onToggle={function handleVoiceToggle} ...>
+                            <div className="relative f...">
+                              <button
+                                type="button"
+                                onClick={function handleVoiceToggle}
++                               disabled={false}
+-                               disabled=""
+                                aria-label="음성으로 입력하기"
+                                aria-pressed={false}
++                               title={undefined}
+-                               title="이 브라우저는 음성 입력을 지원하지 않습니다"
++                               className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration..."
+-                               className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration..."
+                              >
+                                <Mic size={15}>
+                                  <svg
+                                    ref={null}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={15}
+                                    height={15}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
++                                   className="lucide lucide-mic"
+-                                   className="lucide lucide-mic-off"
+                                    aria-hidden="true"
+                                  >
+                                    <path>
+                                    <path
++                                     d="M19 10v2a7 7 0 0 1-14 0v-2"
+-                                     d="M15 9.34V5a3 3 0 0 0-5.68-1.33"
+                                    >
++                                   <rect x="9" y="2" width="6" height="13" rx="3">
+-                                   <path d="M16.95 16.95A7 7 0 0 1 5 12v-2">
+                          ...
+            ...
+          ...
+
+    at throwOnHydrationMismatch (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:3319:56)
+    at beginWork (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6759:918)
+    at runWithFiberInDEV (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:966:74)
+    at performUnitOfWork (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9556:97)
+    at workLoopConcurrentByScheduler (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9552:58)
+    at renderRootConcurrent (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9535:71)
+    at performWorkOnRoot (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9062:150)
+    at performWorkOnRootViaSchedulerTask (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10256:9)
+    at MessagePort.performWorkUntilDeadline (http://localhost:3001/_next/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:2648:64)
+[    1153ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    1167ms] [LOG] %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    1167ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943718702} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    1168ms] [LOG] %c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    1347ms] [LOG] [Fast Refresh] done in 314ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    6037ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[    6038ms] [LOG] [Fast Refresh] done in 115ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   16155ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   16162ms] [LOG] [Fast Refresh] done in 112ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   21042ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   21095ms] [LOG] [Fast Refresh] done in 160ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   30232ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   30331ms] [LOG] [Fast Refresh] done in 212ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   34312ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   34337ms] [LOG] [Fast Refresh] done in 134ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   57749ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   57770ms] [LOG] [Fast Refresh] done in 135ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   58000ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   58019ms] [LOG] [Fast Refresh] done in 120ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   68071ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   68098ms] [LOG] [Fast Refresh] done in 134ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   85343ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   85355ms] [LOG] [Fast Refresh] done in 120ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   89332ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   89730ms] [LOG] [Fast Refresh] done in 500ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   92601ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[   92630ms] [LOG] [Fast Refresh] done in 131ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  113904ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  113907ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  114135ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  114150ms] [LOG] [Fast Refresh] done in 115ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  117479ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  117510ms] [LOG] [Fast Refresh] done in 138ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  120808ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  120827ms] [LOG] [Fast Refresh] done in 118ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  121057ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  121062ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  121203ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  121205ms] [LOG] [Fast Refresh] done in 102ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  126823ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  126884ms] [LOG] [Fast Refresh] done in 173ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  163809ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  163813ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  170040ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(4), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  170044ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943887574} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  177113ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943894645} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  180796ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943898321} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  184679ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  184679ms] [LOG] [Fast Refresh] done in 101ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  185683ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943903217} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  188451ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943905967} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  203493ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  203503ms] [LOG] [Fast Refresh] done in 125ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  216635ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  216657ms] [LOG] [Fast Refresh] done in 125ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  219934ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  220105ms] [LOG] [Fast Refresh] done in 277ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  220232ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  220265ms] [LOG] [Fast Refresh] done in 140ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  231229ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  231341ms] [LOG] [Fast Refresh] done in 215ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  270663ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943988191} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  272767ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943990271} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  275196ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  275305ms] [LOG] [Fast Refresh] done in 216ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  275478ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  275479ms] [LOG] [Fast Refresh] done in 109ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  275876ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778943993393} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  282860ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  282917ms] [LOG] [Fast Refresh] done in 159ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  287196ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  287201ms] [LOG] [Fast Refresh] done in 110ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  290706ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  290720ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  298080ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  298107ms] [LOG] [Fast Refresh] done in 128ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  301597ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  301610ms] [LOG] [Fast Refresh] done in 118ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  310746ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  310752ms] [LOG] [Fast Refresh] done in 110ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  320716ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  320797ms] [LOG] [Fast Refresh] done in 183ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  324636ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  324710ms] [LOG] [Fast Refresh] done in 175ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  331105ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  331106ms] [LOG] [Fast Refresh] done in 101ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  338979ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  338985ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  347527ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  347560ms] [LOG] [Fast Refresh] done in 136ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  351653ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  351720ms] [LOG] [Fast Refresh] done in 169ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  355241ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  355311ms] [LOG] [Fast Refresh] done in 171ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  356769ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  356803ms] [LOG] [Fast Refresh] done in 143ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  359129ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  359183ms] [LOG] [Fast Refresh] done in 157ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  362833ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  362874ms] [LOG] [Fast Refresh] done in 152ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  378327ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  378481ms] [LOG] [Fast Refresh] done in 267ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  378593ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  378705ms] [LOG] [Fast Refresh] done in 223ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  387300ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  387310ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  401404ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  401405ms] [LOG] [Fast Refresh] done in 103ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  408439ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  408475ms] [LOG] [Fast Refresh] done in 136ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  411979ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  412000ms] [LOG] [Fast Refresh] done in 130ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  412285ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944129815} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  414798ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944132330} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  417223ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944134757} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  420122ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944137642} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  423735ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  423747ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  427706ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  427710ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  427883ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  427887ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  428558ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944146088} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  431299ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  431318ms] [LOG] [Fast Refresh] done in 126ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  440406ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  442377ms] [LOG] [Fast Refresh] done in 2073ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  444128ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  444258ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo/fa0a3ed7-ab1b-49bd-a369-ff516c34d1f7 color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo/fa0a3ed7-ab1b-49bd-a369-ff516c34d1f7, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944161779} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  444347ms] [LOG] [Fast Refresh] done in 323ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  444467ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  444594ms] [LOG] [Fast Refresh] done in 238ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  447946ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  448623ms] [LOG] [Fast Refresh] done in 779ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  452026ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  452186ms] [LOG] [Fast Refresh] done in 266ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  452343ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  452520ms] [LOG] [Fast Refresh] done in 283ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  453961ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944171493} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  455958ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  456275ms] [LOG] [Fast Refresh] done in 432ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  459722ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  459962ms] [LOG] [Fast Refresh] done in 342ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  463363ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  463806ms] [LOG] [Fast Refresh] done in 545ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  466542ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944184060} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  475380ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  475409ms] [LOG] [Fast Refresh] done in 131ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  484023ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  484048ms] [LOG] [Fast Refresh] done in 129ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  486357ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  486371ms] [LOG] [Fast Refresh] done in 126ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  486732ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  486735ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  490289ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  490290ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  502007ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  502010ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  503849ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  503895ms] [LOG] [Fast Refresh] done in 148ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  513446ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  513469ms] [LOG] [Fast Refresh] done in 133ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  515595ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944233125} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  522312ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944239846} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  522484ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  522498ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  524067ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  524130ms] [LOG] [Fast Refresh] done in 164ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  525432ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944242962} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  528083ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778944245617} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  528190ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  528229ms] [LOG] [Fast Refresh] done in 142ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  531131ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  531433ms] [LOG] [Fast Refresh] done in 411ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  533380ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  533544ms] [LOG] [Fast Refresh] done in 266ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  533665ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  534705ms] [LOG] [Fast Refresh] done in 1151ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  549333ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  549335ms] [LOG] [Fast Refresh] done in 118ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  574746ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  574748ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  591908ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[  591909ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1537546ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1537814ms] [LOG] [Fast Refresh] done in 376ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1541132ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1542862ms] [LOG] [Fast Refresh] done in 413ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1549021ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1549738ms] [LOG] [Fast Refresh] done in 818ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1550050ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1550130ms] [LOG] [Fast Refresh] done in 184ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1550232ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1550241ms] [LOG] [Fast Refresh] done in 109ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1554103ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1554216ms] [LOG] [Fast Refresh] done in 211ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1554529ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1554574ms] [LOG] [Fast Refresh] done in 152ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1557634ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1557809ms] [LOG] [Fast Refresh] done in 273ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1558066ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1558128ms] [LOG] [Fast Refresh] done in 166ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1560743ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1560995ms] [LOG] [Fast Refresh] done in 244ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1561133ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1561215ms] [LOG] [Fast Refresh] done in 182ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1636420ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1636422ms] [LOG] [Fast Refresh] done in 115ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1655619ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1655622ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1800722ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1800893ms] [LOG] [Fast Refresh] done in 285ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1800943ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945518472} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1811005ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3001/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3001/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945528524} /_vercel/insights/view @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1963246ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=2fsymKI4AH-KqRQXkYrIo' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13300
+[ 1966591ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=2fsymKI4AH-KqRQXkYrIo' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13300
+[ 1969928ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=2fsymKI4AH-KqRQXkYrIo' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13300
+[ 1973287ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=2fsymKI4AH-KqRQXkYrIo' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13300
+[ 1976652ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr?id=2fsymKI4AH-KqRQXkYrIo' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13300
+[ 1992400ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1992509ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1992578ms] [LOG] [analytics] PostHog key 없음 — 개발 모드 console.log 폴백 @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1992965ms] [LOG] %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1992965ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945710500} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1992966ms] [LOG] %c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1993579ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1993683ms] [LOG] [Fast Refresh] done in 204ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1994689ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1994809ms] [LOG] [Fast Refresh] done in 229ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1994826ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(4), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 1994832ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/profile color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/profile, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945712359} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2001136ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2001204ms] [LOG] [Fast Refresh] done in 172ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2001225ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945718755} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2004995ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945722514} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2006744ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945724270} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2008915ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945726432} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2014227ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945731753} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2016160ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945733679} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2023389ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945740916} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2093313ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2093320ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2093339ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/memo?tab=saved color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/memo?tab=saved, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945810871} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2097449ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945814983} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2099750ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945817282} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2165709ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945883244} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2168932ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945886460} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2197190ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/profile color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/profile, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945914722} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2203768ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945921295} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2207951ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/cart color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/cart, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945925479} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2226141ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945943675} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2228927ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/memo?tab=saved color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/memo?tab=saved, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945946455} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235100ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235123ms] [LOG] [Fast Refresh] done in 138ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235145ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235146ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235264ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235316ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235358ms] [LOG] [analytics] PostHog key 없음 — 개발 모드 console.log 폴백 @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235398ms] [LOG] %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235399ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/memo?tab=saved color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/memo?tab=saved, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778945952933} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2235399ms] [LOG] %c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2660524ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(4), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2660527ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946378058} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2669247ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/memo color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/memo, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946386778} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2675146ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/profile color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/profile, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946392679} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2678855ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946396384} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2681357ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946398890} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2689036ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/profile color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/profile, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946406568} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2692554ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/login, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946410086} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2711647ms] [LOG] %c[Vercel Web Analytics]%c [view] http://localhost:3000/chat color: rgb(120, 120, 120) color: inherit {o: http://localhost:3000/chat, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 2.0.1, ts: 1778946429175} /_vercel/insights/view @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2756368ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432
+[ 2756368ms] [LOG] %c[Vercel Speed Insights]%c [vitals] color: rgb(120, 120, 120) color: inherit {speed: 4g, metrics: Array(1), scriptVersion: 0.1.3, sdkName: @vercel/speed-insights/next, sdkVersion: 2.0.0} /_vercel/speed-insights/vitals @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2432

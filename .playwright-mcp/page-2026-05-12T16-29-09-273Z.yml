@@ -1,0 +1,83 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "카드 만들기" [level=1] [ref=e5]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: ✓
+          - generic [ref=e12]: 테마 선택
+        - generic [ref=e13]:
+          - generic [ref=e14]: "2"
+          - generic [ref=e15]: 취향 태그
+        - generic [ref=e16]:
+          - generic [ref=e17]: "3"
+          - generic [ref=e18]: 재료·예산
+        - generic [ref=e19]:
+          - generic [ref=e20]: "4"
+          - generic [ref=e21]: 미리보기
+      - generic [ref=e22]:
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - paragraph [ref=e111]: 취향 태그를 선택해주세요 (최소 3개)
+            - generic [ref=e112]: 2/3+
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - paragraph [ref=e115]: 맛 스타일
+              - generic [ref=e116]:
+                - button "구수한" [ref=e117]
+                - button "달콤한" [ref=e118]
+                - button "매운맛" [ref=e119]
+                - button "짭짤" [ref=e120]
+                - button "담백한" [ref=e121]
+                - button "깊은맛" [ref=e122]
+                - button "새콤한" [ref=e123]
+            - generic [ref=e124]:
+              - paragraph [ref=e125]: 식단
+              - generic [ref=e126]:
+                - button "비건" [ref=e127]
+                - button "저칼로리" [active] [ref=e128]
+                - button "단백질 식단" [ref=e129]
+                - button "저속노화" [ref=e130]
+                - button "글루텐프리" [ref=e131]
+            - generic [ref=e132]:
+              - paragraph [ref=e133]: 상황
+              - generic [ref=e134]:
+                - button "혼밥" [ref=e135]
+                - button "가족식사" [ref=e136]
+                - button "손님초대" [ref=e137]
+                - button "도시락" [ref=e138]
+                - button "야식" [ref=e139]
+                - button "간식" [ref=e140]
+        - paragraph [ref=e144]: 취향 태그를 최소 3개 선택해 주세요
+      - generic [ref=e67]:
+        - button "이전" [ref=e141]:
+          - img [ref=e142]
+          - text: 이전
+        - button "다음" [disabled] [ref=e68]:
+          - text: 다음
+          - img [ref=e69]
+    - navigation [ref=e71]:
+      - link "홈" [ref=e72] [cursor=pointer]:
+        - /url: /
+        - img [ref=e73]
+        - generic [ref=e76]: 홈
+      - link "AI" [ref=e77] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e78]
+        - generic [ref=e80]: AI
+      - link "가족" [ref=e81] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e82]
+        - generic [ref=e87]: 가족
+      - link "메모" [ref=e88] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e89]
+        - generic [ref=e92]: 메모
+      - link "장바구니" [ref=e93] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e94]
+        - generic [ref=e98]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e104] [cursor=pointer]:
+    - img [ref=e105]
+  - alert [ref=e108]

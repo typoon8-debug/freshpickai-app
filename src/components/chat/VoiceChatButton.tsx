@@ -9,12 +9,19 @@ interface VoiceChatButtonProps {
   state: SpeechState;
   isSupported: boolean;
   onToggle: () => void;
+  /** AI 응답 스트리밍 중 — true이면 버튼 비활성화 */
+  aiResponding?: boolean;
 }
 
-export function VoiceChatButton({ state, isSupported, onToggle }: VoiceChatButtonProps) {
+export function VoiceChatButton({
+  state,
+  isSupported,
+  onToggle,
+  aiResponding = false,
+}: VoiceChatButtonProps) {
   const isListening = state === "listening";
   const isProcessing = state === "processing";
-  const isDisabled = !isSupported || isProcessing;
+  const isDisabled = !isSupported || isProcessing || aiResponding;
 
   return (
     <div className="relative flex flex-shrink-0 flex-col items-center">

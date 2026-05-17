@@ -1,0 +1,29 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "내 섹션 관리" [level=1] [ref=e5]
+    - navigation [ref=e12]:
+      - link "홈" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - img [ref=e14]
+        - generic [ref=e17]: 홈
+      - link "AI" [ref=e18] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e19]
+        - generic [ref=e21]: AI
+      - link "가족" [ref=e22] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e23]
+        - generic [ref=e28]: 가족
+      - link "메모" [ref=e29] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e30]
+        - generic [ref=e33]: 메모
+      - link "장바구니" [ref=e34] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e35]
+        - generic [ref=e39]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e45] [cursor=pointer]:
+    - img [ref=e46]
+  - alert [ref=e49]

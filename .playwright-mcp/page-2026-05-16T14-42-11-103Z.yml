@@ -1,0 +1,207 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e48]:
+        - generic [ref=e49]: FreshPick AI
+        - generic [ref=e50]:
+          - link "찜 목록" [ref=e51] [cursor=pointer]:
+            - /url: /wishlist
+            - img [ref=e52]
+          - link "장바구니" [ref=e54] [cursor=pointer]:
+            - /url: /cart
+            - img [ref=e55]
+          - link "마이프레시" [ref=e59] [cursor=pointer]:
+            - /url: /profile
+            - img [ref=e60]
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - paragraph [ref=e66]: 우리가족 보드
+            - heading "우리 가족" [level=2] [ref=e67]
+          - generic [ref=e68]:
+            - img [ref=e69]
+            - generic [ref=e71]: Lv.12
+        - generic [ref=e73]:
+          - img [ref=e74]
+          - generic [ref=e77]:
+            - generic [ref=e78]: 47끼
+            - text: 이번 달 함께한 식사
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - heading "가족 구성원" [level=3] [ref=e81]
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - generic [ref=e85]: 👨‍👩‍
+              - generic [ref=e87]:
+                - generic [ref=e88]:
+                  - generic [ref=e89]: 엄마
+                  - generic [ref=e90]: 부모
+                - paragraph [ref=e91]: 된장찌개 레시피 확인
+                - paragraph [ref=e92]: Lv.8
+            - generic [ref=e93]:
+              - generic [ref=e95]: 👨‍👩‍
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - generic [ref=e99]: 아빠
+                  - generic [ref=e100]: 부모
+                - paragraph [ref=e101]: 장바구니 3개 추가
+                - paragraph [ref=e102]: Lv.5
+            - generic [ref=e103]:
+              - generic [ref=e105]: 🧑‍
+              - generic [ref=e107]:
+                - generic [ref=e108]:
+                  - generic [ref=e109]: 서연
+                  - generic [ref=e110]: 청소년
+                - paragraph [ref=e111]: 비건 메뉴 추천 요청
+                - paragraph [ref=e112]: Lv.3
+            - generic [ref=e113]:
+              - generic [ref=e115]: 🧒
+              - generic [ref=e117]:
+                - generic [ref=e118]:
+                  - generic [ref=e119]: 하준
+                  - generic [ref=e120]: 아이
+                - paragraph [ref=e121]: 치킨 5번 선택 👍
+                - paragraph [ref=e122]: Lv.2
+        - generic [ref=e123]:
+          - heading "이번 주 뭐 먹지? 🗳️" [level=3] [ref=e124]
+          - paragraph [ref=e126]: 현재 진행 중인 투표가 없어요
+        - generic [ref=e127]:
+          - heading "이번 달 TOP 5 메뉴 🏆" [level=3] [ref=e128]
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - img [ref=e132]
+              - generic [ref=e134]: 🥩
+              - paragraph [ref=e135]: 셰프의 갈비찜 정식
+              - generic [ref=e136]: 8회
+            - generic [ref=e137]:
+              - generic [ref=e138]: "2"
+              - generic [ref=e139]: 🌿
+              - paragraph [ref=e140]: 제철 봄나물 비빔밥
+              - generic [ref=e141]: 6회
+            - generic [ref=e142]:
+              - generic [ref=e143]: "3"
+              - generic [ref=e144]: 🍲
+              - paragraph [ref=e145]: 미슐랭 된장찌개
+              - generic [ref=e146]: 5회
+            - generic [ref=e147]:
+              - generic [ref=e148]: "4"
+              - generic [ref=e149]: 🫘
+              - paragraph [ref=e150]: 두부 강된장찌개
+              - generic [ref=e151]: 3회
+            - generic [ref=e152]:
+              - generic [ref=e153]: "5"
+              - generic [ref=e154]: 🍳
+              - paragraph [ref=e155]: 달걀볶음밥
+              - generic [ref=e156]: 2회
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - img [ref=e159]
+            - heading "지금 뜨는 카드" [level=3] [ref=e162]
+            - generic [ref=e163]: 실시간
+          - generic [ref=e164]:
+            - link "🌿 봄 나물 제철한상 +42% 상승" [ref=e165] [cursor=pointer]:
+              - /url: /cards/c03
+              - generic [ref=e166]: 🌿
+              - generic [ref=e167]:
+                - paragraph [ref=e168]: 봄 나물 제철한상
+                - paragraph [ref=e169]: +42% 상승
+            - link "🍡 K-디저트 모음전 +28% 상승" [ref=e170] [cursor=pointer]:
+              - /url: /cards/c05
+              - generic [ref=e171]: 🍡
+              - generic [ref=e172]:
+                - paragraph [ref=e173]: K-디저트 모음전
+                - paragraph [ref=e174]: +28% 상승
+            - link "🍿 홈시네마 나이트 +19% 상승" [ref=e175] [cursor=pointer]:
+              - /url: /cards/c06
+              - generic [ref=e176]: 🍿
+              - generic [ref=e177]:
+                - paragraph [ref=e178]: 홈시네마 나이트
+                - paragraph [ref=e179]: +19% 상승
+        - generic [ref=e180]:
+          - heading "하준 선호 ⭐" [level=3] [ref=e181]
+          - generic [ref=e182]:
+            - paragraph [ref=e183]: ⭐
+            - paragraph [ref=e184]: 아직 별점이 없어요
+            - paragraph [ref=e185]: 카드 상세 페이지에서 별점을 남겨보세요
+          - generic [ref=e186]:
+            - paragraph [ref=e187]: 카드 직접 평가하기
+            - generic [ref=e188]:
+              - paragraph [ref=e189]: 아래 별점 컴포넌트는 카드 상세 페이지에서도 사용 가능해요
+              - generic [ref=e190]:
+                - paragraph [ref=e191]: 예시 카드
+                - group "예시 카드 별점" [ref=e192]:
+                  - button "1점" [ref=e193]:
+                    - img [ref=e194]
+                  - button "2점" [ref=e196]:
+                    - img [ref=e197]
+                  - button "3점" [ref=e199]:
+                    - img [ref=e200]
+                  - button "4점" [ref=e202]:
+                    - img [ref=e203]
+                  - button "5점" [ref=e205]:
+                    - img [ref=e206]
+        - generic [ref=e208]:
+          - generic [ref=e209]:
+            - img [ref=e210]
+            - heading "이번 주 미션" [level=3] [ref=e212]
+          - generic [ref=e213]:
+            - generic [ref=e215]:
+              - generic [ref=e216]: 🥗
+              - generic [ref=e217]:
+                - paragraph [ref=e218]: 이번 주 채소 도전!
+                - paragraph [ref=e219]: 4가지 채소 요리 도전 중 → 3/4 완료
+              - link "레시피 보기" [ref=e220] [cursor=pointer]:
+                - /url: /cards/c07
+                - text: 레시피 보기
+                - img [ref=e221]
+            - generic [ref=e224]:
+              - generic [ref=e225]: 🎬
+              - generic [ref=e226]:
+                - paragraph [ref=e227]: 금요일 홈시네마 나이트
+                - paragraph [ref=e228]: 팝콘 + 나초 + 치킨 조합 세트
+              - link "카드 보기" [ref=e229] [cursor=pointer]:
+                - /url: /cards/c10
+                - text: 카드 보기
+                - img [ref=e230]
+        - generic [ref=e233]:
+          - generic [ref=e235]:
+            - img [ref=e236]
+            - heading "가족 초대하기" [level=3] [ref=e241]
+          - generic [ref=e242]:
+            - img [ref=e244]
+            - generic [ref=e247]:
+              - paragraph [ref=e248]: 초대 코드 (6자리)
+              - generic [ref=e249]:
+                - generic [ref=e250]: 46QF8E
+                - button "링크 복사" [ref=e251]:
+                  - img [ref=e252]
+                  - text: 링크 복사
+              - button "카카오톡으로 가족 초대 보내기" [disabled] [ref=e255]:
+                - img [ref=e256]
+                - text: 카카오톡 공유 (설정 필요)
+              - paragraph [ref=e262]: QR을 찍거나 링크/카카오로 보내면 가족이 바로 합류할 수 있어요
+    - navigation [ref=e9]:
+      - link "홈" [ref=e10] [cursor=pointer]:
+        - /url: /
+        - img [ref=e11]
+        - generic [ref=e14]: 홈
+      - link "AI" [ref=e15] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e16]
+        - generic [ref=e18]: AI
+      - link "카테고리" [ref=e19] [cursor=pointer]:
+        - /url: /category
+        - img [ref=e20]
+        - generic [ref=e25]: 카테고리
+      - link "가족" [ref=e26] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e27]
+        - generic [ref=e32]: 가족
+      - link "메모" [ref=e33] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e34]
+        - generic [ref=e37]: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e43] [cursor=pointer]:
+    - img [ref=e44]
+  - alert [ref=e47]

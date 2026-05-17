@@ -1,0 +1,25 @@
+- generic [active] [ref=e1]:
+  - main [ref=e64]:
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - img [ref=e68]
+        - generic [ref=e71]: FreshPick
+      - generic [ref=e72]:
+        - generic [ref=e80]:
+          - generic [ref=e81]: 🍽️
+          - generic [ref=e82]:
+            - heading "다양한 테마 카드로 메뉴를 바로 결정" [level=2] [ref=e83]
+            - paragraph [ref=e84]: 셰프스 테이블부터 홈시네마까지 원하는 메뉴를 30초 안에 고르세요
+          - generic [ref=e85]:
+            - generic [ref=e86]: 🍙 10분 참치 마요 주먹밥
+            - generic [ref=e87]: 🍳 계란 토스트 & 미니 수프
+            - generic [ref=e88]: 🫕 엄마표 김치찌개
+            - generic [ref=e89]: 🥓 아빠표 불고기 파티
+            - generic [ref=e90]: 🍱 가족 나들이 김밥 세트
+        - generic [ref=e91]:
+          - button "다음" [ref=e92]
+          - button "건너뛰기" [ref=e93]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e59] [cursor=pointer]:
+    - img [ref=e60]
+  - alert [ref=e63]

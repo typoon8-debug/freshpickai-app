@@ -1,0 +1,10 @@
+[     131ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1843ms] [LOG] [Fast Refresh] done in 1822ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1919ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1945ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    2072ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/icon-192x192.png:0
+[    2076ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3000/icon-192x192.png (Download error or resource isn't a valid image) @ http://localhost:3000/cart:0
+[    2170ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    2181ms] [LOG] [Fast Refresh] done in 115ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    2256ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/icon-192x192.png:0
+[    2262ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3000/icon-192x192.png (Download error or resource isn't a valid image) @ http://localhost:3000/onboarding:0

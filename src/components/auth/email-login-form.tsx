@@ -19,9 +19,10 @@ type FormValues = z.infer<typeof schema>;
 interface EmailLoginFormProps {
   onBack: () => void;
   className?: string;
+  nextUrl?: string;
 }
 
-export function EmailLoginForm({ onBack, className }: EmailLoginFormProps) {
+export function EmailLoginForm({ onBack, className, nextUrl }: EmailLoginFormProps) {
   const router = useRouter();
   const {
     register,
@@ -33,7 +34,7 @@ export function EmailLoginForm({ onBack, className }: EmailLoginFormProps) {
     try {
       const result = await signInWithEmail(data.email, data.password);
       if (result.error) throw new Error(result.error);
-      router.replace("/");
+      router.replace(nextUrl || "/");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "로그인에 실패했어요.");
     }

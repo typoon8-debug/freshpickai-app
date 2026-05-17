@@ -1,0 +1,149 @@
+- generic:
+  - generic:
+    - main:
+      - generic:
+        - button:
+          - img
+        - heading [level=1]: 결제
+        - generic:
+          - link:
+            - /url: /wishlist
+            - img
+          - link:
+            - /url: /cart
+            - img
+            - generic: "2"
+          - link:
+            - /url: /profile
+            - img
+      - generic:
+        - generic:
+          - paragraph: 주문 상품 (2개)
+          - generic:
+            - generic:
+              - generic: 🥩
+              - generic: 소갈비
+              - generic: ×1
+            - generic:
+              - generic: 🍐
+              - generic: 배
+              - generic: ×1
+        - generic:
+          - generic:
+            - generic:
+              - img
+              - generic: 배송지
+            - button [active]:
+              - text: 변경
+              - img
+          - generic:
+            - paragraph: 우리집
+            - paragraph: 경기 구리시 동구릉로85번길 45 1층
+            - paragraph: 홍점장 · 010-5713-2525
+            - generic:
+              - img
+              - paragraph: 배송 방식은 스토어 정책에 따라 다릅니다
+        - generic:
+          - generic:
+            - img
+            - generic: 결제 수단
+          - generic:
+            - button:
+              - generic: 💛
+              - text: 카카오페이
+            - button:
+              - generic: 💚
+              - text: 네이버페이
+            - button:
+              - generic: 💳
+              - text: 신용카드
+            - button:
+              - generic: 🏦
+              - text: 계좌이체
+        - generic:
+          - generic:
+            - img
+            - generic: 혜택 적용
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: 포인트
+                - generic: 0원 보유
+              - generic: 포인트 없음
+            - generic:
+              - generic:
+                - img
+                - generic: 쿠폰
+              - generic:
+                - button: 쿠폰 사용 안 함
+                - button [disabled]:
+                  - generic:
+                    - generic: 첫가입 쿠폰(구리인창점)
+                    - generic: 5,000원 할인
+                  - paragraph: 50,000원 이상 구매 시
+                  - paragraph: 5월 17일까지
+        - generic:
+          - generic:
+            - img
+            - paragraph: 스토어 배송정책에 따라 배송됩니다
+          - generic:
+            - generic:
+              - generic:
+                - generic: 상품 합계
+                - generic: 40,000원
+              - generic:
+                - generic: 배송비
+                - generic: 무료
+              - generic:
+                - generic: 최종 결제금액
+                - generic: 40,000원
+      - generic:
+        - button [disabled]:
+          - img
+          - text: 40,000원 결제하기
+        - paragraph: 주문 내용을 확인하였으며 결제에 동의합니다
+    - navigation:
+      - link:
+        - /url: /
+        - img
+        - generic: 홈
+      - link:
+        - /url: /chat
+        - img
+        - generic: AI
+      - link:
+        - /url: /category
+        - img
+        - generic: 카테고리
+      - link:
+        - /url: /family
+        - img
+        - generic: 가족
+      - link:
+        - /url: /memo
+        - img
+        - generic: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e152] [cursor=pointer]:
+    - img [ref=e153]
+  - alert
+  - dialog "배송지 선택" [ref=e167]:
+    - generic [ref=e169]:
+      - heading "배송지 선택" [level=2] [ref=e170]
+      - button [ref=e171]:
+        - img [ref=e172]
+    - generic [ref=e175]:
+      - list [ref=e176]:
+        - listitem [ref=e177]:
+          - button "우리집 선택됨 경기 구리시 동구릉로85번길 45 1층 홍점장 · 010-5713-2525" [ref=e178]:
+            - generic [ref=e179]:
+              - generic [ref=e180]: 우리집
+              - img [ref=e181]
+              - generic [ref=e183]: 선택됨
+            - paragraph [ref=e184]: 경기 구리시 동구릉로85번길 45 1층
+            - paragraph [ref=e185]: 홍점장 · 010-5713-2525
+      - link "새 배송지 추가" [ref=e186] [cursor=pointer]:
+        - /url: /profile/addresses
+        - img [ref=e187]
+        - text: 새 배송지 추가

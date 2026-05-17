@@ -1,0 +1,88 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "카드 만들기" [level=1] [ref=e5]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: "1"
+          - generic [ref=e12]: 테마 선택
+        - generic [ref=e13]:
+          - generic [ref=e14]: "2"
+          - generic [ref=e15]: 취향 태그
+        - generic [ref=e16]:
+          - generic [ref=e17]: "3"
+          - generic [ref=e18]: 재료·예산
+        - generic [ref=e19]:
+          - generic [ref=e20]: "4"
+          - generic [ref=e21]: 미리보기
+      - generic [ref=e23]:
+        - paragraph [ref=e24]: 어떤 테마의 카드를 만들까요?
+        - generic [ref=e25]:
+          - button "👨‍🍳 셰프스 테이블 미슐랭 수준 가정식" [ref=e26]:
+            - generic [ref=e27]: 👨‍🍳
+            - generic [ref=e28]: 셰프스 테이블
+            - generic [ref=e29]: 미슐랭 수준 가정식
+          - button "🍱 하루한끼 균형 잡힌 한 끼" [ref=e30]:
+            - generic [ref=e31]: 🍱
+            - generic [ref=e32]: 하루한끼
+            - generic [ref=e33]: 균형 잡힌 한 끼
+          - button "🥘 엄마손맛 전통 가정식 레시피" [ref=e34]:
+            - generic [ref=e35]: 🥘
+            - generic [ref=e36]: 엄마손맛
+            - generic [ref=e37]: 전통 가정식 레시피
+          - button "📺 드라마한끼 드라마 속 그 음식" [ref=e38]:
+            - generic [ref=e39]: 📺
+            - generic [ref=e40]: 드라마한끼
+            - generic [ref=e41]: 드라마 속 그 음식
+          - button "🧘 혼웰빙 혼자서 건강하게" [ref=e42]:
+            - generic [ref=e43]: 🧘
+            - generic [ref=e44]: 혼웰빙
+            - generic [ref=e45]: 혼자서 건강하게
+          - button "🌿 제철한상 제철 재료 큐레이팅" [active] [ref=e46]:
+            - generic [ref=e47]: 🌿
+            - generic [ref=e48]: 제철한상
+            - generic [ref=e49]: 제철 재료 큐레이팅
+          - button "🌍 글로벌 세계 음식 탐험" [ref=e50]:
+            - generic [ref=e51]: 🌍
+            - generic [ref=e52]: 글로벌
+            - generic [ref=e53]: 세계 음식 탐험
+          - button "🍡 K디저트 한국 스타일 디저트" [ref=e54]:
+            - generic [ref=e55]: 🍡
+            - generic [ref=e56]: K디저트
+            - generic [ref=e57]: 한국 스타일 디저트
+          - button "🍿 간식팩 방과후 간식 세트" [ref=e58]:
+            - generic [ref=e59]: 🍿
+            - generic [ref=e60]: 간식팩
+            - generic [ref=e61]: 방과후 간식 세트
+          - button "🎬 홈시네마 영화 보며 먹는 것" [ref=e62]:
+            - generic [ref=e63]: 🎬
+            - generic [ref=e64]: 홈시네마
+            - generic [ref=e65]: 영화 보며 먹는 것
+      - button "다음" [ref=e68]:
+        - text: 다음
+        - img [ref=e69]
+    - navigation [ref=e71]:
+      - link "홈" [ref=e72] [cursor=pointer]:
+        - /url: /
+        - img [ref=e73]
+        - generic [ref=e76]: 홈
+      - link "AI" [ref=e77] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e78]
+        - generic [ref=e80]: AI
+      - link "가족" [ref=e81] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e82]
+        - generic [ref=e87]: 가족
+      - link "메모" [ref=e88] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e89]
+        - generic [ref=e92]: 메모
+      - link "장바구니" [ref=e93] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e94]
+        - generic [ref=e98]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e104] [cursor=pointer]:
+    - img [ref=e105]
+  - alert [ref=e108]

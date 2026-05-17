@@ -2,22 +2,11 @@
 
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Loader2, CheckCircle2, XCircle, Package, Truck } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Package, MapPin } from "lucide-react";
 import { confirmAndCreateOrderAction, type FpOrderPayload } from "@/lib/actions/orders";
 import { useCartStore } from "@/lib/store";
 
 type Status = "processing" | "success" | "error";
-
-/** 익일 06시 배송 예약 문자열 생성 */
-function getDeliveryWindowText(): string {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const month = tomorrow.getMonth() + 1;
-  const day = tomorrow.getDate();
-  const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
-  const weekday = weekdays[tomorrow.getDay()];
-  return `${month}월 ${day}일(${weekday}) 오전 6시 이전 도착 예정`;
-}
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
@@ -117,15 +106,15 @@ function CheckoutSuccessContent() {
         <p className="text-mocha-800 font-mono text-base font-bold">{orderNo}</p>
       </div>
 
-      {/* 배송 예약 */}
-      <div className="border-line w-full rounded-xl border bg-white px-5 py-4">
-        <div className="flex items-center gap-2 pb-3">
-          <Truck size={15} className="text-mocha-500" />
-          <span className="text-ink-700 text-sm font-semibold">배송 예약 확인</span>
+      {/* 배송 조회 안내 */}
+      <div className="border-mocha-200 bg-mocha-50 w-full rounded-xl border px-5 py-4">
+        <div className="flex items-center gap-2 pb-2">
+          <MapPin size={15} className="text-mocha-500" />
+          <span className="text-mocha-700 text-sm font-semibold">배송 조회 안내</span>
         </div>
-        <p className="text-ink-800 text-sm font-semibold">{getDeliveryWindowText()}</p>
-        <p className="text-ink-400 mt-1 text-xs">
-          ※ 스토어 배송 정책에 따라 배송 시간은 변동될 수 있습니다
+        <p className="text-ink-700 text-sm">
+          <span className="text-mocha-700 font-semibold">나의 프레시</span> →{" "}
+          <span className="font-medium">주문/배송조회</span>에서 확인하세요
         </p>
       </div>
 

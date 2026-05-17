@@ -1,0 +1,687 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e44]:
+    - main [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e47]: FreshPick AI
+        - generic [ref=e48]:
+          - button "알림" [ref=e49]:
+            - img [ref=e50]
+          - button "설정" [ref=e53]:
+            - img [ref=e54]
+      - main [ref=e57]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - img [ref=e63]
+            - generic [ref=e66]: 오늘의 큐레이팅
+          - generic [ref=e67]:
+            - heading "아보카도 퀴노아 포케 볼" [level=2] [ref=e68]
+            - paragraph [ref=e69]: 저칼로리 고영양 한 끼
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - img [ref=e72]
+              - text: 취향 매칭 90%
+            - generic [ref=e75]: 담백한
+          - link "지금 보기" [ref=e76] [cursor=pointer]:
+            - /url: /cards/ca000005-0005-4000-8000-000000000003
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - button "전체" [ref=e79]
+            - button "흑백요리사" [ref=e80]
+            - button "한 끼" [ref=e81]
+            - button "엄마손맛" [ref=e82]
+            - button "드라마한끼" [ref=e83]
+            - button "혼웰빙" [ref=e84]
+            - button "제철한상" [ref=e85]
+            - button "글로벌" [ref=e86]
+            - button "K디저트" [ref=e87]
+            - button "간식팩" [ref=e88]
+            - button "홈시네마" [ref=e89]
+          - link "섹션 편집" [ref=e90] [cursor=pointer]:
+            - /url: /sections
+            - img [ref=e91]
+        - generic [ref=e94]:
+          - button "전체" [ref=e95]
+          - button "식사형" [ref=e96]
+          - button "간식·디저트" [ref=e97]
+          - button "홈시네마" [ref=e98]
+        - generic [ref=e99]:
+          - generic [ref=e100] [cursor=pointer]:
+            - generic [ref=e101]:
+              - generic [ref=e102]: 🥩
+              - generic [ref=e103]: 흑백요리사
+              - generic [ref=e104]: NEW
+            - generic [ref=e105]:
+              - generic [ref=e106]:
+                - heading "셰프의 갈비찜 정식" [level=3] [ref=e107]
+                - paragraph [ref=e108]: 방송에서 화제된 그 레시피
+              - generic [ref=e109]:
+                - generic [ref=e110]: 깊은맛
+                - generic [ref=e111]: 짭짤
+                - generic [ref=e112]: 달콤
+              - generic [ref=e113]:
+                - generic [ref=e115]:
+                  - generic [ref=e116]: 건강점수
+                  - generic [ref=e117]: 보통 70
+                - generic [ref=e120]:
+                  - img [ref=e121]
+                  - text: 취향 70%
+              - paragraph [ref=e124]: 18,000원~
+          - generic [ref=e125] [cursor=pointer]:
+            - generic [ref=e126]:
+              - generic [ref=e127]: 🍙
+              - generic [ref=e128]: 한 끼
+              - generic [ref=e129]: NEW
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - heading "10분 참치 마요 주먹밥" [level=3] [ref=e132]
+                - paragraph [ref=e133]: 바쁜 아침 10분이면 완성
+              - generic [ref=e134]:
+                - generic [ref=e135]: 고소한
+                - generic [ref=e136]: 심플
+                - generic [ref=e137]: 빠른
+              - generic [ref=e138]:
+                - generic [ref=e140]:
+                  - generic [ref=e141]: 건강점수
+                  - generic [ref=e142]: 보통 70
+                - generic [ref=e145]:
+                  - img [ref=e146]
+                  - text: 취향 70%
+              - paragraph [ref=e149]: 5,000원~
+          - generic [ref=e150] [cursor=pointer]:
+            - generic [ref=e151]:
+              - generic [ref=e152]: 🍜
+              - generic [ref=e153]: 드라마레시피
+              - generic [ref=e154]: NEW
+            - generic [ref=e155]:
+              - generic [ref=e156]:
+                - heading "더 글로리 쌀국수" [level=3] [ref=e157]
+                - paragraph [ref=e158]: 화제의 드라마 속 위로 한 그릇
+              - generic [ref=e159]:
+                - generic [ref=e160]: 시원한
+                - generic [ref=e161]: 깔끔
+                - generic [ref=e162]: 매콤
+              - generic [ref=e163]:
+                - generic [ref=e165]:
+                  - generic [ref=e166]: 건강점수
+                  - generic [ref=e167]: 보통 70
+                - generic [ref=e170]:
+                  - img [ref=e171]
+                  - text: 취향 70%
+              - paragraph [ref=e174]: 11,000원~
+          - generic [ref=e175] [cursor=pointer]:
+            - generic [ref=e176]:
+              - generic [ref=e177]: 🥣
+              - generic [ref=e178]: 혼웰빙
+              - generic [ref=e179]:
+                - img [ref=e180]
+                - text: TOP2
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - heading "발효 곡물 그래놀라 볼" [level=3] [ref=e184]
+                - paragraph [ref=e185]: 운동 후 회복 식단
+              - generic [ref=e186]:
+                - generic [ref=e187]: 고소한
+                - generic [ref=e188]: 달콤
+                - generic [ref=e189]: 건강한
+              - generic [ref=e190]:
+                - generic [ref=e192]:
+                  - generic [ref=e193]: 건강점수
+                  - generic [ref=e194]: 건강 90
+                - generic [ref=e197]:
+                  - img [ref=e198]
+                  - text: 취향 90%
+              - paragraph [ref=e201]: 8,000원~
+          - generic [ref=e202] [cursor=pointer]:
+            - generic [ref=e203]:
+              - generic [ref=e204]: 🍓
+              - generic [ref=e205]: 제철K팜
+              - generic [ref=e206]:
+                - img [ref=e207]
+                - text: TOP3
+            - generic [ref=e209]:
+              - generic [ref=e210]:
+                - heading "봄 딸기 샐러드" [level=3] [ref=e211]
+                - paragraph [ref=e212]: 5월 제철 딸기로 만드는 상큼함
+              - generic [ref=e213]:
+                - generic [ref=e214]: 상큼
+                - generic [ref=e215]: 달콤
+                - generic [ref=e216]: 신선한
+              - generic [ref=e217]:
+                - generic [ref=e219]:
+                  - generic [ref=e220]: 건강점수
+                  - generic [ref=e221]: 건강 90
+                - generic [ref=e224]:
+                  - img [ref=e225]
+                  - text: 취향 90%
+              - paragraph [ref=e228]: 9,000원~
+          - generic [ref=e229] [cursor=pointer]:
+            - generic [ref=e230]:
+              - generic [ref=e231]: 🍝
+              - generic [ref=e232]: 세계한끼
+              - generic [ref=e233]: NEW
+            - generic [ref=e234]:
+              - generic [ref=e235]:
+                - heading "정통 태국 팟타이" [level=3] [ref=e236]
+                - paragraph [ref=e237]: 현지 소스로 완성하는 정통의 맛
+              - generic [ref=e238]:
+                - generic [ref=e239]: 새콤
+                - generic [ref=e240]: 달콤
+                - generic [ref=e241]: 매콤
+              - generic [ref=e242]:
+                - generic [ref=e244]:
+                  - generic [ref=e245]: 건강점수
+                  - generic [ref=e246]: 보통 60
+                - generic [ref=e249]:
+                  - img [ref=e250]
+                  - text: 취향 60%
+              - paragraph [ref=e253]: 12,000원~
+          - generic [ref=e254] [cursor=pointer]:
+            - generic [ref=e255]:
+              - generic [ref=e256]: 🍮
+              - generic [ref=e257]: K디저트
+              - generic [ref=e258]: NEW
+            - generic [ref=e259]:
+              - generic [ref=e260]:
+                - heading "인절미 티라미수" [level=3] [ref=e261]
+                - paragraph [ref=e262]: K-디저트의 정수
+              - generic [ref=e263]:
+                - generic [ref=e264]: 달콤
+                - generic [ref=e265]: 쫀득
+                - generic [ref=e266]: 고소
+              - generic [ref=e267]:
+                - generic [ref=e269]:
+                  - generic [ref=e270]: 건강점수
+                  - generic [ref=e271]: 주의 40
+                - generic [ref=e274]:
+                  - img [ref=e275]
+                  - text: 취향 40%
+              - paragraph [ref=e278]: 8,000원~
+          - generic [ref=e279] [cursor=pointer]:
+            - generic [ref=e280]:
+              - generic [ref=e281]: 🍫
+              - generic [ref=e282]: 간식팩
+              - generic [ref=e283]: NEW
+            - generic [ref=e284]:
+              - generic [ref=e285]:
+                - heading "청소년 에너지 바" [level=3] [ref=e286]
+                - paragraph [ref=e287]: 시험기간 집중력 UP 간식
+              - generic [ref=e288]:
+                - generic [ref=e289]: 달콤
+                - generic [ref=e290]: 고소
+                - generic [ref=e291]: 바삭
+              - generic [ref=e292]:
+                - generic [ref=e294]:
+                  - generic [ref=e295]: 건강점수
+                  - generic [ref=e296]: 보통 60
+                - generic [ref=e299]:
+                  - img [ref=e300]
+                  - text: 취향 60%
+              - paragraph [ref=e303]: 6,000원~
+          - generic [ref=e304] [cursor=pointer]:
+            - generic [ref=e305]:
+              - generic [ref=e306]: 🍱
+              - generic [ref=e307]: 가족레시피
+            - generic [ref=e308]:
+              - generic [ref=e309]:
+                - heading "가족 나들이 김밥 세트" [level=3] [ref=e310]
+                - paragraph [ref=e311]: 소풍·나들이 필수 도시락
+              - generic [ref=e312]:
+                - generic [ref=e313]: 고소한
+                - generic [ref=e314]: 담백한
+                - generic [ref=e315]: 정겨운
+              - generic [ref=e316]:
+                - generic [ref=e318]:
+                  - generic [ref=e319]: 건강점수
+                  - generic [ref=e320]: 보통 70
+                - generic [ref=e323]:
+                  - img [ref=e324]
+                  - text: 취향 70%
+              - paragraph [ref=e327]: 12,000원~
+          - generic [ref=e328] [cursor=pointer]:
+            - generic [ref=e329]:
+              - generic [ref=e330]: 🍱
+              - generic [ref=e331]: 드라마레시피
+            - generic [ref=e332]:
+              - generic [ref=e333]:
+                - heading "이상한 변호사 우영우 김밥" [level=3] [ref=e334]
+                - paragraph [ref=e335]: 드라마 속 그 장면 그대로
+              - generic [ref=e336]:
+                - generic [ref=e337]: 고소한
+                - generic [ref=e338]: 담백한
+                - generic [ref=e339]: 추억의
+              - generic [ref=e340]:
+                - generic [ref=e342]:
+                  - generic [ref=e343]: 건강점수
+                  - generic [ref=e344]: 보통 70
+                - generic [ref=e347]:
+                  - img [ref=e348]
+                  - text: 취향 70%
+              - paragraph [ref=e351]: 7,000원~
+          - generic [ref=e352] [cursor=pointer]:
+            - generic [ref=e353]:
+              - generic [ref=e354]: 🧆
+              - generic [ref=e355]: 간식팩
+            - generic [ref=e356]:
+              - generic [ref=e357]:
+                - heading "아이 영양 간식 세트" [level=3] [ref=e358]
+                - paragraph [ref=e359]: 방부제 없는 엄마표 간식 5종
+              - generic [ref=e360]:
+                - generic [ref=e361]: 달콤
+                - generic [ref=e362]: 건강한
+                - generic [ref=e363]: 안전한
+              - generic [ref=e364]:
+                - generic [ref=e366]:
+                  - generic [ref=e367]: 건강점수
+                  - generic [ref=e368]: 건강 80
+                - generic [ref=e371]:
+                  - img [ref=e372]
+                  - text: 취향 80%
+              - paragraph [ref=e375]: 9,000원~
+          - generic [ref=e376] [cursor=pointer]:
+            - generic [ref=e377]:
+              - generic [ref=e378]: 🍬
+              - generic [ref=e379]: 드라마레시피
+            - generic [ref=e380]:
+              - generic [ref=e381]:
+                - heading "오징어게임 달고나 세트" [level=3] [ref=e382]
+                - paragraph [ref=e383]: 달고나 뽑기 4종 모양 도전
+              - generic [ref=e384]:
+                - generic [ref=e385]: 달콤
+                - generic [ref=e386]: 바삭
+                - generic [ref=e387]: 추억의
+              - generic [ref=e388]:
+                - generic [ref=e390]:
+                  - generic [ref=e391]: 건강점수
+                  - generic [ref=e392]: 주의 30
+                - generic [ref=e395]:
+                  - img [ref=e396]
+                  - text: 취향 30%
+              - paragraph [ref=e399]: 3,000원~
+          - generic [ref=e400] [cursor=pointer]:
+            - generic [ref=e401]:
+              - generic [ref=e402]: 🥗
+              - generic [ref=e403]: 혼웰빙
+              - generic [ref=e404]:
+                - img [ref=e405]
+                - text: TOP1
+            - generic [ref=e407]:
+              - generic [ref=e408]:
+                - heading "수퍼푸드 샐러드 볼" [level=3] [ref=e409]
+                - paragraph [ref=e410]: 하루 500kcal 목표 달성
+              - generic [ref=e411]:
+                - generic [ref=e412]: 담백한
+                - generic [ref=e413]: 건강한
+                - generic [ref=e414]: 가벼운
+              - generic [ref=e415]:
+                - generic [ref=e417]:
+                  - generic [ref=e418]: 건강점수
+                  - generic [ref=e419]: 건강 100
+                - generic [ref=e422]:
+                  - img [ref=e423]
+                  - text: 취향 100%
+              - paragraph [ref=e426]: 14,000원~
+          - generic [ref=e427] [cursor=pointer]:
+            - generic [ref=e428]:
+              - generic [ref=e429]: 🫓
+              - generic [ref=e430]: 홈시네마
+            - generic [ref=e431]:
+              - generic [ref=e432]:
+                - heading "심야 나초 & 살사 세트" [level=3] [ref=e433]
+                - paragraph [ref=e434]: 3가지 딥 소스와 바삭한 나초
+              - generic [ref=e435]:
+                - generic [ref=e436]: 바삭
+                - generic [ref=e437]: 새콤
+                - generic [ref=e438]: 매콤
+              - generic [ref=e439]:
+                - generic [ref=e441]:
+                  - generic [ref=e442]: 건강점수
+                  - generic [ref=e443]: 주의 40
+                - generic [ref=e446]:
+                  - img [ref=e447]
+                  - text: 취향 40%
+              - paragraph [ref=e450]: 12,000원~
+          - generic [ref=e451] [cursor=pointer]:
+            - generic [ref=e452]:
+              - generic [ref=e453]: 🥑
+              - generic [ref=e454]: 혼웰빙
+            - generic [ref=e455]:
+              - generic [ref=e456]:
+                - heading "아보카도 퀴노아 포케 볼" [level=3] [ref=e457]
+                - paragraph [ref=e458]: 저칼로리 고영양 한 끼
+              - generic [ref=e459]:
+                - generic [ref=e460]: 담백한
+                - generic [ref=e461]: 고소한
+                - generic [ref=e462]: 산뜻한
+              - generic [ref=e463]:
+                - generic [ref=e465]:
+                  - generic [ref=e466]: 건강점수
+                  - generic [ref=e467]: 건강 90
+                - generic [ref=e470]:
+                  - img [ref=e471]
+                  - text: 취향 90%
+              - paragraph [ref=e474]: 13,000원~
+          - generic [ref=e475] [cursor=pointer]:
+            - generic [ref=e476]:
+              - generic [ref=e477]: 🍩
+              - generic [ref=e478]: 간식팩
+            - generic [ref=e479]:
+              - generic [ref=e480]:
+                - heading "전통 약과 세트" [level=3] [ref=e481]
+                - paragraph [ref=e482]: 꿀·생강·계피 정통 약과
+              - generic [ref=e483]:
+                - generic [ref=e484]: 달콤
+                - generic [ref=e485]: 고소
+                - generic [ref=e486]: 향긋
+              - generic [ref=e487]:
+                - generic [ref=e489]:
+                  - generic [ref=e490]: 건강점수
+                  - generic [ref=e491]: 보통 50
+                - generic [ref=e494]:
+                  - img [ref=e495]
+                  - text: 취향 50%
+              - paragraph [ref=e498]: 11,000원~
+          - generic [ref=e499] [cursor=pointer]:
+            - generic [ref=e500]:
+              - generic [ref=e501]: 🌿
+              - generic [ref=e502]: 제철K팜
+            - generic [ref=e503]:
+              - generic [ref=e504]:
+                - heading "봄 나물 비빔밥" [level=3] [ref=e505]
+                - paragraph [ref=e506]: 냉이·달래·씀바귀 봄 나물 3종
+              - generic [ref=e507]:
+                - generic [ref=e508]: 쌉쌀
+                - generic [ref=e509]: 구수
+                - generic [ref=e510]: 담백
+              - generic [ref=e511]:
+                - generic [ref=e513]:
+                  - generic [ref=e514]: 건강점수
+                  - generic [ref=e515]: 건강 90
+                - generic [ref=e518]:
+                  - img [ref=e519]
+                  - text: 취향 90%
+              - paragraph [ref=e522]: 8,000원~
+          - generic [ref=e523] [cursor=pointer]:
+            - generic [ref=e524]:
+              - generic [ref=e525]: 🦀
+              - generic [ref=e526]: 제철K팜
+            - generic [ref=e527]:
+              - generic [ref=e528]:
+                - heading "제철 꽃게장 정식" [level=3] [ref=e529]
+                - paragraph [ref=e530]: 봄·가을 꽃게 제철 한정 메뉴
+              - generic [ref=e531]:
+                - generic [ref=e532]: 짭짤
+                - generic [ref=e533]: 달콤
+                - generic [ref=e534]: 신선한
+              - generic [ref=e535]:
+                - generic [ref=e537]:
+                  - generic [ref=e538]: 건강점수
+                  - generic [ref=e539]: 건강 80
+                - generic [ref=e542]:
+                  - img [ref=e543]
+                  - text: 취향 80%
+              - paragraph [ref=e546]: 28,000원~
+          - generic [ref=e547] [cursor=pointer]:
+            - generic [ref=e548]:
+              - generic [ref=e549]: 🍗
+              - generic [ref=e550]: 홈시네마
+            - generic [ref=e551]:
+              - generic [ref=e552]:
+                - heading "무비나이트 치킨 플래터" [level=3] [ref=e553]
+                - paragraph [ref=e554]: 영화 볼 때 온 가족이 함께
+              - generic [ref=e555]:
+                - generic [ref=e556]: 바삭
+                - generic [ref=e557]: 매콤
+                - generic [ref=e558]: 풍성한
+              - generic [ref=e559]:
+                - generic [ref=e561]:
+                  - generic [ref=e562]: 건강점수
+                  - generic [ref=e563]: 보통 50
+                - generic [ref=e566]:
+                  - img [ref=e567]
+                  - text: 취향 50%
+              - paragraph [ref=e570]: 25,000원~
+          - generic [ref=e571] [cursor=pointer]:
+            - generic [ref=e572]:
+              - generic [ref=e573]: 🍜
+              - generic [ref=e574]: 세계한끼
+            - generic [ref=e575]:
+              - generic [ref=e576]:
+                - heading "로마식 카르보나라" [level=3] [ref=e577]
+                - paragraph [ref=e578]: 크림 없는 진짜 이탈리안
+              - generic [ref=e579]:
+                - generic [ref=e580]: 진한
+                - generic [ref=e581]: 고소
+                - generic [ref=e582]: 크리미
+              - generic [ref=e583]:
+                - generic [ref=e585]:
+                  - generic [ref=e586]: 건강점수
+                  - generic [ref=e587]: 보통 60
+                - generic [ref=e590]:
+                  - img [ref=e591]
+                  - text: 취향 60%
+              - paragraph [ref=e594]: 14,000원~
+          - generic [ref=e595] [cursor=pointer]:
+            - generic [ref=e596]:
+              - generic [ref=e597]: 🍥
+              - generic [ref=e598]: 세계한끼
+            - generic [ref=e599]:
+              - generic [ref=e600]:
+                - heading "일본식 돈코츠 라멘" [level=3] [ref=e601]
+                - paragraph [ref=e602]: 12시간 우린 진한 육수
+              - generic [ref=e603]:
+                - generic [ref=e604]: 진한
+                - generic [ref=e605]: 고소
+                - generic [ref=e606]: 짭짤
+              - generic [ref=e607]:
+                - generic [ref=e609]:
+                  - generic [ref=e610]: 건강점수
+                  - generic [ref=e611]: 보통 60
+                - generic [ref=e614]:
+                  - img [ref=e615]
+                  - text: 취향 60%
+              - paragraph [ref=e618]: 13,000원~
+          - generic [ref=e619] [cursor=pointer]:
+            - generic [ref=e620]:
+              - generic [ref=e621]: 🍿
+              - generic [ref=e622]: 홈시네마
+            - generic [ref=e623]:
+              - generic [ref=e624]:
+                - heading "홈시네마 팝콘 버킷" [level=3] [ref=e625]
+                - paragraph [ref=e626]: 버터·카라멜·체다 3가지 맛
+              - generic [ref=e627]:
+                - generic [ref=e628]: 고소
+                - generic [ref=e629]: 짭짤
+                - generic [ref=e630]: 달콤
+              - generic [ref=e631]:
+                - generic [ref=e633]:
+                  - generic [ref=e634]: 건강점수
+                  - generic [ref=e635]: 주의 40
+                - generic [ref=e638]:
+                  - img [ref=e639]
+                  - text: 취향 40%
+              - paragraph [ref=e642]: 9,000원~
+          - generic [ref=e643] [cursor=pointer]:
+            - generic [ref=e644]:
+              - generic [ref=e645]: 🎂
+              - generic [ref=e646]: K디저트
+            - generic [ref=e647]:
+              - generic [ref=e648]:
+                - heading "흑임자 크림 케이크" [level=3] [ref=e649]
+                - paragraph [ref=e650]: 전통 재료로 만드는 트렌디 케이크
+              - generic [ref=e651]:
+                - generic [ref=e652]: 고소
+                - generic [ref=e653]: 달콤
+                - generic [ref=e654]: 부드러운
+              - generic [ref=e655]:
+                - generic [ref=e657]:
+                  - generic [ref=e658]: 건강점수
+                  - generic [ref=e659]: 보통 50
+                - generic [ref=e662]:
+                  - img [ref=e663]
+                  - text: 취향 50%
+              - paragraph [ref=e666]: 15,000원~
+          - generic [ref=e667] [cursor=pointer]:
+            - generic [ref=e668]:
+              - generic [ref=e669]: 🍲
+              - generic [ref=e670]: 흑백요리사
+            - generic [ref=e671]:
+              - generic [ref=e672]:
+                - heading "미슐랭 된장찌개" [level=3] [ref=e673]
+                - paragraph [ref=e674]: 재래식 된장으로 완성하는 깊은 맛
+              - generic [ref=e675]:
+                - generic [ref=e676]: 구수한
+                - generic [ref=e677]: 따뜻한
+                - generic [ref=e678]: 깊은맛
+              - generic [ref=e679]:
+                - generic [ref=e681]:
+                  - generic [ref=e682]: 건강점수
+                  - generic [ref=e683]: 건강 80
+                - generic [ref=e686]:
+                  - img [ref=e687]
+                  - text: 취향 80%
+              - paragraph [ref=e690]: 12,000원~
+          - generic [ref=e691] [cursor=pointer]:
+            - generic [ref=e692]:
+              - generic [ref=e693]: 🍄
+              - generic [ref=e694]: 흑백요리사
+            - generic [ref=e695]:
+              - generic [ref=e696]:
+                - heading "셰프의 트러플 버섯 리조또" [level=3] [ref=e697]
+                - paragraph [ref=e698]: 3종 버섯으로 완성하는 이탈리안
+              - generic [ref=e699]:
+                - generic [ref=e700]: 고소한
+                - generic [ref=e701]: 진한
+                - generic [ref=e702]: 풍성한
+              - generic [ref=e703]:
+                - generic [ref=e705]:
+                  - generic [ref=e706]: 건강점수
+                  - generic [ref=e707]: 보통 70
+                - generic [ref=e710]:
+                  - img [ref=e711]
+                  - text: 취향 70%
+              - paragraph [ref=e714]: 15,000원~
+          - generic [ref=e715] [cursor=pointer]:
+            - generic [ref=e716]:
+              - generic [ref=e717]: 🍚
+              - generic [ref=e718]: 한 끼
+            - generic [ref=e719]:
+              - generic [ref=e720]:
+                - heading "혼밥 삼겹살 덮밥" [level=3] [ref=e721]
+                - paragraph [ref=e722]: 1인 가구를 위한 간단 한 끼
+              - generic [ref=e723]:
+                - generic [ref=e724]: 고소한
+                - generic [ref=e725]: 매콤
+                - generic [ref=e726]: 든든한
+              - generic [ref=e727]:
+                - generic [ref=e729]:
+                  - generic [ref=e730]: 건강점수
+                  - generic [ref=e731]: 보통 60
+                - generic [ref=e734]:
+                  - img [ref=e735]
+                  - text: 취향 60%
+              - paragraph [ref=e738]: 8,000원~
+          - generic [ref=e739] [cursor=pointer]:
+            - generic [ref=e740]:
+              - generic [ref=e741]: 🍦
+              - generic [ref=e742]: K디저트
+            - generic [ref=e743]:
+              - generic [ref=e744]:
+                - heading "쑥 인절미 파르페" [level=3] [ref=e745]
+                - paragraph [ref=e746]: 전통과 현대가 만나는 파르페
+              - generic [ref=e747]:
+                - generic [ref=e748]: 쌉쌀
+                - generic [ref=e749]: 달콤
+                - generic [ref=e750]: 쫀득
+              - generic [ref=e751]:
+                - generic [ref=e753]:
+                  - generic [ref=e754]: 건강점수
+                  - generic [ref=e755]: 보통 50
+                - generic [ref=e758]:
+                  - img [ref=e759]
+                  - text: 취향 50%
+              - paragraph [ref=e762]: 9,000원~
+          - generic [ref=e763] [cursor=pointer]:
+            - generic [ref=e764]:
+              - generic [ref=e765]: 🍳
+              - generic [ref=e766]: 한 끼
+            - generic [ref=e767]:
+              - generic [ref=e768]:
+                - heading "계란 토스트 & 미니 수프" [level=3] [ref=e769]
+                - paragraph [ref=e770]: 영양 가득 아침 세트
+              - generic [ref=e771]:
+                - generic [ref=e772]: 고소한
+                - generic [ref=e773]: 따뜻한
+                - generic [ref=e774]: 심플
+              - generic [ref=e775]:
+                - generic [ref=e777]:
+                  - generic [ref=e778]: 건강점수
+                  - generic [ref=e779]: 보통 70
+                - generic [ref=e782]:
+                  - img [ref=e783]
+                  - text: 취향 70%
+              - paragraph [ref=e786]: 6,000원~
+          - generic [ref=e787] [cursor=pointer]:
+            - generic [ref=e788]:
+              - generic [ref=e789]: 🫕
+              - generic [ref=e790]: 가족레시피
+            - generic [ref=e791]:
+              - generic [ref=e792]:
+                - heading "엄마표 김치찌개" [level=3] [ref=e793]
+                - paragraph [ref=e794]: 3대가 함께하는 가족 밥상
+              - generic [ref=e795]:
+                - generic [ref=e796]: 칼칼한
+                - generic [ref=e797]: 구수한
+                - generic [ref=e798]: 정겨운
+              - generic [ref=e799]:
+                - generic [ref=e801]:
+                  - generic [ref=e802]: 건강점수
+                  - generic [ref=e803]: 건강 80
+                - generic [ref=e806]:
+                  - img [ref=e807]
+                  - text: 취향 80%
+              - paragraph [ref=e810]: 10,000원~
+          - generic [ref=e811] [cursor=pointer]:
+            - generic [ref=e812]:
+              - generic [ref=e813]: 🥓
+              - generic [ref=e814]: 가족레시피
+            - generic [ref=e815]:
+              - generic [ref=e816]:
+                - heading "아빠표 불고기 파티" [level=3] [ref=e817]
+                - paragraph [ref=e818]: 주말 저녁 온 가족이 함께
+              - generic [ref=e819]:
+                - generic [ref=e820]: 달콤
+                - generic [ref=e821]: 짭짤
+                - generic [ref=e822]: 풍성한
+              - generic [ref=e823]:
+                - generic [ref=e825]:
+                  - generic [ref=e826]: 건강점수
+                  - generic [ref=e827]: 보통 70
+                - generic [ref=e830]:
+                  - img [ref=e831]
+                  - text: 취향 70%
+              - paragraph [ref=e834]: 22,000원~
+    - navigation [ref=e835]:
+      - link "홈" [ref=e836] [cursor=pointer]:
+        - /url: /
+        - img [ref=e837]
+        - generic [ref=e840]: 홈
+      - link "AI" [ref=e841] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e842]
+        - generic [ref=e844]: AI
+      - link "가족" [ref=e845] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e846]
+        - generic [ref=e851]: 가족
+      - link "메모" [ref=e852] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e853]
+        - generic [ref=e856]: 메모
+      - link "장바구니" [ref=e857] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e858]
+        - generic [ref=e862]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e9] [cursor=pointer]:
+    - img [ref=e10]
+  - alert [ref=e13]

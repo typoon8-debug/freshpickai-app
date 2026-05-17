@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isValidInviteCode } from "@/lib/family/invite-code";
 
 export type JoinInviteError =
@@ -30,7 +30,10 @@ export async function joinFamilyByInvite(code: string): Promise<JoinInviteResult
     return { success: false, error: "AUTH_REQUIRED" };
   }
 
-  const { data: group } = await supabase
+  // fp_family_group/member SELECT & INSERT 모두 admin으로 RLS 우회
+  const admin = createAdminClient();
+
+  const { data: group } = await admin
     .from("fp_family_group")
     .select("group_id")
     .eq("invite_code", normalized)
@@ -40,18 +43,18 @@ export async function joinFamilyByInvite(code: string): Promise<JoinInviteResult
     return { success: false, error: "CODE_INVALID" };
   }
 
-  const { data: existing } = await supabase
+  const { data: existing } = await admin
     .from("fp_family_member")
     .select("member_id")
     .eq("group_id", group.group_id)
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     return { success: true, groupId: group.group_id, alreadyMember: true };
   }
 
-  const { error: insertError } = await supabase
+  const { error: insertError } = await admin
     .from("fp_family_member")
     .insert({ group_id: group.group_id, user_id: user.id });
 

@@ -1,18 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Check } from "lucide-react";
+import { ShoppingCart, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { TopHeader } from "@/components/layout/top-header";
 import { FreeShippingBar } from "@/components/cart/free-shipping-bar";
 import { CartGroup } from "@/components/cart/cart-group";
 import { CartSummary } from "@/components/cart/cart-summary";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCartStore } from "@/lib/store";
 import { MOCK_CARDS } from "@/data/mock-cards";
+import {
+  fetchCartItemsAction,
+  removeItemAction,
+  setQtyAction,
+  clearCartAction,
+} from "@/lib/actions/cart";
 
 export default function CartPage() {
-  const { items, setQty, remove } = useCartStore();
+  const { items, setQty, remove, clear, syncFromDB } = useCartStore();
+
+  // AI 도구가 DB에만 담은 항목을 Zustand에 동기화 (마운트마다 최신 DB 반영)
+  useEffect(() => {
+    fetchCartItemsAction().then(syncFromDB);
+  }, [syncFromDB]);
+
   // 선택 해제한 ID만 추적 → 새 항목은 자동으로 선택 상태
   const [deselectedIds, setDeselectedIds] = useState<Set<string>>(new Set());
   const selectedIds = useMemo(
@@ -38,6 +52,43 @@ export default function CartPage() {
       return next;
     });
   };
+
+  // DB + Zustand 동시 삭제
+  const handleRemove = useCallback(
+    async (cartItemId: string) => {
+      remove(cartItemId); // 낙관적: Zustand 즉시 삭제
+      const result = await removeItemAction(cartItemId);
+      if (result.error) {
+        toast.error("삭제에 실패했습니다. 다시 시도해주세요.");
+        fetchCartItemsAction().then(syncFromDB); // 실패 시 DB 기준 복원
+      }
+    },
+    [remove, syncFromDB]
+  );
+
+  // DB + Zustand 동시 수량 변경
+  const handleSetQty = useCallback(
+    async (cartItemId: string, qty: number) => {
+      setQty(cartItemId, qty); // 낙관적: Zustand 즉시 변경
+      const result = await setQtyAction(cartItemId, qty);
+      if (result.error) {
+        fetchCartItemsAction().then(syncFromDB); // 실패 시 DB 기준 복원
+      }
+    },
+    [setQty, syncFromDB]
+  );
+
+  // 전체 삭제: DB + Zustand
+  const handleClearAll = useCallback(async () => {
+    clear(); // 낙관적: Zustand 즉시 비움
+    const result = await clearCartAction();
+    if (result.error) {
+      toast.error("전체 삭제에 실패했습니다.");
+      fetchCartItemsAction().then(syncFromDB);
+    } else {
+      toast.success("장바구니를 비웠어요");
+    }
+  }, [clear, syncFromDB]);
 
   // 카드별 그룹핑
   const groups = useMemo(() => {
@@ -90,22 +141,25 @@ export default function CartPage() {
       <TopHeader title={`장바구니 (${items.length})`} />
       <FreeShippingBar subtotal={subtotal} />
 
-      {/* 전체 선택 바 */}
+      {/* 전체 선택 + 전체 삭제 바 */}
       <div className="border-line flex items-center gap-3 border-b bg-white px-4 py-2.5">
-        <button
-          type="button"
-          onClick={toggleAll}
-          className={cn(
-            "flex h-5 w-5 items-center justify-center rounded border-2 transition",
-            allSelected ? "border-mocha-600 bg-mocha-600" : "border-ink-300 bg-white"
-          )}
+        <Checkbox
+          checked={allSelected}
+          onCheckedChange={toggleAll}
           aria-label="전체 선택"
-        >
-          {allSelected && <Check size={11} className="text-white" strokeWidth={3} />}
-        </button>
-        <span className="text-ink-600 text-sm">
+          className="data-checked:border-mocha-600 data-checked:bg-mocha-600 border-ink-400"
+        />
+        <span className="text-ink-600 flex-1 text-sm">
           전체 선택 ({selectedCount}/{items.length})
         </span>
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className="text-ink-400 hover:text-terracotta flex items-center gap-1 text-xs transition"
+        >
+          <Trash2 size={13} />
+          전체 삭제
+        </button>
       </div>
 
       <div className="flex flex-col gap-4 px-4 pt-4 pb-28">
@@ -118,8 +172,8 @@ export default function CartPage() {
             items={group.items}
             selectedIds={selectedIds}
             onToggleSelect={toggleSelect}
-            onQtyChange={setQty}
-            onRemove={remove}
+            onQtyChange={handleSetQty}
+            onRemove={handleRemove}
           />
         ))}
         <CartSummary subtotal={subtotal} />

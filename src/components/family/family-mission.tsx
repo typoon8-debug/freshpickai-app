@@ -1,35 +1,24 @@
 import { Film, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-interface Mission {
-  id: string;
-  icon: string;
-  title: string;
-  desc: string;
-  cta?: string;
-  ctaHref?: string;
+interface MissionCard {
+  card_id: string;
+  name: string;
+  emoji: string | null;
 }
 
-const MOCK_MISSIONS: Mission[] = [
-  {
-    id: "m1",
-    icon: "🥗",
-    title: "이번 주 채소 도전!",
-    desc: "4가지 채소 요리 도전 중 → 3/4 완료",
-    cta: "레시피 보기",
-    ctaHref: "/cards/c07",
-  },
-  {
-    id: "m2",
-    icon: "🎬",
-    title: "금요일 홈시네마 나이트",
-    desc: "팝콘 + 나초 + 치킨 조합 세트",
-    cta: "카드 보기",
-    ctaHref: "/cards/c10",
-  },
+const MISSION_META = [
+  { icon: "🥗", title: "이번 주 채소 도전!", desc: "4가지 채소 요리 도전 중" },
+  { icon: "🎬", title: "금요일 홈시네마 나이트", desc: "오늘의 무비 페어링 메뉴" },
 ];
 
-export function FamilyMission() {
+interface FamilyMissionProps {
+  cards: MissionCard[];
+}
+
+export function FamilyMission({ cards }: FamilyMissionProps) {
+  if (cards.length === 0) return null;
+
   return (
     <section className="px-4">
       <div className="mb-3 flex items-center gap-2">
@@ -38,26 +27,30 @@ export function FamilyMission() {
       </div>
 
       <div className="flex flex-col gap-3">
-        {MOCK_MISSIONS.map((mission) => (
-          <div key={mission.id} className="border-line overflow-hidden rounded-lg border bg-white">
-            <div className="flex items-center gap-3 px-4 py-3">
-              <span className="text-2xl">{mission.icon}</span>
-              <div className="flex-1">
-                <p className="text-ink-900 text-sm font-semibold">{mission.title}</p>
-                <p className="text-ink-500 mt-0.5 text-xs">{mission.desc}</p>
-              </div>
-              {mission.ctaHref && (
+        {cards.slice(0, 2).map((card, idx) => {
+          const meta = MISSION_META[idx];
+          return (
+            <div
+              key={card.card_id}
+              className="border-line overflow-hidden rounded-lg border bg-white"
+            >
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-2xl">{card.emoji ?? meta?.icon ?? "🍽️"}</span>
+                <div className="flex-1">
+                  <p className="text-ink-900 text-sm font-semibold">{meta?.title ?? card.name}</p>
+                  <p className="text-ink-500 mt-0.5 text-xs">{card.name}</p>
+                </div>
                 <Link
-                  href={mission.ctaHref}
+                  href={`/cards/${card.card_id}`}
                   className="text-mocha-700 flex items-center text-xs font-medium"
                 >
-                  {mission.cta}
+                  카드 보기
                   <ChevronRight size={13} />
                 </Link>
-              )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

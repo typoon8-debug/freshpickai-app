@@ -10,8 +10,8 @@ interface FamilyBannerProps {
 
 export function FamilyBanner({
   groupName = "우리 가족",
-  level = 12,
-  mealsThisMonth = 47,
+  level = 1,
+  mealsThisMonth = 0,
 }: FamilyBannerProps) {
   return (
     <div className="bg-mocha-700 px-4 py-5">

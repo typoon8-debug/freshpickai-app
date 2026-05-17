@@ -1,0 +1,236 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e77]:
+    - main [ref=e78]:
+      - generic [ref=e896]:
+        - button "뒤로가기" [ref=e897]:
+          - img [ref=e898]
+        - generic [ref=e900]:
+          - generic [ref=e901]: 흑백요리사
+          - generic [ref=e902]: 셰프의 갈비찜 정식
+        - button "찜하기" [ref=e903]:
+          - img [ref=e904]
+      - generic [ref=e906]:
+        - generic [ref=e907]:
+          - button "이 카드로 요리하기" [disabled] [ref=e908]:
+            - img [ref=e909]
+            - text: 이 카드로 요리하기
+          - button "공유하기" [ref=e911]:
+            - img [ref=e912]
+        - generic [ref=e919] [cursor=pointer]:
+          - generic [ref=e921]:
+            - generic [ref=e922]: 🍽️
+            - generic [ref=e923]:
+              - heading "셰프의 갈비찜" [level=2] [ref=e924]
+              - paragraph [ref=e925]: 방송에서 화제된 진한 간장 소스 갈비찜. 12시간 숙성 소스 비법 공개.
+            - generic [ref=e926]:
+              - generic [ref=e927]:
+                - img [ref=e928]
+                - text: 90분
+              - generic [ref=e931]:
+                - img [ref=e932]
+                - text: 580kcal
+              - generic [ref=e935]:
+                - generic [ref=e936]: 건강점수
+                - generic [ref=e937]: 보통 70
+            - generic [ref=e940]:
+              - img [ref=e941]
+              - text: 재료 보기
+          - generic [ref=e945]:
+            - heading "재료 목록" [level=3] [ref=e947]
+            - generic [ref=e948]:
+              - generic [ref=e949]:
+                - generic [ref=e950]:
+                  - generic [ref=e951]: 🥩
+                  - generic [ref=e952]:
+                    - paragraph [ref=e953]: 소갈비
+                    - paragraph [ref=e954]: 600 g
+                - generic [ref=e955]:
+                  - generic [ref=e956]: 12,000원
+                  - generic [ref=e957]:
+                    - button "수량 감소" [disabled] [ref=e958]:
+                      - img [ref=e959]
+                    - generic [ref=e960]: "1"
+                    - button "수량 증가" [ref=e961]:
+                      - img [ref=e962]
+              - generic [ref=e963]:
+                - generic [ref=e964]:
+                  - generic [ref=e965]: 🫙
+                  - generic [ref=e966]:
+                    - paragraph [ref=e967]: 간장
+                    - paragraph [ref=e968]: 4 tbsp
+                - generic [ref=e969]:
+                  - generic [ref=e970]: 500원
+                  - generic [ref=e971]:
+                    - button "수량 감소" [disabled] [ref=e972]:
+                      - img [ref=e973]
+                    - generic [ref=e974]: "1"
+                    - button "수량 증가" [ref=e975]:
+                      - img [ref=e976]
+              - generic [ref=e977]:
+                - generic [ref=e978]:
+                  - generic [ref=e979]: 🍐
+                  - generic [ref=e980]:
+                    - paragraph [ref=e981]: 배
+                    - paragraph [ref=e982]: 1/2 개
+                - generic [ref=e983]:
+                  - generic [ref=e984]: 1,500원
+                  - generic [ref=e985]: 2,000원
+                  - generic [ref=e986]:
+                    - button "수량 감소" [disabled] [ref=e987]:
+                      - img [ref=e988]
+                    - generic [ref=e989]: "1"
+                    - button "수량 증가" [ref=e990]:
+                      - img [ref=e991]
+              - generic [ref=e992]:
+                - generic [ref=e993]:
+                  - generic [ref=e994]: 🥕
+                  - generic [ref=e995]:
+                    - paragraph [ref=e996]: 당근
+                    - paragraph [ref=e997]: 1 개
+                - generic [ref=e998]:
+                  - generic [ref=e999]: 800원
+                  - generic [ref=e1000]:
+                    - button "수량 감소" [disabled] [ref=e1001]:
+                      - img [ref=e1002]
+                    - generic [ref=e1003]: "1"
+                    - button "수량 증가" [ref=e1004]:
+                      - img [ref=e1005]
+              - generic [ref=e1006]:
+                - generic [ref=e1007]:
+                  - generic [ref=e1008]: 🥦
+                  - generic [ref=e1009]:
+                    - paragraph [ref=e1010]: 무
+                    - paragraph [ref=e1011]: 200 g
+                - generic [ref=e1012]:
+                  - generic [ref=e1013]: 600원
+                  - generic [ref=e1014]:
+                    - button "수량 감소" [disabled] [ref=e1015]:
+                      - img [ref=e1016]
+                    - generic [ref=e1017]: "1"
+                    - button "수량 증가" [ref=e1018]:
+                      - img [ref=e1019]
+            - generic [ref=e1020]:
+              - img [ref=e1021]
+              - text: 앞면 보기
+        - generic [ref=e1024]:
+          - heading "건강 점수" [level=3] [ref=e1025]
+          - generic [ref=e1026]:
+            - generic [ref=e1028]:
+              - generic [ref=e1029]: 저속노화 지수항산화·가공도·식이섬유
+              - generic [ref=e1030]: 6/10
+            - generic [ref=e1034]:
+              - generic [ref=e1035]: 혈당 지수GI 지수 기반
+              - generic [ref=e1036]: 7/10
+            - generic [ref=e1040]:
+              - generic [ref=e1041]: 영양 밸런스단백질·탄수화물·지방 비율
+              - generic [ref=e1042]: 1/10
+        - generic [ref=e1045]:
+          - generic [ref=e1046]:
+            - heading "가격 비교" [level=3] [ref=e1047]
+            - generic [ref=e1048]: 🌿 제철 특가
+          - generic [ref=e1049]:
+            - generic [ref=e1050]:
+              - generic [ref=e1051]: 홈메이드 (이 카드)
+              - generic [ref=e1052]: 13,500원
+            - generic [ref=e1053]:
+              - generic [ref=e1054]: 외식 평균
+              - generic [ref=e1055]: 29,700원
+            - generic [ref=e1056]:
+              - generic [ref=e1057]: 배달 평균
+              - generic [ref=e1058]: 24,975원
+            - generic [ref=e1059]:
+              - generic [ref=e1060]: 카페 브런치
+              - generic [ref=e1061]: 21,600원
+          - paragraph [ref=e1062]: 외식 대비 최대 55% 절약
+        - generic [ref=e1063]:
+          - heading "구성 음식" [level=3] [ref=e1064]
+          - generic [ref=e1067]:
+            - generic [ref=e1068]:
+              - paragraph [ref=e1069]: 셰프의 갈비찜
+              - paragraph [ref=e1070]: 방송에서 화제된 진한 간장 소스 갈비찜. 12시간 숙성 소스 비법 공개.
+              - paragraph [ref=e1071]: ⏱ 90분
+            - button "레시피" [ref=e1072]:
+              - text: 레시피
+              - img [ref=e1073]
+        - generic [ref=e1075]:
+          - generic [ref=e1076]:
+            - generic [ref=e1077]: 🌿
+            - heading "재료 정보" [level=3] [ref=e1078]
+          - generic [ref=e1079]:
+            - generic [ref=e1080]:
+              - paragraph [ref=e1081]: 소갈비
+              - paragraph [ref=e1082]: "손질: 찬물에 1시간 담가 핏물을 제거하세요"
+              - paragraph [ref=e1083]: "계량: 600g = 4인분 기준"
+              - paragraph [ref=e1084]: "대체: 돼지갈비, 소등심"
+            - generic [ref=e1085]:
+              - paragraph [ref=e1086]: 당근
+              - paragraph [ref=e1087]: "손질: 껍질 벗기고 큼직하게 썰어요"
+              - paragraph [ref=e1088]: "계량: 1개 = 약 200g"
+              - paragraph [ref=e1089]: "대체: 감자, 고구마"
+            - generic [ref=e1090]:
+              - paragraph [ref=e1091]: 무
+              - paragraph [ref=e1092]: "손질: 두껍게 나박썰기 해요"
+              - paragraph [ref=e1093]: "계량: 1/4개 = 약 300g"
+              - paragraph [ref=e1094]: "대체: 순무, 감자"
+        - generic [ref=e1095]:
+          - generic [ref=e1096]:
+            - heading "사용자 노트 (0)" [level=3] [ref=e1097]:
+              - text: 사용자 노트
+              - generic [ref=e1098]: (0)
+            - button "내 노트 남기기" [ref=e1099]:
+              - img [ref=e1100]
+              - text: 내 노트 남기기
+          - generic [ref=e1102]:
+            - button "전체" [ref=e1103]
+            - button "팁" [ref=e1104]
+            - button "후기" [ref=e1105]
+            - button "질문" [ref=e1106]
+          - paragraph [ref=e1107]: 아직 노트가 없어요. 첫 번째 노트를 남겨보세요!
+      - generic [ref=e1108]:
+        - heading "노트 남기기" [level=3] [ref=e1110]
+        - generic [ref=e1111]:
+          - button "팁" [ref=e1112]
+          - button "후기" [ref=e1113]
+          - button "질문" [ref=e1114]
+        - textbox "요리 팁이나 재료 대체 방법을 적어주세요" [ref=e1115]
+        - generic [ref=e1116]:
+          - checkbox "AI 학습에 동의합니다 (선택). 도움이 많이 된 노트는 레시피 개선에 활용될 수 있어요." [ref=e1117]
+          - generic [ref=e1118]: AI 학습에 동의합니다 (선택). 도움이 많이 된 노트는 레시피 개선에 활용될 수 있어요.
+        - button "노트 저장하기" [disabled] [ref=e1119]
+      - generic [ref=e1121]:
+        - link "AI 변형하기" [ref=e1122] [cursor=pointer]:
+          - /url: /chat
+          - img [ref=e1123]
+          - text: AI 변형하기
+        - button "15,400원 모두 담기" [ref=e1125]:
+          - img [ref=e1126]
+          - text: 15,400원 모두 담기
+    - navigation [ref=e868]:
+      - link "홈" [ref=e869] [cursor=pointer]:
+        - /url: /
+        - img [ref=e870]
+        - generic [ref=e873]: 홈
+      - link "AI" [ref=e874] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e875]
+        - generic [ref=e877]: AI
+      - link "가족" [ref=e878] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e879]
+        - generic [ref=e884]: 가족
+      - link "메모" [ref=e885] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e886]
+        - generic [ref=e889]: 메모
+      - link "장바구니" [ref=e890] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e891]
+        - generic [ref=e895]: 장바구니
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e1130]:
+        - img [ref=e1132]
+        - generic [ref=e1136]: 장바구니에 담았습니다!
+  - button "Open Next.js Dev Tools" [ref=e42] [cursor=pointer]:
+    - img [ref=e43]
+  - alert [ref=e46]

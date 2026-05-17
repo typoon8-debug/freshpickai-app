@@ -1,0 +1,45 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "장보기 메모" [level=1] [ref=e5]
+      - generic [ref=e6]:
+        - button "새 메모" [ref=e7]
+        - button "저장된 메모" [ref=e8]
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - textbox "계란2판 새우깡3봉지 저녁찬거리 (자유롭게 입력하세요)" [ref=e13]:
+            - /placeholder: "계란2판 새우깡3봉지 저녁찬거리\n(자유롭게 입력하세요)"
+            - text: 계란2판 새우깡3봉지
+          - generic [ref=e15]: 11/500
+        - button "AI로 파싱하기" [ref=e16]:
+          - img [ref=e17]
+          - text: AI로 파싱하기
+    - navigation [ref=e20]:
+      - link "홈" [ref=e21] [cursor=pointer]:
+        - /url: /
+        - img [ref=e22]
+        - generic [ref=e25]: 홈
+      - link "AI" [ref=e26] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e27]
+        - generic [ref=e29]: AI
+      - link "가족" [ref=e30] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e31]
+        - generic [ref=e36]: 가족
+      - link "메모" [ref=e37] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e38]
+        - generic [ref=e41]: 메모
+      - link "장바구니" [ref=e42] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e43]
+        - generic [ref=e47]: 장바구니
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e110]:
+        - img [ref=e112]
+        - generic [ref=e116]: 2개 항목을 장바구니에 추가했습니다
+  - button "Open Next.js Dev Tools" [ref=e53] [cursor=pointer]:
+    - img [ref=e54]
+  - alert [ref=e57]

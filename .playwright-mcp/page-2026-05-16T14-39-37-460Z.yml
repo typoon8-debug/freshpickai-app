@@ -1,0 +1,19 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e259]:
+    - paragraph [ref=e260]: "!"
+    - heading "문제가 발생했어요" [level=1] [ref=e261]
+    - paragraph [ref=e262]: "A \"use server\" file can only export async functions, found object. Read more: https://nextjs.org/docs/messages/invalid-use-server-value"
+    - button "다시 시도" [ref=e263]
+  - region "Notifications alt+T"
+  - generic [ref=e250] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e251]:
+      - img [ref=e252]
+    - generic [ref=e264]:
+      - button "Open issues overlay" [ref=e265]:
+        - generic [ref=e266]:
+          - generic [ref=e267]: "0"
+          - generic [ref=e268]: "1"
+        - generic [ref=e269]: Issue
+      - button "Collapse issues badge" [ref=e270]:
+        - img [ref=e271]
+  - alert [ref=e255]

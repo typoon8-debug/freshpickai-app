@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: FreshPick AI
+        - generic [ref=e6]:
+          - link "찜 목록" [ref=e7] [cursor=pointer]:
+            - /url: /wishlist
+            - img [ref=e8]
+          - link "장바구니" [ref=e10] [cursor=pointer]:
+            - /url: /cart
+            - img [ref=e11]
+            - generic [ref=e15]: "2"
+          - link "마이프레시" [ref=e16] [cursor=pointer]:
+            - /url: /profile
+            - img [ref=e17]
+      - main [ref=e20]
+    - navigation [ref=e91]:
+      - link "홈" [ref=e92] [cursor=pointer]:
+        - /url: /
+        - img [ref=e93]
+        - generic [ref=e96]: 홈
+      - link "AI" [ref=e97] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e98]
+        - generic [ref=e100]: AI
+      - link "카테고리" [ref=e101] [cursor=pointer]:
+        - /url: /category
+        - img [ref=e102]
+        - generic [ref=e107]: 카테고리
+      - link "가족" [ref=e108] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e109]
+        - generic [ref=e114]: 가족
+      - link "메모" [ref=e115] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e116]
+        - generic [ref=e119]: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e125] [cursor=pointer]:
+    - img [ref=e126]
+  - alert [ref=e129]

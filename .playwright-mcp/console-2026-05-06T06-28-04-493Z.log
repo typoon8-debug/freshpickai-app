@@ -1,0 +1,47 @@
+[    2790ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/manifest.webmanifest:0
+[    2818ms] [ERROR] Manifest fetch from http://localhost:3000/manifest.webmanifest failed, code 404 @ http://localhost:3000/login:0
+[    6999ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    7115ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    7150ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/login" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <LoadingBoundaryProvider loading={[...]}>
+                      <SegmentViewNode type="layout" pagePath="layout.tsx">
+                        <SegmentTrieNode>
+                        <link>
+                        <script>
+                        <script>
+                        <script>
+                        <RootLayout>
+                          <html
+                            lang="ko"
++                           className="bree_serif_10cfd888-module__DhEldG__variable h-full"
+-                           className="bree_serif_10cfd888-module__DhEldG__variable h-full light"
+-                           style={{color-scheme:"light"}}
+                          >
+                  ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[    7305ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/manifest.webmanifest:0
+[    7316ms] [ERROR] Manifest fetch from http://localhost:3000/manifest.webmanifest failed, code 404 @ http://localhost:3000/login:0
+[   25741ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://fjcbwqadjclajwfpvfil.supabase.co/auth/v1/authorize?provider=apple&redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fconfirm&code_challenge=eLSyEEtrQ5K5N875vukFFlGzFchtCnNXoqQuoaUVzbY&code_challenge_method=s256:0
+[   25821ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://fjcbwqadjclajwfpvfil.supabase.co/favicon.ico:0

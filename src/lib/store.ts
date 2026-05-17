@@ -40,6 +40,8 @@ type CartState = {
   clear: () => void;
   total: () => number;
   totalCount: () => number;
+  /** DB에서 가져온 최신 목록으로 Zustand를 교체 — cart/page 마운트 시 호출 */
+  syncFromDB: (dbItems: CartItem[]) => void;
 };
 export const useCartStore = create<CartState>()(
   persist(
@@ -61,6 +63,7 @@ export const useCartStore = create<CartState>()(
       clear: () => set({ items: [] }),
       total: () => get().items.reduce((s, i) => s + i.price * i.qty, 0),
       totalCount: () => get().items.length,
+      syncFromDB: (dbItems) => set({ items: dbItems }),
     }),
     { name: "fp-cart" }
   )

@@ -1,0 +1,188 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "내 섹션 관리" [level=1] [ref=e5]
+      - generic [ref=e6]:
+        - paragraph [ref=e50]: 섹션 순서를 바꾸거나 AI 자동 채움을 켜보세요.
+        - generic [ref=e51]:
+          - generic [ref=e82]:
+            - generic "드래그로 순서 변경" [ref=e83]:
+              - img [ref=e84]
+            - paragraph [ref=e92]: 오늘뭐먹지
+            - button "AI 자동 채움 토글" [ref=e93]:
+              - img [ref=e94]
+              - text: AI
+            - button "편집" [ref=e97]:
+              - img [ref=e98]
+            - generic [ref=e101]:
+              - button "위로" [disabled] [ref=e102]:
+                - img [ref=e103]
+              - button "아래로" [ref=e105]:
+                - img [ref=e106]
+          - generic [ref=e54]:
+            - generic "드래그로 순서 변경" [ref=e55]:
+              - img [ref=e56]
+            - paragraph [ref=e64]: 흑백요리사
+            - button "AI 자동 채움 토글" [ref=e65]:
+              - img [ref=e66]
+              - text: AI
+            - button "편집" [ref=e69]:
+              - img [ref=e70]
+            - generic [ref=e73]:
+              - button "위로" [ref=e74]:
+                - img [ref=e75]
+              - button "아래로" [ref=e77]:
+                - img [ref=e78]
+          - generic [ref=e110]:
+            - generic "드래그로 순서 변경" [ref=e111]:
+              - img [ref=e112]
+            - paragraph [ref=e120]: 가족레시피
+            - button "AI 자동 채움 토글" [ref=e121]:
+              - img [ref=e122]
+              - text: AI
+            - button "편집" [ref=e125]:
+              - img [ref=e126]
+            - generic [ref=e129]:
+              - button "위로" [ref=e130]:
+                - img [ref=e131]
+              - button "아래로" [ref=e133]:
+                - img [ref=e134]
+          - generic [ref=e138]:
+            - generic "드래그로 순서 변경" [ref=e139]:
+              - img [ref=e140]
+            - paragraph [ref=e148]: 드라마식탁
+            - button "AI 자동 채움 토글" [ref=e149]:
+              - img [ref=e150]
+              - text: AI
+            - button "편집" [ref=e153]:
+              - img [ref=e154]
+            - generic [ref=e157]:
+              - button "위로" [ref=e158]:
+                - img [ref=e159]
+              - button "아래로" [ref=e161]:
+                - img [ref=e162]
+          - generic [ref=e165]:
+            - generic [ref=e166]:
+              - generic "드래그로 순서 변경" [ref=e167]:
+                - img [ref=e168]
+              - paragraph [ref=e176]: 혼웰빙
+              - button "AI 자동 채움 토글" [ref=e177]:
+                - img [ref=e178]
+                - text: AI
+              - button "편집" [ref=e181]:
+                - img [ref=e182]
+              - generic [ref=e185]:
+                - button "위로" [ref=e186]:
+                  - img [ref=e187]
+                - button "아래로" [ref=e189]:
+                  - img [ref=e190]
+            - paragraph [ref=e192]: 수동으로 카드를 골라 채워주세요
+          - generic [ref=e195]:
+            - generic "드래그로 순서 변경" [ref=e196]:
+              - img [ref=e197]
+            - paragraph [ref=e205]: 제철한상
+            - button "AI 자동 채움 토글" [ref=e206]:
+              - img [ref=e207]
+              - text: AI
+            - button "편집" [ref=e210]:
+              - img [ref=e211]
+            - generic [ref=e214]:
+              - button "위로" [ref=e215]:
+                - img [ref=e216]
+              - button "아래로" [ref=e218]:
+                - img [ref=e219]
+          - generic [ref=e222]:
+            - generic [ref=e223]:
+              - generic "드래그로 순서 변경" [ref=e224]:
+                - img [ref=e225]
+              - paragraph [ref=e233]: 세계한상
+              - button "AI 자동 채움 토글" [ref=e234]:
+                - img [ref=e235]
+                - text: AI
+              - button "편집" [ref=e238]:
+                - img [ref=e239]
+              - generic [ref=e242]:
+                - button "위로" [ref=e243]:
+                  - img [ref=e244]
+                - button "아래로" [ref=e246]:
+                  - img [ref=e247]
+            - paragraph [ref=e249]: 수동으로 카드를 골라 채워주세요
+          - generic [ref=e251]:
+            - generic [ref=e252]:
+              - generic "드래그로 순서 변경" [ref=e253]:
+                - img [ref=e254]
+              - paragraph [ref=e262]: K디저트
+              - button "AI 자동 채움 토글" [ref=e263]:
+                - img [ref=e264]
+                - text: AI
+              - button "편집" [ref=e267]:
+                - img [ref=e268]
+              - generic [ref=e271]:
+                - button "위로" [ref=e272]:
+                  - img [ref=e273]
+                - button "아래로" [ref=e275]:
+                  - img [ref=e276]
+            - paragraph [ref=e278]: 수동으로 카드를 골라 채워주세요
+          - generic [ref=e280]:
+            - generic [ref=e281]:
+              - generic "드래그로 순서 변경" [ref=e282]:
+                - img [ref=e283]
+              - paragraph [ref=e291]: 간식박스
+              - button "AI 자동 채움 토글" [ref=e292]:
+                - img [ref=e293]
+                - text: AI
+              - button "편집" [ref=e296]:
+                - img [ref=e297]
+              - generic [ref=e300]:
+                - button "위로" [ref=e301]:
+                  - img [ref=e302]
+                - button "아래로" [ref=e304]:
+                  - img [ref=e305]
+            - paragraph [ref=e307]: 수동으로 카드를 골라 채워주세요
+          - generic [ref=e309]:
+            - generic [ref=e310]:
+              - generic "드래그로 순서 변경" [ref=e311]:
+                - img [ref=e312]
+              - paragraph [ref=e320]: 홈시네마
+              - button "AI 자동 채움 토글" [ref=e321]:
+                - img [ref=e322]
+                - text: AI
+              - button "편집" [ref=e325]:
+                - img [ref=e326]
+              - generic [ref=e329]:
+                - button "위로" [ref=e330]:
+                  - img [ref=e331]
+                - button "아래로" [disabled] [ref=e333]:
+                  - img [ref=e334]
+            - paragraph [ref=e336]: 수동으로 카드를 골라 채워주세요
+        - generic [ref=e341]:
+          - 'textbox "섹션 이름 (예: 내맘대로 메뉴)" [active] [ref=e342]'
+          - button [disabled] [ref=e343]:
+            - img [ref=e344]
+          - button [ref=e345]:
+            - img [ref=e346]
+    - navigation [ref=e12]:
+      - link "홈" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - img [ref=e14]
+        - generic [ref=e17]: 홈
+      - link "AI" [ref=e18] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e19]
+        - generic [ref=e21]: AI
+      - link "가족" [ref=e22] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e23]
+        - generic [ref=e28]: 가족
+      - link "메모" [ref=e29] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e30]
+        - generic [ref=e33]: 메모
+      - link "장바구니" [ref=e34] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e35]
+        - generic [ref=e39]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e45] [cursor=pointer]:
+    - img [ref=e46]
+  - alert [ref=e49]

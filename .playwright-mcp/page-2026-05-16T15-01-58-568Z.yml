@@ -1,0 +1,59 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e11]:
+              - paragraph [ref=e12]: FreshPick AI
+              - paragraph [ref=e13]: 온라인
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic [ref=e19]: RAG 연결됨
+        - generic [ref=e20]:
+          - generic [ref=e22]: 🤖
+          - paragraph [ref=e23]: FreshPick AI에게 물어보세요
+          - paragraph [ref=e24]:
+            - text: 오늘 뭐 먹을지, 가족 취향에 맞는 메뉴,
+            - text: 특별한 날 요리까지 함께 찾아드릴게요.
+        - button "냉장고 비우기 모드" [ref=e26]:
+          - img [ref=e27]
+          - text: 냉장고 비우기 모드
+        - generic [ref=e29]:
+          - button "🥗 비건" [ref=e30]
+          - button "🌶️ 매운맛" [ref=e31]
+          - button "⏱️ 10분" [ref=e32]
+          - button "💰 8천원이하" [ref=e33]
+          - button "🧒 초등간식" [ref=e34]
+        - generic [ref=e36]:
+          - textbox "AI에게 물어보세요..." [ref=e37]
+          - button "음성으로 입력하기" [disabled] [ref=e39]:
+            - img [ref=e40]
+          - button "전송" [disabled] [ref=e46]:
+            - img [ref=e47]
+    - navigation [ref=e50]:
+      - link "홈" [ref=e51] [cursor=pointer]:
+        - /url: /
+        - img [ref=e52]
+        - generic [ref=e55]: 홈
+      - link "AI" [ref=e56] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e57]
+        - generic [ref=e59]: AI
+      - link "카테고리" [ref=e60] [cursor=pointer]:
+        - /url: /category
+        - img [ref=e61]
+        - generic [ref=e66]: 카테고리
+      - link "가족" [ref=e67] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e68]
+        - generic [ref=e73]: 가족
+      - link "메모" [ref=e74] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e75]
+        - generic [ref=e78]: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e84] [cursor=pointer]:
+    - img [ref=e85]
+  - alert [ref=e88]

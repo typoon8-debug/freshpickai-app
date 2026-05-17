@@ -1,0 +1,24 @@
+- generic [ref=e1]:
+  - main [ref=e61]:
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - img [ref=e65]
+        - generic [ref=e68]: FreshPick
+      - generic [ref=e69]:
+        - generic [ref=e102]:
+          - generic [ref=e103]: 👨‍👩‍👧‍👦
+          - generic [ref=e104]:
+            - heading "가족이 함께 투표로 결정" [level=2] [ref=e105]
+            - paragraph [ref=e106]: 이번 주 뭐 먹을지 가족 모두가 좋아요/싫어요로 투표해요
+          - generic [ref=e107]:
+            - generic [ref=e108]: 실시간투표
+            - generic [ref=e109]: 가족보드
+            - generic [ref=e110]: 주간TOP5
+            - generic [ref=e111]: 무비나이트
+        - generic [ref=e88]:
+          - button "다음" [active] [ref=e89]
+          - button "건너뛰기" [ref=e90]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e44] [cursor=pointer]:
+    - img [ref=e45]
+  - alert [ref=e48]

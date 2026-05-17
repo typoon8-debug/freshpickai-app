@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "카드 만들기" [level=1] [ref=e5]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: ✓
+          - generic [ref=e12]: 테마 선택
+        - generic [ref=e13]:
+          - generic [ref=e14]: ✓
+          - generic [ref=e15]: 취향 태그
+        - generic [ref=e16]:
+          - generic [ref=e17]: "3"
+          - generic [ref=e18]: 재료·예산
+        - generic [ref=e19]:
+          - generic [ref=e20]: "4"
+          - generic [ref=e21]: 미리보기
+      - generic [ref=e145]:
+        - generic [ref=e146]:
+          - paragraph [ref=e147]: 재료 목록
+          - generic [ref=e148]:
+            - textbox "재료 이름" [ref=e149]
+            - spinbutton [ref=e150]: "1"
+            - textbox "단위" [ref=e151]: 개
+            - button [disabled] [ref=e152]:
+              - img [ref=e153]
+        - generic [ref=e154]:
+          - paragraph [ref=e155]: 예상 예산 (1인분 기준)
+          - generic [ref=e156]:
+            - spinbutton [ref=e157]
+            - generic [ref=e158]: 원
+        - generic [ref=e159]:
+          - paragraph [ref=e160]: 썸네일 이미지
+          - generic [ref=e161] [cursor=pointer]:
+            - img [ref=e162]
+            - paragraph [ref=e165]: 이미지 업로드 (Task 023에서 Supabase Storage 연동 예정)
+      - generic [ref=e67]:
+        - button "이전" [ref=e141]:
+          - img [ref=e142]
+          - text: 이전
+        - button "다음" [disabled] [ref=e68]:
+          - text: 다음
+          - img [ref=e69]
+    - navigation [ref=e71]:
+      - link "홈" [ref=e72] [cursor=pointer]:
+        - /url: /
+        - img [ref=e73]
+        - generic [ref=e76]: 홈
+      - link "AI" [ref=e77] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e78]
+        - generic [ref=e80]: AI
+      - link "가족" [ref=e81] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e82]
+        - generic [ref=e87]: 가족
+      - link "메모" [ref=e88] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e89]
+        - generic [ref=e92]: 메모
+      - link "장바구니" [ref=e93] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e94]
+        - generic [ref=e98]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e104] [cursor=pointer]:
+    - img [ref=e105]
+  - alert [ref=e108]

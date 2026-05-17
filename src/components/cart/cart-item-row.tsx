@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Minus, Plus, Trash2, Check } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { CartItem } from "@/lib/types";
 
 interface CartItemRowProps {
@@ -52,17 +53,12 @@ export function CartItemRow({
       )}
 
       {/* 체크박스 */}
-      <button
-        type="button"
-        onClick={() => onToggleSelect(item.cartItemId)}
+      <Checkbox
+        checked={checked}
+        onCheckedChange={() => onToggleSelect(item.cartItemId)}
         aria-label={checked ? "선택 해제" : "선택"}
-        className={cn(
-          "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 transition",
-          checked ? "border-mocha-600 bg-mocha-600" : "border-ink-300 bg-white"
-        )}
-      >
-        {checked && <Check size={11} className="text-white" strokeWidth={3} />}
-      </button>
+        className="border-ink-400 data-checked:border-mocha-600 data-checked:bg-mocha-600 h-5 w-5 shrink-0 rounded-sm border-2 data-checked:text-white"
+      />
 
       {/* 썸네일 또는 이모지 */}
       {item.thumbnailUrl ? (

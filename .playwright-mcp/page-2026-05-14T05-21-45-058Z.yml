@@ -1,0 +1,19 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - paragraph [ref=e3]: "!"
+    - heading "문제가 발생했어요" [level=1] [ref=e4]
+    - paragraph [ref=e5]: "Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#options"
+    - button "다시 시도" [ref=e6]
+  - region "Notifications alt+T"
+  - generic [ref=e11] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e12]:
+      - img [ref=e13]
+    - generic [ref=e16]:
+      - button "Open issues overlay" [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: "0"
+          - generic [ref=e20]: "1"
+        - generic [ref=e21]: Issue
+      - button "Collapse issues badge" [ref=e22]:
+        - img [ref=e23]
+  - alert [ref=e25]

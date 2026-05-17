@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS fp_poll (
                       CHECK (poll_type IN ('general', 'movie_night', 'dinner', 'activity')),
 
   -- 결과로 생성된 카드 (dinner/movie_night 완료 시)
-  result_card_id    TEXT REFERENCES fp_menu_card(card_id),
+  result_card_id    UUID REFERENCES fp_menu_card(card_id),
 
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   closed_at         TIMESTAMPTZ

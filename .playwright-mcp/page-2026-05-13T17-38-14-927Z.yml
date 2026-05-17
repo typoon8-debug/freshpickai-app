@@ -1,0 +1,227 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - button "뒤로가기" [ref=e5]:
+          - img [ref=e6]
+        - generic [ref=e8]:
+          - generic [ref=e9]: 제철한상
+          - generic [ref=e10]: 봄 딸기 샐러드
+        - button "찜하기" [ref=e11]:
+          - img [ref=e12]
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - button "이 카드로 요리하기" [disabled] [ref=e16]:
+            - img [ref=e17]
+            - text: 이 카드로 요리하기
+          - button "공유하기" [ref=e19]:
+            - img [ref=e20]
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: 🍽️
+            - generic [ref=e31]:
+              - heading "봄 딸기 샐러드" [level=2] [ref=e32]
+              - paragraph [ref=e33]: 5월 제철 딸기로 만드는 상큼한 샐러드. 루꼴라와 발사믹 드레싱.
+            - generic [ref=e34]:
+              - generic [ref=e35]:
+                - img [ref=e36]
+                - text: 10분
+              - generic [ref=e39]:
+                - img [ref=e40]
+                - text: 240kcal
+              - generic [ref=e43]:
+                - generic [ref=e44]: 건강점수
+                - generic [ref=e45]: 건강 90
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - text: 재료 보기
+          - generic [ref=e53]:
+            - heading "재료 목록" [level=3] [ref=e55]
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]:
+                  - generic [ref=e59]: 🍓
+                  - generic [ref=e60]:
+                    - paragraph [ref=e61]: 딸기
+                    - paragraph [ref=e62]: 200 g
+                - generic [ref=e63]:
+                  - generic [ref=e64]: 4,000원
+                  - generic [ref=e65]: 6,000원
+                  - generic [ref=e66]:
+                    - button "수량 감소" [disabled] [ref=e67]:
+                      - img [ref=e68]
+                    - generic [ref=e69]: "1"
+                    - button "수량 증가" [ref=e70]:
+                      - img [ref=e71]
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - generic [ref=e74]: 🥬
+                  - generic [ref=e75]:
+                    - paragraph [ref=e76]: 루꼴라
+                    - paragraph [ref=e77]: 80 g
+                - generic [ref=e78]:
+                  - generic [ref=e79]: 1,800원
+                  - generic [ref=e80]:
+                    - button "수량 감소" [disabled] [ref=e81]:
+                      - img [ref=e82]
+                    - generic [ref=e83]: "1"
+                    - button "수량 증가" [ref=e84]:
+                      - img [ref=e85]
+              - generic [ref=e86]:
+                - generic [ref=e87]:
+                  - generic [ref=e88]: 🫙
+                  - generic [ref=e89]:
+                    - paragraph [ref=e90]: 발사믹 드레싱
+                    - paragraph [ref=e91]: 2 tbsp
+                - generic [ref=e92]:
+                  - generic [ref=e93]: 1,200원
+                  - generic [ref=e94]:
+                    - button "수량 감소" [disabled] [ref=e95]:
+                      - img [ref=e96]
+                    - generic [ref=e97]: "1"
+                    - button "수량 증가" [ref=e98]:
+                      - img [ref=e99]
+              - generic [ref=e100]:
+                - generic [ref=e101]:
+                  - generic [ref=e102]: 🧀
+                  - generic [ref=e103]:
+                    - paragraph [ref=e104]: 리코타 치즈
+                    - paragraph [ref=e105]: 50 g
+                - generic [ref=e106]:
+                  - generic [ref=e107]: 2,000원
+                  - generic [ref=e108]:
+                    - button "수량 감소" [disabled] [ref=e109]:
+                      - img [ref=e110]
+                    - generic [ref=e111]: "1"
+                    - button "수량 증가" [ref=e112]:
+                      - img [ref=e113]
+            - generic [ref=e114]:
+              - img [ref=e115]
+              - text: 앞면 보기
+        - generic [ref=e118]:
+          - heading "건강 점수" [level=3] [ref=e119]
+          - generic [ref=e120]:
+            - generic [ref=e122]:
+              - generic [ref=e123]: 저속노화 지수항산화·가공도·식이섬유
+              - generic [ref=e124]: 4/10
+            - generic [ref=e128]:
+              - generic [ref=e129]: 혈당 지수GI 지수 기반
+              - generic [ref=e130]: 6/10
+            - generic [ref=e134]:
+              - generic [ref=e135]: 영양 밸런스단백질·탄수화물·지방 비율
+              - generic [ref=e136]: 1/10
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - heading "가격 비교" [level=3] [ref=e141]
+            - generic [ref=e142]: 🌿 제철 특가
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - generic [ref=e145]: 홈메이드 (이 카드)
+              - generic [ref=e146]: 6,750원
+            - generic [ref=e147]:
+              - generic [ref=e148]: 외식 평균
+              - generic [ref=e149]: 14,850원
+            - generic [ref=e150]:
+              - generic [ref=e151]: 배달 평균
+              - generic [ref=e152]: 12,488원
+            - generic [ref=e153]:
+              - generic [ref=e154]: 카페 브런치
+              - generic [ref=e155]: 10,800원
+          - paragraph [ref=e156]: 외식 대비 최대 55% 절약
+        - generic [ref=e157]:
+          - heading "구성 음식" [level=3] [ref=e158]
+          - generic [ref=e160]:
+            - generic [ref=e162]:
+              - paragraph [ref=e163]: 봄 딸기 샐러드
+              - paragraph [ref=e164]: 5월 제철 딸기로 만드는 상큼한 샐러드. 루꼴라와 발사믹 드레싱.
+              - paragraph [ref=e165]: ⏱ 10분
+            - generic [ref=e166]:
+              - button "🍓 딸기 200g 4,000원 6,000원" [ref=e167]:
+                - generic [ref=e168]: 🍓
+                - generic [ref=e170]:
+                  - generic [ref=e171]: 딸기
+                  - generic [ref=e172]: 200g
+                - generic [ref=e173]:
+                  - paragraph [ref=e174]: 4,000원
+                  - paragraph [ref=e175]: 6,000원
+              - button "🥬 루꼴라 80g 1,800원" [ref=e176]:
+                - generic [ref=e177]: 🥬
+                - generic [ref=e179]:
+                  - generic [ref=e180]: 루꼴라
+                  - generic [ref=e181]: 80g
+                - paragraph [ref=e183]: 1,800원
+              - button "🫙 발사믹 드레싱 2tbsp 1,200원" [ref=e184]:
+                - generic [ref=e185]: 🫙
+                - generic [ref=e187]:
+                  - generic [ref=e188]: 발사믹 드레싱
+                  - generic [ref=e189]: 2tbsp
+                - paragraph [ref=e191]: 1,200원
+              - button "🧀 리코타 치즈 50g 2,000원" [ref=e192]:
+                - generic [ref=e193]: 🧀
+                - generic [ref=e195]:
+                  - generic [ref=e196]: 리코타 치즈
+                  - generic [ref=e197]: 50g
+                - paragraph [ref=e199]: 2,000원
+        - generic [ref=e201]:
+          - generic [ref=e202]: 🌿
+          - generic [ref=e203]:
+            - paragraph [ref=e204]: 재료 정보
+            - paragraph [ref=e205]: 손질법·계량 힌트·대체 재료 정보를 준비 중입니다.
+        - generic [ref=e206]:
+          - generic [ref=e207]:
+            - heading "사용자 노트 (0)" [level=3] [ref=e208]:
+              - text: 사용자 노트
+              - generic [ref=e209]: (0)
+            - button "내 노트 남기기" [ref=e210]:
+              - img [ref=e211]
+              - text: 내 노트 남기기
+          - generic [ref=e213]:
+            - button "전체" [ref=e214]
+            - button "팁" [ref=e215]
+            - button "후기" [ref=e216]
+            - button "질문" [ref=e217]
+          - paragraph [ref=e218]: 아직 노트가 없어요. 첫 번째 노트를 남겨보세요!
+      - generic [ref=e219]:
+        - heading "노트 남기기" [level=3] [ref=e221]
+        - generic [ref=e222]:
+          - button "팁" [ref=e223]
+          - button "후기" [ref=e224]
+          - button "질문" [ref=e225]
+        - textbox "요리 팁이나 재료 대체 방법을 적어주세요" [ref=e226]
+        - generic [ref=e227]:
+          - checkbox "AI 학습에 동의합니다 (선택). 도움이 많이 된 노트는 레시피 개선에 활용될 수 있어요." [ref=e228]
+          - generic [ref=e229]: AI 학습에 동의합니다 (선택). 도움이 많이 된 노트는 레시피 개선에 활용될 수 있어요.
+        - button "노트 저장하기" [disabled] [ref=e230]
+      - generic [ref=e232]:
+        - link "AI 변형하기" [ref=e233] [cursor=pointer]:
+          - /url: /chat
+          - img [ref=e234]
+          - text: AI 변형하기
+        - button "9,000원 모두 담기" [ref=e236]:
+          - img [ref=e237]
+          - text: 9,000원 모두 담기
+    - navigation [ref=e241]:
+      - link "홈" [ref=e242] [cursor=pointer]:
+        - /url: /
+        - img [ref=e243]
+        - generic [ref=e246]: 홈
+      - link "AI" [ref=e247] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e248]
+        - generic [ref=e250]: AI
+      - link "가족" [ref=e251] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e252]
+        - generic [ref=e257]: 가족
+      - link "메모" [ref=e258] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e259]
+        - generic [ref=e262]: 메모
+      - link "장바구니" [ref=e263] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e264]
+        - generic [ref=e268]: 장바구니
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e274] [cursor=pointer]:
+    - img [ref=e275]
+  - alert [ref=e278]

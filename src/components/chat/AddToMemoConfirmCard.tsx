@@ -36,7 +36,7 @@ export function AddToMemoConfirmCard({ items }: AddToMemoConfirmCardProps) {
 
       {/* 메모 보기 버튼 */}
       <Link
-        href="/memo"
+        href="/memo?tab=saved"
         className="bg-mocha-700 text-paper hover:bg-mocha-900 flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition"
         data-testid="go-to-memo-btn"
       >

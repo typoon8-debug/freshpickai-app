@@ -13,6 +13,8 @@ export interface UseSpeechRecognitionReturn {
   error: string | null;
   startListening: () => void;
   stopListening: () => void;
+  /** 음성 전송 완료 후 idle 복귀용 — chat-input에서 onSend 후 호출 */
+  resetAfterSend: () => void;
 }
 
 // Web Speech API 타입 (lib.dom.d.ts에 미포함된 webkit 확장)
@@ -74,6 +76,7 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
   const [error, setError] = useState<string | null>(null);
 
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+  const mountedRef = useRef(true);
   // lazy initializer: SSR에서는 false, 클라이언트 마운트 시 즉시 결정
   const [isSupported] = useState(() => getSpeechRecognitionConstructor() !== null);
 
@@ -122,6 +125,7 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     };
 
     recognition.onerror = (ev: ISpeechRecognitionErrorEvent) => {
+      if (!mountedRef.current) return;
       // 사용자가 직접 중지한 경우는 에러로 처리하지 않음
       if (ev.error === "aborted" || ev.error === "no-speech") {
         setState("idle");
@@ -133,7 +137,10 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     };
 
     recognition.onend = () => {
+      if (!mountedRef.current) return;
       recognitionRef.current = null;
+      // processing 상태인 경우 useEffect가 onSend를 처리한 뒤 resetAfterSend로 idle 복귀
+      // listening 상태인 경우(결과 없이 종료) idle로 복귀
       setState((prev) => (prev === "listening" ? "idle" : prev));
       setInterimTranscript("");
     };
@@ -148,14 +155,25 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
       recognitionRef.current = null;
     }
     setState("idle");
+    setTranscript("");
+    setInterimTranscript("");
+  }, []);
+
+  /** 음성 전송 완료 후 idle 복귀 — processing 상태를 해제 */
+  const resetAfterSend = useCallback(() => {
+    setState("idle");
+    setTranscript("");
     setInterimTranscript("");
   }, []);
 
   // 컴포넌트 언마운트 시 정리
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       if (recognitionRef.current) {
         recognitionRef.current.abort();
+        recognitionRef.current = null;
       }
     };
   }, []);
@@ -169,5 +187,6 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     error,
     startListening,
     stopListening,
+    resetAfterSend,
   };
 }

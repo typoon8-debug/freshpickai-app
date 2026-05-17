@@ -1,0 +1,47 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - button "뒤로가기" [ref=e5]:
+          - img [ref=e6]
+        - heading "장바구니" [level=1] [ref=e8]
+        - generic [ref=e9]:
+          - link "찜 목록" [ref=e10] [cursor=pointer]:
+            - /url: /wishlist
+            - img [ref=e11]
+          - link "장바구니" [ref=e13] [cursor=pointer]:
+            - /url: /cart
+            - img [ref=e14]
+          - link "마이프레시" [ref=e18] [cursor=pointer]:
+            - /url: /profile
+            - img [ref=e19]
+      - generic [ref=e22]:
+        - img [ref=e23]
+        - paragraph [ref=e27]: 장바구니가 비어있어요
+        - link "홈으로" [ref=e28] [cursor=pointer]:
+          - /url: /
+    - navigation [ref=e29]:
+      - link "홈" [ref=e30] [cursor=pointer]:
+        - /url: /
+        - img [ref=e31]
+        - generic [ref=e34]: 홈
+      - link "AI" [ref=e35] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e36]
+        - generic [ref=e38]: AI
+      - link "카테고리" [ref=e39] [cursor=pointer]:
+        - /url: /category
+        - img [ref=e40]
+        - generic [ref=e45]: 카테고리
+      - link "가족" [ref=e46] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e47]
+        - generic [ref=e52]: 가족
+      - link "메모" [ref=e53] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e54]
+        - generic [ref=e57]: 메모
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e63] [cursor=pointer]:
+    - img [ref=e64]
+  - alert [ref=e67]

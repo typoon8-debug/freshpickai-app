@@ -1,0 +1,25 @@
+- generic [ref=e1]:
+  - main [ref=e61]:
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - img [ref=e65]
+        - generic [ref=e68]: FreshPick
+      - generic [ref=e69]:
+        - generic [ref=e91]:
+          - generic [ref=e92]: 🤖
+          - generic [ref=e93]:
+            - heading "AI가 우리 가족 취향을 기억해요" [level=2] [ref=e94]
+            - paragraph [ref=e95]: 9가지 페르소나 AI가 가족 식단을 맞춤 큐레이팅합니다
+          - generic [ref=e96]:
+            - generic [ref=e97]: 가족매니저
+            - generic [ref=e98]: 워킹맘
+            - generic [ref=e99]: 건강시니어
+            - generic [ref=e100]: 가성비대학생
+            - generic [ref=e101]: 프리미엄미식가
+        - generic [ref=e88]:
+          - button "다음" [active] [ref=e89]
+          - button "건너뛰기" [ref=e90]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e44] [cursor=pointer]:
+    - img [ref=e45]
+  - alert [ref=e48]

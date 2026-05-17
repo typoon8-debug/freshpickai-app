@@ -8,16 +8,17 @@ import { cn } from "@/lib/utils";
 interface SocialButtonsProps {
   onEmailClick?: () => void;
   className?: string;
+  nextUrl?: string;
 }
 
-export function SocialButtons({ onEmailClick, className }: SocialButtonsProps) {
+export function SocialButtons({ onEmailClick, className, nextUrl }: SocialButtonsProps) {
   const [kakaoLoading, startKakao] = useTransition();
   const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await signInWithGoogle();
+      const { error } = await signInWithGoogle(nextUrl);
       if (error) throw error;
     } catch {
       setGoogleLoading(false);
@@ -30,7 +31,7 @@ export function SocialButtons({ onEmailClick, className }: SocialButtonsProps) {
       <button
         type="button"
         disabled={kakaoLoading}
-        onClick={() => startKakao(() => signInWithKakao())}
+        onClick={() => startKakao(() => signInWithKakao(nextUrl))}
         className="flex min-h-13 w-full items-center justify-center gap-3 rounded bg-[#FEE500] text-[15px] font-semibold text-[#191919] transition hover:brightness-95 disabled:opacity-60"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">

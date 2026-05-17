@@ -23,12 +23,14 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
     isSupported,
     startListening,
     stopListening,
+    resetAfterSend,
   } = useSpeechRecognition();
 
-  // 음성 인식 확정(processing) → 자동 전송
+  // 음성 인식 확정(processing) → 자동 전송 후 idle 복귀
   useEffect(() => {
     if (!transcript || speechState !== "processing") return;
     onSend(transcript);
+    resetAfterSend(); // ← processing → idle 복귀 (버튼 재활성화)
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -106,6 +108,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           state={speechState}
           isSupported={isSupported}
           onToggle={handleVoiceToggle}
+          aiResponding={!!disabled}
         />
 
         <button

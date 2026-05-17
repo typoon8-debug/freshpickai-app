@@ -1,0 +1,48 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - heading "장보기 메모" [level=1] [ref=e5]
+      - generic [ref=e6]:
+        - button "새 메모" [ref=e7]
+        - button "저장된 메모" [ref=e8]
+      - generic [ref=e129]:
+        - button "삼겹살2개 당근3개 양파1개 삼겹살2개 당근3개 양파1개 5월 13일 3개 항목" [ref=e130]:
+          - img [ref=e131]
+          - generic [ref=e134]:
+            - paragraph [ref=e135]: 삼겹살2개 당근3개 양파1개
+            - paragraph [ref=e136]: 삼겹살2개 당근3개 양파1개
+          - generic [ref=e137]:
+            - generic [ref=e138]: 5월 13일
+            - generic [ref=e139]: 3개 항목
+          - img [ref=e140]
+        - button "메모 삭제" [ref=e142]:
+          - img [ref=e143]
+    - navigation [ref=e20]:
+      - link "홈" [ref=e21] [cursor=pointer]:
+        - /url: /
+        - img [ref=e22]
+        - generic [ref=e25]: 홈
+      - link "AI" [ref=e26] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e27]
+        - generic [ref=e29]: AI
+      - link "가족" [ref=e30] [cursor=pointer]:
+        - /url: /family
+        - img [ref=e31]
+        - generic [ref=e36]: 가족
+      - link "메모" [ref=e37] [cursor=pointer]:
+        - /url: /memo
+        - img [ref=e38]
+        - generic [ref=e41]: 메모
+      - link "장바구니" [ref=e42] [cursor=pointer]:
+        - /url: /cart
+        - img [ref=e43]
+        - generic [ref=e47]: 장바구니
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e146]:
+        - img [ref=e148]
+        - generic [ref=e152]: 메모가 저장되었습니다
+  - button "Open Next.js Dev Tools" [ref=e53] [cursor=pointer]:
+    - img [ref=e54]
+  - alert [ref=e57]
