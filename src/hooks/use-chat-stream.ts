@@ -38,6 +38,7 @@ export function useChatStream() {
     appendStream,
     setStreaming,
     setCurrentTool,
+    setRagError,
     updateMemoItems,
     updateCartItems,
     updateIntents,
@@ -81,6 +82,7 @@ export function useChatStream() {
 
       setStreaming(true);
       setCurrentTool(null);
+      setRagError(false);
 
       const aiId = `ai-${Date.now()}`;
       push({ id: aiId, role: "ai", text: "", time: formatTime() });
@@ -172,6 +174,7 @@ export function useChatStream() {
                 }
                 case "error": {
                   console.error("[chat stream] error:", chunk.errorText);
+                  setRagError(true);
                   break;
                 }
               }
@@ -192,6 +195,7 @@ export function useChatStream() {
         }
       } catch (err) {
         console.error("[useChatStream] error:", err);
+        setRagError(true);
         appendStream("\n\n죄송합니다. 잠시 오류가 발생했습니다. 다시 시도해 주세요.");
       } finally {
         setStreaming(false);
@@ -204,6 +208,7 @@ export function useChatStream() {
       appendStream,
       setStreaming,
       setCurrentTool,
+      setRagError,
       updateMemoItems,
       updateCartItems,
       updateIntents,

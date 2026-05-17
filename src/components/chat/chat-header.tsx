@@ -2,7 +2,7 @@
 
 import { Sparkles, Wifi, Heart, ShoppingCart, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import { useChatStore, useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/store/wishlist-store";
 import { useNotificationStore } from "@/lib/store/notification-store";
@@ -16,39 +16,17 @@ function useIsMounted() {
   );
 }
 
-type HealthResponse = { checks: { db: boolean } };
-
-function useRagStatus() {
-  const [connected, setConnected] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const check = () => {
-      fetch("/api/health")
-        .then((r) => r.json() as Promise<HealthResponse>)
-        .then((data) => setConnected(data.checks?.db === true))
-        .catch(() => setConnected(false));
-    };
-    check();
-    // 30초마다 재확인
-    const id = setInterval(check, 30_000);
-    return () => clearInterval(id);
-  }, []);
-
-  return connected;
-}
-
 export function ChatHeader() {
   const isStreaming = useChatStore((s) => s.isStreaming);
   const currentTool = useChatStore((s) => s.currentTool);
+  const ragError = useChatStore((s) => s.ragError);
   const router = useRouter();
   const mounted = useIsMounted();
 
   const cartCount = useCartStore((s) => s.items.length);
   const wishCount = useWishlistStore((s) => s.ids.size);
   const notifCount = useNotificationStore((s) => s.unreadCount);
-  const ragConnected = useRagStatus();
 
-  // RAG 툴이 실행 중이거나 DB가 연결된 경우 녹색, 툴 활성 시 깜박임 추가
   const isRagActive = currentTool !== null;
 
   return (
@@ -70,9 +48,7 @@ export function ChatHeader() {
         {/* RAG 연결 상태 — 녹색(연결/활성) / 회색(미연결·로딩) */}
         <div
           className="relative flex h-9 w-9 items-center justify-center rounded-lg"
-          title={
-            isRagActive ? "RAG 검색 중..." : ragConnected === true ? "RAG 연결됨" : "RAG 연결 안됨"
-          }
+          title={isRagActive ? "RAG 검색 중..." : ragError ? "RAG 오류 발생" : "RAG 연결됨"}
         >
           <Wifi
             size={18}
@@ -80,9 +56,9 @@ export function ChatHeader() {
               "transition-colors duration-300",
               isRagActive
                 ? "animate-pulse text-green-500"
-                : ragConnected === true
-                  ? "text-green-500"
-                  : "text-ink-300"
+                : ragError
+                  ? "text-ink-300"
+                  : "text-green-500"
             )}
           />
         </div>

@@ -76,10 +76,12 @@ type ChatState = {
   messages: ChatMessage[];
   isStreaming: boolean;
   currentTool: string | null;
+  ragError: boolean;
   push: (m: ChatMessage) => void;
   appendStream: (chunk: string) => void;
   setStreaming: (b: boolean) => void;
   setCurrentTool: (tool: string | null) => void;
+  setRagError: (hasError: boolean) => void;
   updateMemoItems: (msgId: string, items: MemoAddedItem[]) => void;
   updateCartItems: (msgId: string, items: CartAddedItem[]) => void;
   updateIntents: (msgId: string, intents: ChatActionIntent[]) => void;
@@ -95,6 +97,7 @@ export const useChatStore = create<ChatState>()(
       messages: [],
       isStreaming: false,
       currentTool: null,
+      ragError: false,
       push: (m) =>
         set((s) => ({
           // 최근 MAX_CHAT_MESSAGES개만 유지 — 장시간 세션 메모리 누수 방지
@@ -110,6 +113,7 @@ export const useChatStore = create<ChatState>()(
         }),
       setStreaming: (b) => set({ isStreaming: b }),
       setCurrentTool: (tool) => set({ currentTool: tool }),
+      setRagError: (hasError) => set({ ragError: hasError }),
       updateMemoItems: (msgId, items) =>
         set((s) => ({
           messages: s.messages.map((m) => (m.id === msgId ? { ...m, memoItems: items } : m)),
@@ -122,14 +126,14 @@ export const useChatStore = create<ChatState>()(
         set((s) => ({
           messages: s.messages.map((m) => (m.id === msgId ? { ...m, intents } : m)),
         })),
-      reset: () => set({ messages: [], currentTool: null }),
+      reset: () => set({ messages: [], currentTool: null, ragError: false }),
       /** DB 기록 복원 — 항상 덮어쓰기 (탭 재진입·새로고침 모두 최신 DB 기록 표시) */
       initMessages: (messages) => set(() => ({ messages: messages.slice(-MAX_CHAT_MESSAGES) })),
     }),
     {
       name: "fp-chat",
       storage: createJSONStorage(() => sessionStorage),
-      // 메시지만 persist — 스트리밍 상태는 새로고침 시 초기화
+      // 메시지만 persist — 스트리밍 상태·에러 상태는 새로고침 시 초기화
       partialize: (state) => ({ messages: state.messages }),
     }
   )
