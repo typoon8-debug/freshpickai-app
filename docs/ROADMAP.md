@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF 캐시 최적화 3종 + DB 쿼리 감소 2종 + FIX-014~016 + PERF 가족보드 Suspense·투표 배치쿼리·AI 추천 RPC)
+## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF 캐시 최적화 3종 + DB 쿼리 감소 2종 + FIX-014~016 + PERF 가족보드 Suspense·투표 배치쿼리·AI 추천 RPC + FIX-017 상품 상세 detailImgLabel)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -34,6 +34,7 @@
 | **PERF-P01: DinnerVoteLoader Suspense 스트리밍 분리** | ✅ 완료 | 2026-05-18 |
 | **PERF-P02: 투표 N+1 → getBatchPollData 4쿼리 배치** | ✅ 완료 | 2026-05-18 |
 | **PERF-P03: getCardIdsFromStoreItems 2쿼리 → 1 RPC** | ✅ 완료 | 2026-05-18 |
+| **FIX-017: 상품 상세 detailImgLabel 컬럼 표시** | ✅ 완료 | 2026-05-18 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -158,6 +159,7 @@
 - **PERF-P01 DinnerVoteLoader Suspense 스트리밍**: FamilyPage에서 DinnerVote·PopularRanking·TrendingCards 로직을 `DinnerVoteLoader` async Server Component로 분리. `<Suspense fallback={<DinnerVoteSkeleton />}>` 래핑 → 가족 보드 상단 UI 블로킹 없이 선행 렌더링
 - **PERF-P02 투표 N+1 배치 쿼리**: 안건당 2쿼리(N×2) → `getBatchPollData()` 4쿼리 고정. `fp_get_batch_poll_results` RPC + 전체/내 투표 + 멤버 수 병렬 조회. 활성/종료 투표 `Promise.all` 병렬 실행
 - **PERF-P03 AI 추천 카드 조회 RPC 전환**: `getCardIdsFromStoreItems()` 내 2단계 순차 쿼리 → `fp_get_card_ids_from_store_items` RPC 단일 호출로 교체
+- **FIX-017 상품 상세 detailImgLabel 표시**: `CategoryItemDetail` 타입에 `detailImgLabel` 추가. `getItemByIdAction()` SELECT에 `item_detail_img_label` 포함. 상품 상세 이미지 하단에 13px `whitespace-pre-line` 텍스트로 렌더링
 
 ---
 
