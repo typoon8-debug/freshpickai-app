@@ -2,7 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { revalidateTag } from "next/cache";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { OnboardingValues } from "@/components/auth/onboarding-form";
 
 const ONBOARDING_COOKIE = "fp_onboarded";
@@ -73,6 +74,20 @@ export async function saveOnboarding(values: OnboardingValues): Promise<{ succes
     return { success: false };
   }
 
+  // 선호 설정이 저장됐으므로 페르소나 컨텍스트 캐시 즉시 무효화
+  revalidateTag("persona-context", {});
+
+  // AI 추천 타임스탬프 초기화 — 신규 가입자가 홈에서 즉시 Claude 호출하는 것을 방지
+  // customer 레코드가 없어도 에러가 응답에 영향 주지 않도록 void 처리
+  if (user.email) {
+    const admin = createAdminClient();
+    void admin
+      .from("customer")
+      .update({ ai_recommend_generated_at: now })
+      .eq("email", user.email)
+      .is("ai_recommend_generated_at", null);
+  }
+
   // 온보딩 완료 쿠키 설정
   const cookieStore = await cookies();
   cookieStore.set(ONBOARDING_COOKIE, "done", {
@@ -100,6 +115,15 @@ export async function skipOnboardingAction(): Promise<void> {
         { user_id: user.id, onboarding_skipped_at: now, modified_at: now },
         { onConflict: "user_id" }
       );
+    // 스킵도 완료로 간주 — AI 추천 타임스탬프 초기화
+    if (user.email) {
+      const admin = createAdminClient();
+      void admin
+        .from("customer")
+        .update({ ai_recommend_generated_at: now })
+        .eq("email", user.email)
+        .is("ai_recommend_generated_at", null);
+    }
   }
 
   // 스킵도 완료로 처리해 다시 가드에 걸리지 않도록

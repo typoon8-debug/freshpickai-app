@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { GenderType, FamilyRoleType } from "@/lib/constants/relationship";
 import type { FpUser } from "@/lib/types";
@@ -41,6 +41,7 @@ export async function updateUserProfile(
   if (error || !data) return { ok: false, error: error?.message ?? "UPDATE_FAILED" };
 
   revalidatePath("/profile");
+  revalidateTag("persona-context", {});
 
   return {
     ok: true,

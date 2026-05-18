@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 // ── 주문 이력 기반 persona_tags 추론 ─────────────────────────
@@ -101,6 +102,8 @@ export async function applyInferredTags(userId: string): Promise<{ success: bool
     { onConflict: "user_id" }
   );
 
+  if (!error) revalidateTag("persona-context", {});
+
   return { success: !error };
 }
 
@@ -147,6 +150,8 @@ export async function saveUserPreference(values: {
     },
     { onConflict: "user_id" }
   );
+
+  if (!error) revalidateTag("persona-context", {});
 
   return { success: !error };
 }
