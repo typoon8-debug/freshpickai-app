@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id)
+## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -23,6 +23,8 @@
 | **HOT-004: RAG 상태 표시 개선** (폴링 제거) | ✅ 완료 | 2026-05-18 |
 | **FIX-011: ChatBottomPanel 드래그 UX 통합** | ✅ 완료 | 2026-05-18 |
 | **MEMO-001: addToMemo 세션 기반 분리 + M019** | ✅ 완료 | 2026-05-18 |
+| **UX-013: 핸들바 클릭 토글 + ChevronUp/Down 레이블** | ✅ 완료 | 2026-05-18 |
+| **FIX-012: dvh → svh 뷰포트 단위 iOS 호환성 수정** | ✅ 완료 | 2026-05-18 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -128,6 +130,8 @@
 
 - **FIX-011 ChatBottomPanel 드래그 UX 통합**: `ChatShell` 내 인라인 냉장고 버튼·`QuickChips`·`ChatInput`을 `ChatBottomPanel` 단일 컴포넌트로 통합. `@use-gesture/react` 드래그 핸들바(위↑ 펼침 / 아래↓ 50px 임계 접힘) + Framer Motion spring 애니메이션. AI 스트리밍 시작·메시지 전송 시 자동 접힘(`startTransition` 적용)
 - **MEMO-001 addToMemo 세션 기반 분리**: `fp_shopping_memo`에 `session_id TEXT` 컬럼 추가 (M019 마이그레이션). 메모 조회 전략: ①세션 ID 일치 → ②타이틀 폴백 → ③신규 생성. `topic` 파라미터로 AI가 대화 맥락에서 주제 키워드 자동 추출 → 메모 제목 `AI 추천 장보기 (날짜) · 주제` 형태로 주제 분리
+- **UX-013 핸들바 클릭 토글**: `ChatBottomPanel` 드래그 핸들바에 `onClick` 토글 추가. `ChevronDown/Up` 아이콘 + "접기/펼치기" 텍스트 레이블로 UI 상태 명시. 핸들바 높이 확장(`h-5 → h-8`)으로 탭 영역 확대
+- **FIX-012 svh 뷰포트 호환성**: `ChatShell` 컨테이너 `100dvh → 100svh` 교체. iOS Safari에서 주소창 변화에 따른 레이아웃 흔들림 방지
 
 ---
 
