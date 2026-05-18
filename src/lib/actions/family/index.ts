@@ -43,12 +43,16 @@ export async function createFamilyGroup(name: string): Promise<FamilyGroup | nul
   };
 }
 
-export async function getFamilyGroup(): Promise<FamilyGroup | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+export async function getFamilyGroup(userId?: string): Promise<FamilyGroup | null> {
+  let uid = userId;
+  if (!uid) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+    uid = user.id;
+  }
 
   // fp_family_member SELECT RLS가 순환 정책일 수 있어 admin client 사용
   const admin = createAdminClient();
@@ -56,7 +60,7 @@ export async function getFamilyGroup(): Promise<FamilyGroup | null> {
   const { data: member } = await admin
     .from("fp_family_member")
     .select("group_id")
-    .eq("user_id", user.id)
+    .eq("user_id", uid)
     .order("joined_at", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -116,19 +120,23 @@ export async function removeFamilyMember(
   return { ok: true };
 }
 
-export async function getFamilyMembers(): Promise<FamilyMember[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
+export async function getFamilyMembers(userId?: string): Promise<FamilyMember[]> {
+  let uid = userId;
+  if (!uid) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
+    uid = user.id;
+  }
 
   const admin = createAdminClient();
 
   const { data: myMembership } = await admin
     .from("fp_family_member")
     .select("group_id")
-    .eq("user_id", user.id)
+    .eq("user_id", uid)
     .order("joined_at", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -186,19 +194,23 @@ export type FamilyStats = {
 };
 
 /** 이번 달 가족 주문 수(함께한 식사) + 평균 레벨 조회 */
-export async function getFamilyStatsAction(): Promise<FamilyStats> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { mealsThisMonth: 0, level: 1 };
+export async function getFamilyStatsAction(userId?: string): Promise<FamilyStats> {
+  let uid = userId;
+  if (!uid) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { mealsThisMonth: 0, level: 1 };
+    uid = user.id;
+  }
 
   const admin = createAdminClient();
 
   const { data: myMembership } = await admin
     .from("fp_family_member")
     .select("group_id")
-    .eq("user_id", user.id)
+    .eq("user_id", uid)
     .order("joined_at", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -209,13 +221,13 @@ export async function getFamilyStatsAction(): Promise<FamilyStats> {
     const { count } = await admin
       .from("fp_order")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
+      .eq("user_id", uid)
       .gte("created_at", monthStart);
 
     const { data: myProfile } = await admin
       .from("fp_user_profile")
       .select("level")
-      .eq("user_id", user.id)
+      .eq("user_id", uid)
       .single();
 
     return { mealsThisMonth: count ?? 0, level: myProfile?.level ?? 1 };

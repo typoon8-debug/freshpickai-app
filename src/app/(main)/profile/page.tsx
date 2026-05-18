@@ -10,8 +10,6 @@ import { getProfileStatsAction } from "@/lib/actions/profile";
 import { getInboxNotifications, getUnreadCount } from "@/lib/actions/profile/notifications-inbox";
 import { signOutAction } from "@/lib/actions/auth/signout";
 import { resetOnboardingAction } from "@/lib/actions/auth/onboarding";
-import type { CookingSkill, ShoppingTime } from "@/lib/ai/persona-context";
-import type { FamilyRoleType, GenderType } from "@/lib/constants/relationship";
 
 const MENU_ITEMS = [
   { href: "/profile/my-store", label: "내가게" },
@@ -32,16 +30,11 @@ export default async function ProfilePage() {
 
   if (!user) redirect("/login");
 
-  const [ctx, prefData, profile, stats, notifications, unreadCount] = await Promise.all([
+  const [ctx, profile, stats, notifications, unreadCount] = await Promise.all([
     buildPersonaContext(user.id),
     supabase
-      .from("fp_user_preference")
-      .select("dietary_tags, persona_tags, cook_time_min, budget_level")
-      .eq("user_id", user.id)
-      .single(),
-    supabase
       .from("fp_user_profile")
-      .select("display_name, avatar_url, family_role, gender")
+      .select("display_name, avatar_url")
       .eq("user_id", user.id)
       .single(),
     getProfileStatsAction(),
@@ -49,19 +42,8 @@ export default async function ProfilePage() {
     getUnreadCount(),
   ]);
 
-  const personaTags: string[] = prefData.data?.persona_tags ?? [];
-  const dietaryTags: string[] = prefData.data?.dietary_tags ?? [];
-  const householdTag = personaTags.find((t) => t.startsWith("household:"));
-  const skillTag = personaTags.find((t) => t.startsWith("skill:"));
-  const shopTimeTag = personaTags.find((t) => t.startsWith("shop_time:"));
-
-  const householdSize = householdTag ? parseInt(householdTag.split(":")[1]) || 3 : 3;
-  const rawSkill = skillTag?.split(":")[1];
-  const cookingSkill: CookingSkill =
-    rawSkill === "beginner" || rawSkill === "advanced" ? rawSkill : "intermediate";
-  const rawShopTime = shopTimeTag?.split(":")[1];
-  const preferredShoppingTime: ShoppingTime =
-    rawShopTime === "morning" || rawShopTime === "evening" ? rawShopTime : "afternoon";
+  // buildPersonaContext가 이미 fp_user_preference를 조회하므로 ctx에서 직접 사용
+  const { dietaryTags, householdSize, cookingSkill, preferredShoppingTime } = ctx;
 
   return (
     <div className="min-h-screen pb-12">
@@ -136,8 +118,8 @@ export default async function ProfilePage() {
             cookingSkill,
             preferredShoppingTime,
             householdSize,
-            familyRole: (profile.data?.family_role ?? "parent") as FamilyRoleType,
-            gender: (profile.data?.gender ?? null) as GenderType | null,
+            familyRole: ctx.familyRole,
+            gender: ctx.gender,
           }}
         />
       </div>

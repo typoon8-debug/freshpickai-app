@@ -36,9 +36,9 @@ export default async function FamilyPage() {
   } = await supabase.auth.getUser();
 
   const [group, members, familyStats] = await Promise.all([
-    getFamilyGroup(),
-    getFamilyMembers(),
-    getFamilyStatsAction(),
+    getFamilyGroup(user?.id),
+    getFamilyMembers(user?.id),
+    getFamilyStatsAction(user?.id),
   ]);
 
   // 투표 세션 (없으면 AI 추천으로 자동 생성)
