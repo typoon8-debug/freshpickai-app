@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단)
+## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF 캐시 최적화 3종 + DB 쿼리 감소 2종 + FIX-014~016)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -26,6 +26,11 @@
 | **UX-013: 핸들바 클릭 토글 + ChevronUp/Down 레이블** | ✅ 완료 | 2026-05-18 |
 | **FIX-012: dvh → svh 뷰포트 단위 iOS 호환성 수정** | ✅ 완료 | 2026-05-18 |
 | **FIX-013: 채팅 화면 pull-to-refresh 차단** | ✅ 완료 | 2026-05-18 |
+| **PERF: unstable_cache 캐시 최적화** (페르소나 5분·카테고리 1시간) | ✅ 완료 | 2026-05-18 |
+| **PERF: DB 쿼리 중복 제거** (가족 actions userId 파라미터화·profile 쿼리 통합) | ✅ 완료 | 2026-05-18 |
+| **FIX-014: 온보딩 후 persona 캐시 즉시 무효화 + AI 추천 타임스탬프 초기화** | ✅ 완료 | 2026-05-18 |
+| **FIX-015: getPollResults 불필요 쿼리 제거 + 타입 캐스팅 버그** | ✅ 완료 | 2026-05-18 |
+| **FIX-016: PWA SW 업데이트 자동 새로고침** (controllerchange 이벤트) | ✅ 완료 | 2026-05-18 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -134,6 +139,16 @@
 - **UX-013 핸들바 클릭 토글**: `ChatBottomPanel` 드래그 핸들바에 `onClick` 토글 추가. `ChevronDown/Up` 아이콘 + "접기/펼치기" 텍스트 레이블로 UI 상태 명시. 핸들바 높이 확장(`h-5 → h-8`)으로 탭 영역 확대
 - **FIX-012 svh 뷰포트 호환성**: `ChatShell` 컨테이너 `100dvh → 100svh` 교체. iOS Safari에서 주소창 변화에 따른 레이아웃 흔들림 방지
 - **FIX-013 채팅 pull-to-refresh 차단**: `ChatShell` 마운트 시 `document.body.style.overscrollBehaviorY = "none"` → 채팅 이탈 시 cleanup으로 원복. `MessageList`에 `overscroll-y-contain` 추가 → 스크롤 이벤트 body 전파 격리
+
+### 캐시 최적화 + DB 쿼리 감소 + 버그 수정 (2026-05-18)
+
+- **PERF-C01 페르소나 컨텍스트 5분 캐시**: `buildPersonaContext()` DB 조회를 `unstable_cache` 래핑(TTL 300s, `persona-context` 태그). 선호 설정 변경 5개 지점에서 `revalidateTag` 즉시 무효화
+- **PERF-C02 대분류 목록 1시간 캐시**: `getLargeCategoriesAction()` → admin client `unstable_cache` (TTL 3600s). 카테고리 페이지 `force-dynamic` 제거
+- **PERF-Q01 가족 Server Actions userId 파라미터화**: `getFamilyGroup/getFamilyMembers/getFamilyStatsAction` 옵셔널 `userId?` 추가 → 호출 측에서 직접 전달해 `supabase.auth.getUser()` 중복 호출 제거
+- **PERF-Q02 profile 페이지 중복 쿼리 제거**: `fp_user_preference` 별도 쿼리 삭제 → `buildPersonaContext()` ctx에서 직접 추출 (DB 왕복 1회 절감)
+- **FIX-014 온보딩 persona 캐시 무효화**: `saveOnboarding()` · `skipOnboardingAction()` 완료 후 `revalidateTag("persona-context")`. 신규 가입자 AI 추천 타임스탬프 초기화(즉시 Claude 호출 방지)
+- **FIX-015 getPollResults 쿼리 버그**: 4번째 `members` 쿼리 제거(3개 병렬로 축소). `totalTargeted` 계산 `count: "exact"` 직접 숫자 반환 + 잘못된 타입 캐스팅 제거
+- **FIX-016 PWA SW 업데이트 자동 새로고침**: `InstallBanner`에 `controllerchange` 이벤트 리스너 → SW 교체 시 `window.location.reload()`. 최초 설치(`hadController=false`) 제외
 
 ---
 

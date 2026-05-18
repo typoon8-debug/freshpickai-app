@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF-캐시 페르소나/카테고리 unstable_cache + DB 쿼리 감소 + FIX-014~016
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -244,6 +244,42 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | **TOOL-001** | `addToMemo` 세션 기반 조회 전략 | 세션 ID 전달 시: ①세션 일치 기존 메모 조회 → ②타이틀 폴백 → ③신규 생성(session_id 저장). 동일 세션 내 누적 저장, 세션 변경 시 새 메모 자동 분리 | `src/lib/ai/tools/add-to-memo.ts` |
 | **TOOL-002** | `topic` 파라미터 추가 | AI가 대화 맥락에서 주제 키워드(예: '주말식사', '주중도시락', '간식')를 자동 추출. 메모 제목에 `· 주제` 접미사로 반영 (`AI 추천 장보기 (날짜) · 주제`) | `src/lib/ai/tools/add-to-memo.ts` |
 | **ROUTE-001** | `sessionId` 라우트 전달 | `/api/ai/chat` Route Handler에서 `createAddToMemoTool(user.id, supabase, sessionId)` 형태로 세션 ID 주입 | `src/app/api/ai/chat/route.ts` |
+
+---
+
+### 13. 캐시 최적화 + DB 쿼리 감소 + 버그 수정 (2026-05-18)
+
+> 서버 응답 속도 개선 — `unstable_cache` 도입 + auth 중복 호출 제거 + revalidateTag 연동
+
+**PERF: unstable_cache 캐시 최적화**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **PERF-C01** | 페르소나 컨텍스트 5분 캐시 | `buildPersonaContext()` 내 DB 조회(`fp_user_preference`·`fp_user_profile`)를 `unstable_cache` 래핑. TTL 300초, `persona-context` 태그. 선호 설정 변경 시 `revalidateTag("persona-context")` 즉시 무효화 | `src/lib/ai/persona-context.ts` |
+| **PERF-C02** | 대분류 목록 1시간 캐시 | `getLargeCategoriesAction()` → admin client 기반 `_fetchLargeCategories()` `unstable_cache` 래핑. TTL 3600초, `large-categories` 태그. 정적 데이터라 재배포 전까지 변경 없음 | `src/lib/actions/category/index.ts` |
+| **PERF-C03** | 카테고리 페이지 `force-dynamic` 제거 | `category/page.tsx`의 `export const dynamic = "force-dynamic"` 삭제 → 정적 캐시 허용으로 전환 | `src/app/(main)/category/page.tsx` |
+
+**PERF: DB 쿼리 중복 제거**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **PERF-Q01** | 가족 Server Actions `userId` 파라미터화 | `getFamilyGroup(userId?)` · `getFamilyMembers(userId?)` · `getFamilyStatsAction(userId?)` — 옵셔널 `userId` 파라미터 추가. 호출 측에서 이미 확보한 `user.id`를 직접 전달해 내부 `supabase.auth.getUser()` 호출 제거 | `src/lib/actions/family/index.ts`, `src/app/(main)/family/page.tsx` |
+| **PERF-Q02** | profile 페이지 중복 쿼리 제거 | `ProfilePage`에서 `fp_user_preference` 별도 쿼리 제거. `buildPersonaContext()` ctx에서 `dietaryTags·householdSize·cookingSkill·preferredShoppingTime·familyRole·gender` 직접 추출 (DB 왕복 1회 절감) | `src/app/(main)/profile/page.tsx` |
+
+**FIX: 버그 수정 3건**
+
+| ID | 항목 | 현상 | 수정 내용 | 영향 파일 |
+|----|------|------|----------|----------|
+| **FIX-014** | 온보딩 후 persona 캐시 stale | 온보딩 완료/스킵 시 페르소나 캐시가 갱신되지 않아 구 데이터 사용 | `saveOnboarding()` · `skipOnboardingAction()` 완료 후 `revalidateTag("persona-context")` 호출. 신규 가입자 AI 추천 타임스탬프(`ai_recommend_generated_at`) 초기화하여 홈 즉시 Claude 호출 방지 | `src/lib/actions/auth/onboarding.ts` |
+| **FIX-015** | `getPollResults` 불필요한 쿼리 + 타입 캐스팅 버그 | 4번째 `members` 쿼리가 이미 `fpPoll.groupId`로 대체 가능. `totalTargeted` 계산 시 `(memberCount as unknown as { count })` 잘못된 캐스팅 | `members` 쿼리 제거(3개 병렬로 축소). `count: "exact", head: true` 로 직접 숫자 반환. 타입 캐스팅 제거 | `src/lib/actions/family/poll.ts` |
+| **FIX-016** | PWA SW 업데이트 시 화면 미반영 | SW 업데이트 후 `controllerchange` 이벤트가 발생해도 페이지가 자동 새로고침되지 않음 | `InstallBanner`에 `controllerchange` 이벤트 리스너 추가 → 기존 SW 교체 시 `window.location.reload()`. 최초 설치(`hadController=false`) 시엔 새로고침 제외 | `src/components/pwa/install-banner.tsx` |
+
+**revalidateTag 연동 전체 맵**
+
+| 태그 | 무효화 시점 |
+|------|------------|
+| `persona-context` | `updateUserProfile()` · `saveOnboarding()` · `skipOnboardingAction()` · `applyInferredTags()` · `saveUserPreference()` |
+| `large-categories` | 재배포 또는 수동 revalidate |
 
 ---
 
