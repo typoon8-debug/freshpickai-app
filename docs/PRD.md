@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF-캐시 페르소나/카테고리 unstable_cache + DB 쿼리 감소 + FIX-014~016
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF-캐시 unstable_cache + DB 쿼리 감소 + FIX-014~016 + PERF 가족보드 Suspense 스트리밍·투표 N+1 배치·AI 추천 RPC
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -280,6 +280,18 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 |------|------------|
 | `persona-context` | `updateUserProfile()` · `saveOnboarding()` · `skipOnboardingAction()` · `applyInferredTags()` · `saveUserPreference()` |
 | `large-categories` | 재배포 또는 수동 revalidate |
+
+---
+
+### 14. 가족보드 성능 스프린트 (2026-05-18)
+
+> 가족 페이지 TTFB 단축 — Suspense 스트리밍 분리 + 투표 N+1 → 배치 쿼리 + AI 추천 RPC 전환
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **PERF-P01** | `DinnerVoteLoader` Suspense 스트리밍 분리 | `FamilyPage`에서 DinnerVote·PopularRanking·TrendingCards 로직(AI 메뉴 추천·투표 세션·월간 랭킹)을 `DinnerVoteLoader` async Server Component로 추출. `<Suspense fallback={<DinnerVoteSkeleton />}>` 래핑 → 나머지 가족 보드 UI를 블로킹 없이 먼저 렌더링 | `src/components/family/dinner-vote-loader.tsx` (신규), `src/app/(main)/family/page.tsx` |
+| **PERF-P02** | 투표 N+1 → `getBatchPollData()` 4쿼리 배치 | 기존: 투표 안건당 `getPollResults` + `getMyPollVote` 각 2쿼리 → N×2 쿼리. 개선: `fp_get_batch_poll_results` RPC + 전체 투표 조회 + 내 투표 조회 + 멤버 수 조회 총 4쿼리로 처리. 활성/종료 투표 배치를 `Promise.all([getBatchPollData(active), getBatchPollData(closed)])` 병렬 실행 | `src/lib/actions/family/poll.ts`, `src/app/(main)/family/page.tsx` |
+| **PERF-P03** | `getCardIdsFromStoreItems()` 2쿼리 → 1 RPC | 기존: `fp_dish_ingredient` 조회(1) → `fp_card_dish` 조회(2) 순차 2쿼리. 개선: `fp_get_card_ids_from_store_items` RPC 단일 호출로 통합 | `src/app/api/ai/recommend/route.ts` |
 
 ---
 
