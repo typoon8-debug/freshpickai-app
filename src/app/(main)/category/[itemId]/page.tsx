@@ -225,7 +225,7 @@ export default async function ItemDetailPage({ params }: Props) {
           />
         </summary>
         <div className="px-4 pb-5">
-          {detailImages.length > 0 ? (
+          {detailImages.length > 0 || item.detailImgLabel ? (
             <div className="space-y-2">
               {detailImages.map((src, i) => (
                 <div key={i} className="relative w-full">
@@ -238,6 +238,11 @@ export default async function ItemDetailPage({ params }: Props) {
                   />
                 </div>
               ))}
+              {item.detailImgLabel && (
+                <p className="text-ink-600 pt-1 text-[13px] leading-relaxed whitespace-pre-line">
+                  {item.detailImgLabel}
+                </p>
+              )}
             </div>
           ) : item.descriptionMarkup ? (
             <div className="text-ink-600 text-[13px] leading-relaxed whitespace-pre-line">

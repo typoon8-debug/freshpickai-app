@@ -47,6 +47,7 @@ export type CategoryItemDetail = CategoryItem & {
   detailImgAdv1: string | null;
   detailImgAdv2: string | null;
   detailImgAdv3: string | null;
+  detailImgLabel: string | null;
   supplier: string | null;
 };
 
@@ -211,7 +212,7 @@ export async function getItemByIdAction(storeItemId: string): Promise<CategoryIt
   const { data, error } = await supabase
     .from("v_store_inventory_item")
     .select(
-      "store_item_id, store_id, item_name, item_thumbnail_small, item_thumbnail_big, item_image, effective_sale_price, list_price, discount_pct, is_in_stock, std_large_code, std_large_name, std_medium_code, std_medium_name, std_small_name, description_markup, ai_ad_copy, ai_cooking_usage, ai_tags, ai_confidence, ai_generated_at, promo_name, available_quantity, item_detail_img_adv1, item_detail_img_adv2, item_detail_img_adv3, supplier"
+      "store_item_id, store_id, item_name, item_thumbnail_small, item_thumbnail_big, item_image, effective_sale_price, list_price, discount_pct, is_in_stock, std_large_code, std_large_name, std_medium_code, std_medium_name, std_small_name, description_markup, ai_ad_copy, ai_cooking_usage, ai_tags, ai_confidence, ai_generated_at, promo_name, available_quantity, item_detail_img_adv1, item_detail_img_adv2, item_detail_img_adv3, item_detail_img_label, supplier"
     )
     .eq("store_item_id", storeItemId)
     .single();
@@ -246,6 +247,7 @@ export async function getItemByIdAction(storeItemId: string): Promise<CategoryIt
     detailImgAdv1: (r.item_detail_img_adv1 as string | null) ?? null,
     detailImgAdv2: (r.item_detail_img_adv2 as string | null) ?? null,
     detailImgAdv3: (r.item_detail_img_adv3 as string | null) ?? null,
+    detailImgLabel: (r.item_detail_img_label as string | null) ?? null,
     supplier: (r.supplier as string | null) ?? null,
   };
 }
