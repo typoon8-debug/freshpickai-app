@@ -238,17 +238,14 @@ export async function getPollResults(pollId: string): Promise<{
 }> {
   const admin = createAdminClient();
 
-  const [{ data: poll }, { data: rpcRows }, { data: votes }, { data: members }] = await Promise.all(
-    [
-      admin.from("fp_poll").select("*").eq("poll_id", pollId).single(),
-      admin.rpc("fp_get_poll_results", { p_poll_id: pollId }),
-      admin
-        .from("fp_poll_vote")
-        .select("user_id, option_id, fp_user_profile(display_name)")
-        .eq("poll_id", pollId),
-      admin.from("fp_poll").select("group_id").eq("poll_id", pollId).single(),
-    ]
-  );
+  const [{ data: poll }, { data: rpcRows }, { data: votes }] = await Promise.all([
+    admin.from("fp_poll").select("*").eq("poll_id", pollId).single(),
+    admin.rpc("fp_get_poll_results", { p_poll_id: pollId }),
+    admin
+      .from("fp_poll_vote")
+      .select("user_id, option_id, fp_user_profile(display_name)")
+      .eq("poll_id", pollId),
+  ]);
 
   if (!poll) return { poll: null, results: [], totalVoted: 0, totalTargeted: 0 };
 
@@ -285,12 +282,12 @@ export async function getPollResults(pollId: string): Promise<{
   let totalTargeted = 0;
   if (fpPoll.targetMemberIds) {
     totalTargeted = fpPoll.targetMemberIds.length;
-  } else if (members) {
-    const { data: memberCount } = await admin
+  } else {
+    const { count } = await admin
       .from("fp_family_member")
       .select("member_id", { count: "exact", head: true })
-      .eq("group_id", members.group_id);
-    totalTargeted = (memberCount as unknown as { count: number })?.count ?? 0;
+      .eq("group_id", fpPoll.groupId);
+    totalTargeted = count ?? 0;
   }
 
   return {
