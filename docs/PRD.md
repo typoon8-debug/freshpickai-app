@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -218,6 +218,29 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | **AI-001** | `PersonaContext` 보강 | `familyRole: FamilyRoleType`, `gender: GenderType \| null`, `familyRoleLabel: string` 추가. `buildPersonaContext()`에서 `buildRoleLabel()` 호출하여 "아빠", "엄마", "10대 남학생" 등 레이블 생성 | `src/lib/ai/persona-context.ts` |
 | **AI-002** | AI 프롬프트·도구 업데이트 | 시스템 프롬프트에 `familyRoleLabel` 삽입. `get-user-context` 도구 응답에 `gender·familyRole` 포함. `recommend` 라우트에서 페르소나 정확도 강화 | `src/lib/ai/prompts.ts`, `src/lib/ai/tools/get-user-context.ts`, `src/app/api/ai/recommend/route.ts` |
 | **PREF-001** | `PreferenceForm` gender/familyRole 추가 | 선호설정 폼에 성별(남성/여성/기타) + 가족 역할(부모/10대/아이) 선택 UI 추가. `updateUserProfile` Server Action에서 `gender·family_role` 저장 | `src/components/profile/PreferenceForm.tsx`, `src/lib/actions/profile/index.ts` |
+
+---
+
+### 12. ChatBottomPanel 드래그 UX + addToMemo 세션 기반 분리 (2026-05-18)
+
+> 채팅 하단 패널 UX 통합 리팩터링 + 세션 단위 메모 주제 분리
+
+**FIX-011 ChatBottomPanel 컴포넌트 분리**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **UX-011** | `ChatBottomPanel` 신설 | 기존 `ChatShell`에 인라인으로 흩어져 있던 냉장고 버튼·`QuickChips`·`ChatInput`을 단일 컴포넌트로 통합. `@use-gesture/react` 드래그 핸들바(위↑ 펼침 / 아래↓ 접힘, 50px 임계)로 UI 열고닫기. Framer Motion `spring` 애니메이션 적용 | `src/components/chat/chat-bottom-panel.tsx` (신규) |
+| **UX-012** | 자동 접힘 동작 | AI 스트리밍 시작 시 `startTransition(() => setIsExpanded(false))`로 cascading render 방지하며 자동 접힘. 메시지 전송 시에도 접힘 | `src/components/chat/chat-bottom-panel.tsx` |
+| **REFACT-011** | `ChatShell` 간소화 | 인라인 냉장고 버튼·`QuickChips`·`ChatInput` 제거 → `<ChatBottomPanel>` 단일 호출로 교체 | `src/components/chat/chat-shell.tsx` |
+
+**MEMO-001 addToMemo 세션 기반 분리**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **DB-M019** | `fp_shopping_memo.session_id` 추가 | `TEXT` 컬럼 추가. 세션 기반 조회 단일 인덱스 + `(user_id, session_id)` 복합 인덱스(Partial WHERE session_id IS NOT NULL) 추가 | `supabase/migrations/20260518_019_memo_session_id.sql` |
+| **TOOL-001** | `addToMemo` 세션 기반 조회 전략 | 세션 ID 전달 시: ①세션 일치 기존 메모 조회 → ②타이틀 폴백 → ③신규 생성(session_id 저장). 동일 세션 내 누적 저장, 세션 변경 시 새 메모 자동 분리 | `src/lib/ai/tools/add-to-memo.ts` |
+| **TOOL-002** | `topic` 파라미터 추가 | AI가 대화 맥락에서 주제 키워드(예: '주말식사', '주중도시락', '간식')를 자동 추출. 메모 제목에 `· 주제` 접미사로 반영 (`AI 추천 장보기 (날짜) · 주제`) | `src/lib/ai/tools/add-to-memo.ts` |
+| **ROUTE-001** | `sessionId` 라우트 전달 | `/api/ai/chat` Route Handler에서 `createAddToMemoTool(user.id, supabase, sessionId)` 형태로 세션 ID 주입 | `src/app/api/ai/chat/route.ts` |
 
 ---
 
