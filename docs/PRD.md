@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -234,6 +234,7 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | **REFACT-011** | `ChatShell` 간소화 | 인라인 냉장고 버튼·`QuickChips`·`ChatInput` 제거 → `<ChatBottomPanel>` 단일 호출로 교체 | `src/components/chat/chat-shell.tsx` |
 | **UX-013** | 핸들바 클릭 토글 + 상태 레이블 | 드래그 핸들바에 `onClick` 토글 추가(드래그 외 탭으로도 접기/펼치기 가능). `ChevronDown/Up` 아이콘 + "접기/펼치기" 10px 텍스트 레이블 표시. 핸들바 높이 `h-5 → h-8` 확장 | `src/components/chat/chat-bottom-panel.tsx` |
 | **FIX-012** | `dvh → svh` 뷰포트 단위 수정 | `ChatShell` 컨테이너 높이 `100dvh → 100svh` 교체. `dvh`(Dynamic Viewport Height)는 iOS Safari에서 주소창 크기 변화에 따라 레이아웃이 흔들리는 문제 → `svh`(Small Viewport Height, 항상 최소 뷰포트 기준)로 안정화 | `src/components/chat/chat-shell.tsx` |
+| **FIX-013** | 채팅 화면 pull-to-refresh 차단 | `ChatShell` 마운트 시 `document.body.style.overscrollBehaviorY = "none"` 적용 → 채팅 화면 이탈 시 원복(`cleanup`). `MessageList` 스크롤 컨테이너에 `overscroll-y-contain` 추가 → 메시지 목록 내부 스크롤이 body 오버스크롤로 전파되지 않도록 격리 | `src/components/chat/chat-shell.tsx`, `src/components/chat/message-list.tsx` |
 
 **MEMO-001 addToMemo 세션 기반 분리**
 
