@@ -24,25 +24,12 @@ async function getCardIdsFromStoreItems(
 ): Promise<string[]> {
   if (storeItemIds.length === 0) return [];
 
-  const { data: ingredients } = await adminClient
-    .from("fp_dish_ingredient")
-    .select("dish_id")
-    .in("ref_store_item_id", storeItemIds)
-    .limit(50);
+  const { data } = await adminClient.rpc("fp_get_card_ids_from_store_items", {
+    p_store_item_ids: storeItemIds,
+  });
 
-  if (!ingredients || ingredients.length === 0) return [];
-
-  const dishIds = [...new Set(ingredients.map((i) => i.dish_id))];
-
-  const { data: cardDishes } = await adminClient
-    .from("fp_card_dish")
-    .select("card_id")
-    .in("dish_id", dishIds)
-    .limit(50);
-
-  if (!cardDishes || cardDishes.length === 0) return [];
-
-  return [...new Set(cardDishes.map((cd) => cd.card_id))];
+  if (!data || data.length === 0) return [];
+  return (data as { card_id: string }[]).map((r) => r.card_id);
 }
 
 function buildFallbackRecommendations(

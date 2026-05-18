@@ -362,6 +362,92 @@ export async function sendPollReminder(pollId: string): Promise<{ ok: boolean }>
   return { ok: true };
 }
 
+// ── 여러 투표 안건 배치 조회 (N+1 → 4 쿼리) ─────────────────
+export async function getBatchPollData(
+  polls: FpPoll[],
+  userId: string,
+  groupId: string
+): Promise<
+  Array<{
+    poll: FpPoll;
+    results: PollResult[];
+    myVoteOptionId: string | null;
+    totalTargeted: number;
+  }>
+> {
+  if (polls.length === 0) return [];
+
+  const admin = createAdminClient();
+  const pollIds = polls.map((p) => p.pollId);
+
+  const [rpcResult, allVotesResult, myVotesResult, memberCountResult] = await Promise.all([
+    admin.rpc("fp_get_batch_poll_results", { p_poll_ids: pollIds }),
+    admin
+      .from("fp_poll_vote")
+      .select("poll_id, user_id, option_id, fp_user_profile(display_name)")
+      .in("poll_id", pollIds),
+    admin
+      .from("fp_poll_vote")
+      .select("poll_id, option_id")
+      .eq("user_id", userId)
+      .in("poll_id", pollIds),
+    admin
+      .from("fp_family_member")
+      .select("member_id", { count: "exact", head: true })
+      .eq("group_id", groupId),
+  ]);
+
+  const groupMemberCount = memberCountResult.count ?? 0;
+
+  type RpcRow = { poll_id: string; option_id: string; vote_count: number };
+  const countsByPoll = new Map<string, Map<string, number>>();
+  ((rpcResult.data ?? []) as RpcRow[]).forEach((row) => {
+    if (!countsByPoll.has(row.poll_id)) countsByPoll.set(row.poll_id, new Map());
+    countsByPoll.get(row.poll_id)!.set(row.option_id, Number(row.vote_count));
+  });
+
+  type VoteRow = {
+    poll_id: string;
+    user_id: string;
+    option_id: string;
+    fp_user_profile: { display_name: string } | null;
+  };
+  const votersByPollOption: Record<string, Record<string, string[]>> = {};
+  ((allVotesResult.data ?? []) as unknown as VoteRow[]).forEach((v) => {
+    if (!votersByPollOption[v.poll_id]) votersByPollOption[v.poll_id] = {};
+    if (!votersByPollOption[v.poll_id][v.option_id])
+      votersByPollOption[v.poll_id][v.option_id] = [];
+    votersByPollOption[v.poll_id][v.option_id].push(v.fp_user_profile?.display_name ?? "");
+  });
+
+  const myVoteByPoll = new Map<string, string>();
+  ((myVotesResult.data ?? []) as { poll_id: string; option_id: string }[]).forEach((v) => {
+    myVoteByPoll.set(v.poll_id, v.option_id);
+  });
+
+  return polls.map((poll) => {
+    const optionCounts = countsByPoll.get(poll.pollId) ?? new Map<string, number>();
+    const pollVotersByOption = votersByPollOption[poll.pollId] ?? {};
+
+    const results: PollResult[] = poll.options.map((opt) => ({
+      optionId: opt.id,
+      label: opt.label,
+      emoji: opt.emoji,
+      count: optionCounts.get(opt.id) ?? 0,
+      voterNames: pollVotersByOption[opt.id] ?? [],
+    }));
+
+    const totalTargeted = poll.targetMemberIds ? poll.targetMemberIds.length : groupMemberCount;
+
+    return {
+      poll,
+      results,
+      myVoteOptionId: myVoteByPoll.get(poll.pollId) ?? null,
+      totalTargeted,
+    };
+  });
+}
+
 // ── 현재 사용자의 투표 응답 조회 ─────────────────────────────
 export async function getMyPollVote(pollId: string): Promise<FpPollVote | null> {
   const supabase = await createClient();
