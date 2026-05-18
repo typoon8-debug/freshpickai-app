@@ -30,6 +30,14 @@ export function ChatShell({ initialMessages, latestSummary }: ChatShellProps) {
   const removeFromCart = useCartStore((s) => s.remove);
   const initMessages = useChatStore((s) => s.initMessages);
 
+  // 채팅 화면에서만 pull-to-refresh 차단 (이탈 시 원복)
+  useEffect(() => {
+    document.body.style.overscrollBehaviorY = "none";
+    return () => {
+      document.body.style.overscrollBehaviorY = "";
+    };
+  }, []);
+
   // 페이지 진입 시 항상 DB 기록으로 초기화 (탭 재진입·새로고침 모두 최신 대화 복원)
   useEffect(() => {
     initMessages(initialMessages);

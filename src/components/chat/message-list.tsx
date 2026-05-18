@@ -38,7 +38,7 @@ export function MessageList({ onActionSelect, latestSummary }: MessageListProps)
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+    <div className="flex flex-1 flex-col gap-4 overflow-y-auto overscroll-y-contain px-4 py-4">
       {/* 이전 세션 요약 배너 — DB에서 복원된 대화가 있고 요약이 있을 때만 표시 */}
       {latestSummary && messages.length > 0 && (
         <div className="bg-mocha-50 border-mocha-200 rounded-xl border px-4 py-3">
