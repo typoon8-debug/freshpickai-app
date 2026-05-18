@@ -1,7 +1,7 @@
 # FreshPickAI PRD
 
 > **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF-캐시 unstable_cache + DB 쿼리 감소 + FIX-014~016 + PERF 가족보드 Suspense·투표 배치·AI RPC + FIX-017 상품 상세 detailImgLabel 표시
+> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF-캐시 unstable_cache + DB 쿼리 감소 + FIX-014~016 + PERF 가족보드 Suspense·투표 배치·AI RPC + FIX-017 detailImgLabel 이미지 처리 수정 + CONF-001 Vercel 서울 리전 고정
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -302,7 +302,13 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | ID | 항목 | 내용 | 영향 파일 |
 |----|------|------|----------|
 | **FIX-017a** | `CategoryItemDetail` 타입 확장 | `detailImgLabel: string \| null` 필드 추가. `getItemByIdAction()` SELECT 쿼리에 `item_detail_img_label` 컬럼 추가 및 반환 객체 매핑 | `src/lib/actions/category/index.ts` |
-| **FIX-017b** | 상품 상세 레이블 렌더링 | 이미지 상세 `<details>` 섹션 표시 조건 `detailImages.length > 0` → `detailImages.length > 0 \|\| item.detailImgLabel`로 확장. 이미지 목록 하단에 `detailImgLabel` 13px `whitespace-pre-line` 텍스트 표시 | `src/app/(main)/category/[itemId]/page.tsx` |
+| **FIX-017b** | detailImgLabel 이미지 처리 수정 | `detailImgLabel`은 텍스트가 아닌 이미지 URL임을 확인 → `detailImages` 배열(`[adv1, adv2, adv3, detailImgLabel]`)에 포함하여 기존 이미지와 동일하게 `<Image>` 렌더링. 별도 텍스트 `<p>` 렌더링 제거 | `src/app/(main)/category/[itemId]/page.tsx` |
+
+**CONF-001 Vercel 서울 리전 고정**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **CONF-001** | Vercel 배포 리전 `icn1` (서울) 고정 | `vercel.json`에 `"regions": ["icn1"]` 추가. 국내 사용자 대상 서버리스 함수 레이턴시 감소 (기본 `iad1` 미국 동부 → 서울로 전환) | `vercel.json` |
 
 ---
 
