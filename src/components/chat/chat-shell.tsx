@@ -141,7 +141,7 @@ export function ChatShell({ initialMessages, latestSummary }: ChatShellProps) {
   );
 
   return (
-    <div className="flex h-[calc(100dvh-80px)] flex-col">
+    <div className="flex h-[calc(100svh-80px)] flex-col">
       {fridgeOpen ? (
         <FridgeMode onClose={() => setFridgeOpen(false)} />
       ) : (
