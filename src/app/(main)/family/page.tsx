@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { BrandHeader } from "@/components/layout/brand-header";
 import { FamilyBanner } from "@/components/family/family-banner";
 import { MemberGrid } from "@/components/family/member-grid";
 import { DinnerVote } from "@/components/family/dinner-vote";
+import { DinnerVoteLoader } from "@/components/family/dinner-vote-loader";
 import { PopularRanking } from "@/components/family/popular-ranking";
 import { TrendingCards } from "@/components/family/trending-cards";
 import { KidsPreferenceSection } from "@/components/family/KidsPreferenceSection";
@@ -9,25 +11,31 @@ import { FamilyMission } from "@/components/family/family-mission";
 import { FamilyInvite } from "@/components/family/family-invite";
 import { MovieNightButton } from "@/components/family/movie-night-button";
 import { FamilyPollSection } from "@/components/family/family-poll-section";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getFamilyGroup, getFamilyMembers, getFamilyStatsAction } from "@/lib/actions/family";
-import {
-  getCurrentVoteSession,
-  ensureVoteSession,
-  getVoteResults,
-  getMyVotes,
-  getMonthlyPopularCards,
-} from "@/lib/actions/family/vote";
 import {
   getActivePolls,
   getClosedPolls,
   getLatestMovieNightPoll,
-  getPollResults,
-  getMyPollVote,
+  getBatchPollData,
 } from "@/lib/actions/family/poll";
-import { getAIMenuRecommendations } from "@/lib/actions/family/ai-menu-recommend";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/server";
 import type { FpPoll, PollResult } from "@/lib/types";
+
+function DinnerVoteSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 px-4">
+      <Skeleton className="h-6 w-40" />
+      <div className="flex gap-3">
+        <Skeleton className="h-28 flex-1 rounded-2xl" />
+        <Skeleton className="h-28 flex-1 rounded-2xl" />
+        <Skeleton className="h-28 flex-1 rounded-2xl" />
+      </div>
+      <Skeleton className="h-24 w-full rounded-2xl" />
+      <Skeleton className="h-24 w-full rounded-2xl" />
+    </div>
+  );
+}
 
 export default async function FamilyPage() {
   const supabase = await createClient();
@@ -41,85 +49,7 @@ export default async function FamilyPage() {
     getFamilyStatsAction(user?.id),
   ]);
 
-  // 투표 세션 (없으면 AI 추천으로 자동 생성)
-  let session = null;
-  let voteItems: { cardId: string; name: string; emoji: string }[] = [];
-  let voteResults: { cardId: string; likeCount: number; dislikeCount: number }[] = [];
-  let myVotes: Record<string, "like" | "dislike"> = {};
-  let monthlyRanking: Array<{
-    rank: number;
-    cardId: string;
-    name: string;
-    emoji: string;
-    count: number;
-  }> = [];
-
-  if (group) {
-    session = await getCurrentVoteSession(group.groupId);
-
-    if (!session) {
-      // AI가 이번 주 메뉴 3가지를 추천 → 새 세션 생성
-      const { cards: aiCards, title: aiTitle } = await getAIMenuRecommendations(group.groupId);
-      if (aiCards.length > 0) {
-        session = await ensureVoteSession(
-          group.groupId,
-          aiCards.map((c) => c.cardId),
-          aiTitle
-        );
-        voteItems = aiCards;
-      }
-    }
-
-    // 기존 세션이 있으면 실제 카드 정보를 DB에서 조회
-    if (session && voteItems.length === 0) {
-      const adminForCards = createAdminClient();
-      const { data: sessionCards } = await adminForCards
-        .from("fp_menu_card")
-        .select("card_id, name, emoji")
-        .in("card_id", session.cardIds);
-
-      const cardMap = new Map((sessionCards ?? []).map((c) => [c.card_id, c]));
-      voteItems = session.cardIds
-        .map((id) => cardMap.get(id))
-        .filter(
-          (c): c is { card_id: string; name: string; emoji: string | null } => c !== undefined
-        )
-        .map((c) => ({ cardId: c.card_id, name: c.name, emoji: c.emoji ?? "🍽️" }));
-    }
-
-    if (session && user) {
-      const [results, votes, popular] = await Promise.all([
-        getVoteResults(session.sessionId),
-        getMyVotes(session.sessionId),
-        getMonthlyPopularCards(group.groupId),
-      ]);
-      voteResults = results;
-      myVotes = votes;
-
-      // 월간 인기 카드명 조회
-      if (popular.length > 0) {
-        const cardIds = popular.map((p) => p.cardId);
-        const { data: cards } = await supabase
-          .from("fp_menu_card")
-          .select("card_id, name, emoji")
-          .in("card_id", cardIds);
-
-        const cardMap = new Map(
-          (cards ?? []).map((c) => [c.card_id, { name: c.name, emoji: c.emoji ?? "" }])
-        );
-
-        monthlyRanking = popular.map((p, i) => ({
-          rank: i + 1,
-          cardId: p.cardId,
-          name: cardMap.get(p.cardId)?.name ?? p.cardId,
-          emoji: cardMap.get(p.cardId)?.emoji ?? "🍽️",
-          count: p.likeCount,
-        }));
-      }
-    }
-  }
-
-  // 미션 + 트렌딩 폴백용: 실제 존재하는 공식 카드 조회
+  // 트렌딩 폴백용: 실제 존재하는 공식 카드 조회
   const { data: officialCards } = await supabase
     .from("fp_menu_card")
     .select("card_id, name, emoji")
@@ -127,7 +57,6 @@ export default async function FamilyPage() {
     .limit(5);
 
   const missionCards = (officialCards ?? []).slice(0, 2);
-  // 트렌딩 폴백: 실제 카드 ID를 사용해 404 방지
   const trendingFallback =
     officialCards && officialCards.length >= 3
       ? officialCards.slice(0, 3).map((c, i) => ({
@@ -172,25 +101,12 @@ export default async function FamilyPage() {
 
     movieNightPollData = movieNight;
 
-    activePolls = await Promise.all(
-      rawActive.map(async (poll) => {
-        const [{ results, totalTargeted }, myVote] = await Promise.all([
-          getPollResults(poll.pollId),
-          getMyPollVote(poll.pollId),
-        ]);
-        return { poll, results, myVoteOptionId: myVote?.optionId ?? null, totalTargeted };
-      })
-    );
-
-    closedPolls = await Promise.all(
-      rawClosed.map(async (poll) => {
-        const [{ results, totalTargeted }, myVote] = await Promise.all([
-          getPollResults(poll.pollId),
-          getMyPollVote(poll.pollId),
-        ]);
-        return { poll, results, myVoteOptionId: myVote?.optionId ?? null, totalTargeted };
-      })
-    );
+    const [activeBatch, closedBatch] = await Promise.all([
+      getBatchPollData(rawActive, user.id, group.groupId),
+      getBatchPollData(rawClosed, user.id, group.groupId),
+    ]);
+    activePolls = activeBatch;
+    closedPolls = closedBatch;
   }
 
   // 로그인 사용자 표시 이름 (FamilyInvite용)
@@ -216,14 +132,21 @@ export default async function FamilyPage() {
       />
       <div className="flex flex-col gap-6 py-5">
         <MemberGrid members={members} currentUserId={user?.id} hasGroup={!!group} />
-        <DinnerVote
-          session={session}
-          voteItems={voteItems}
-          initialResults={voteResults}
-          initialMyVotes={myVotes}
-        />
-        <PopularRanking items={monthlyRanking.length > 0 ? monthlyRanking : undefined} />
-        <TrendingCards items={monthlyRanking.length > 0 ? monthlyRanking : trendingFallback} />
+        {group && user ? (
+          <Suspense fallback={<DinnerVoteSkeleton />}>
+            <DinnerVoteLoader
+              groupId={group.groupId}
+              userId={user.id}
+              trendingFallback={trendingFallback}
+            />
+          </Suspense>
+        ) : (
+          <>
+            <DinnerVote session={null} voteItems={[]} initialResults={[]} initialMyVotes={{}} />
+            <PopularRanking items={undefined} />
+            <TrendingCards items={trendingFallback} />
+          </>
+        )}
         {group && (
           <FamilyPollSection
             groupId={group.groupId}
