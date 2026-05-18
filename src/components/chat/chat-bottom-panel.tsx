@@ -3,7 +3,7 @@
 import { startTransition, useEffect, useState } from "react";
 import { useDrag } from "@use-gesture/react";
 import { motion } from "framer-motion";
-import { Refrigerator } from "lucide-react";
+import { ChevronDown, ChevronUp, Refrigerator } from "lucide-react";
 import { QuickChips } from "@/components/chat/quick-chips";
 import { ChatInput } from "@/components/chat/chat-input";
 
@@ -43,13 +43,27 @@ export function ChatBottomPanel({
 
   return (
     <div className="border-line bg-paper border-t">
-      {/* 드래그 핸들바 */}
+      {/* 드래그 핸들바 + 아코디언 상태 표시 */}
       <div
         {...bind()}
-        className="flex h-5 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
+        onClick={() => setIsExpanded((prev) => !prev)}
+        className="flex h-8 cursor-grab touch-none flex-col items-center justify-center gap-0.5 active:cursor-grabbing"
         aria-label={isExpanded ? "접기" : "펼치기"}
       >
         <div className="bg-mocha-200 h-1 w-8 rounded-full" />
+        <span className="text-mocha-400 flex items-center gap-0.5 text-[10px] leading-none select-none">
+          {isExpanded ? (
+            <>
+              <ChevronDown size={10} />
+              접기
+            </>
+          ) : (
+            <>
+              <ChevronUp size={10} />
+              펼치기
+            </>
+          )}
+        </span>
       </div>
 
       {/* 아코디언 영역 — 냉장고 버튼 + 빠른 칩 */}
