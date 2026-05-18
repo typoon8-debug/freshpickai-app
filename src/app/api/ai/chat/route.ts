@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
         getInventory: createGetInventoryTool(supabase),
         addToCart: createAddToCartTool(user.id, supabase),
         getUserContext: createGetUserContextTool(user.id),
-        addToMemo: createAddToMemoTool(user.id, supabase),
+        addToMemo: createAddToMemoTool(user.id, supabase, sessionId),
         suggestIntents: createSuggestIntentsTool(),
       },
       stopWhen: stepCountIs(5),

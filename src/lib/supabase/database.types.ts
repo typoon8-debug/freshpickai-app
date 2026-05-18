@@ -2523,6 +2523,7 @@ export type Database = {
           memo_id: string;
           modified_at: string;
           raw_text: string | null;
+          session_id: string | null;
           title: string;
           user_id: string;
         };
@@ -2531,6 +2532,7 @@ export type Database = {
           memo_id?: string;
           modified_at?: string;
           raw_text?: string | null;
+          session_id?: string | null;
           title: string;
           user_id: string;
         };
@@ -2539,6 +2541,7 @@ export type Database = {
           memo_id?: string;
           modified_at?: string;
           raw_text?: string | null;
+          session_id?: string | null;
           title?: string;
           user_id?: string;
         };
