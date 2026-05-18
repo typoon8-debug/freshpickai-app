@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 export type LargeCategory = {
   id: string;
@@ -97,21 +98,30 @@ export async function getUserStoreIdAction(): Promise<string | null> {
   return (customer?.store_id as string | null) ?? null;
 }
 
+// 대분류 목록은 정적 데이터 — admin client로 1시간 캐시
+const _fetchLargeCategories = unstable_cache(
+  async (): Promise<LargeCategory[]> => {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from("tenant_std_large_code")
+      .select("id, code, name, sort_order")
+      .order("sort_order", { ascending: true });
+
+    if (error || !data) return [];
+    return data.map((r) => ({
+      id: r.id as string,
+      code: r.code as string,
+      name: r.name as string,
+      sortOrder: r.sort_order as number,
+    }));
+  },
+  ["large-categories"],
+  { revalidate: 3600, tags: ["large-categories"] }
+);
+
 /** 대분류 목록 */
 export async function getLargeCategoriesAction(): Promise<LargeCategory[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("tenant_std_large_code")
-    .select("id, code, name, sort_order")
-    .order("sort_order", { ascending: true });
-
-  if (error || !data) return [];
-  return data.map((r) => ({
-    id: r.id as string,
-    code: r.code as string,
-    name: r.name as string,
-    sortOrder: r.sort_order as number,
-  }));
+  return _fetchLargeCategories();
 }
 
 /** 대분류 코드로 중분류 목록 조회 */

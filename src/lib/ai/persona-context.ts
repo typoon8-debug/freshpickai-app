@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { embedText, embeddingToSql } from "./embedding";
 import { buildRoleLabel, type GenderType, type FamilyRoleType } from "@/lib/constants/relationship";
 
@@ -185,14 +186,24 @@ function parseTagValue(tags: string[], prefix: string): string | undefined {
   return tags.find((t) => t.startsWith(`${prefix}:`))?.split(":")[1];
 }
 
+// ── DB 조회 결과 5분 캐시 (admin client — 쿠키 의존 없음) ────────
+// 선호 설정 변경 시 revalidateTag("persona-context") 호출로 즉시 무효화
+const _loadPersonaData = unstable_cache(
+  async (userId: string) => {
+    const admin = createAdminClient();
+    const [{ data: pref }, { data: profileRow }] = await Promise.all([
+      admin.from("fp_user_preference").select("*").eq("user_id", userId).single(),
+      admin.from("fp_user_profile").select("family_role, gender").eq("user_id", userId).single(),
+    ]);
+    return { pref, profileRow };
+  },
+  ["persona-data"],
+  { revalidate: 300, tags: ["persona-context"] }
+);
+
 // ── 메인 빌더 함수 ────────────────────────────────────────────
 export async function buildPersonaContext(userId: string): Promise<PersonaContext> {
-  const supabase = await createClient();
-
-  const [{ data: pref }, { data: profileRow }] = await Promise.all([
-    supabase.from("fp_user_preference").select("*").eq("user_id", userId).single(),
-    supabase.from("fp_user_profile").select("family_role, gender").eq("user_id", userId).single(),
-  ]);
+  const { pref, profileRow } = await _loadPersonaData(userId);
 
   const personaTags: string[] = pref?.persona_tags ?? [];
   const dietaryTags: string[] = pref?.dietary_tags ?? [];
@@ -242,8 +253,8 @@ export async function buildPersonaContext(userId: string): Promise<PersonaContex
     familyRoleLabel: buildRoleLabel(familyRole, gender),
   };
 
-  // 페르소나 컨텍스트 텍스트 임베딩 → fp_user_preference.embedding 비동기 저장 (논블로킹)
-  void savePersonaEmbedding(supabase, userId, ctx);
+  // 페르소나 임베딩 비동기 저장 (논블로킹) — 캐시와 별도로 매 호출 시 실행
+  void createClient().then((supabase) => savePersonaEmbedding(supabase, userId, ctx));
 
   return ctx;
 }

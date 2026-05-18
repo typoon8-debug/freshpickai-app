@@ -6,8 +6,6 @@ import {
 } from "@/lib/actions/category";
 import { CategoryShell } from "./_components/category-shell";
 
-export const dynamic = "force-dynamic";
-
 export default async function CategoryPage() {
   const [largeCategories, storeId] = await Promise.all([
     getLargeCategoriesAction(),
