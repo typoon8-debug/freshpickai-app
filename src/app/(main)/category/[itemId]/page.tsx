@@ -58,9 +58,12 @@ export default async function ItemDetailPage({ params }: Props) {
   const aiConfidencePct =
     item.aiConfidence != null ? Math.round(Number(item.aiConfidence) * 100) : null;
 
-  const detailImages = [item.detailImgAdv1, item.detailImgAdv2, item.detailImgAdv3].filter(
-    Boolean
-  ) as string[];
+  const detailImages = [
+    item.detailImgAdv1,
+    item.detailImgAdv2,
+    item.detailImgAdv3,
+    item.detailImgLabel,
+  ].filter(Boolean) as string[];
 
   const avgRating =
     reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
@@ -225,7 +228,7 @@ export default async function ItemDetailPage({ params }: Props) {
           />
         </summary>
         <div className="px-4 pb-5">
-          {detailImages.length > 0 || item.detailImgLabel ? (
+          {detailImages.length > 0 ? (
             <div className="space-y-2">
               {detailImages.map((src, i) => (
                 <div key={i} className="relative w-full">
@@ -238,11 +241,6 @@ export default async function ItemDetailPage({ params }: Props) {
                   />
                 </div>
               ))}
-              {item.detailImgLabel && (
-                <p className="text-ink-600 pt-1 text-[13px] leading-relaxed whitespace-pre-line">
-                  {item.detailImgLabel}
-                </p>
-              )}
             </div>
           ) : item.descriptionMarkup ? (
             <div className="text-ink-600 text-[13px] leading-relaxed whitespace-pre-line">
