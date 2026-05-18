@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Share, Download } from "lucide-react";
 import { usePwaInstall } from "@/hooks/usePwaInstall";
 
 export function InstallBanner() {
   const { showBanner, isIos, install, dismiss } = usePwaInstall();
   const [showIosGuide, setShowIosGuide] = useState(false);
+
+  // SW 업데이트 시 자동 새로고침 — 최초 설치(hadController=false)는 제외
+  useEffect(() => {
+    if (typeof window === "undefined" || !navigator.serviceWorker) return;
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloading = false;
+    const onControllerChange = () => {
+      if (!hadController || reloading) return;
+      reloading = true;
+      window.location.reload();
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+    return () =>
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+  }, []);
 
   if (!showBanner) return null;
 
