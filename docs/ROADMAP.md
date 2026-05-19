@@ -10,6 +10,7 @@
 > **다음 작업**: Task 058 운영자 검수 큐 (F026) · Task 060 멀티 매장 가격 비교 (F028)
 >
 > **2026-05-17~18 완료 내역**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~009 (가족·인증) + HOT-001~004 + FIX-010 gender·relationship(M018) + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 분리(M019) + UX-013 핸들바 토글 + FIX-012~016 + PERF 캐시(unstable_cache) + PERF DB 쿼리 감소 + PERF-P01~P03 가족보드 Suspense·배치쿼리·RPC + FIX-017 detailImgLabel + CONF-001 Vercel 서울 리전
+> **2026-05-19 완료 내역**: FIX-018c 장바구니 체크박스 Android 크로스플랫폼 수정 (Tailwind v4 CSS 네이티브 중첩 → JS 조건 className)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -41,8 +42,9 @@
 | **PERF-P03: getCardIdsFromStoreItems 2쿼리 → 1 RPC** | ✅ 완료 | 2026-05-18 |
 | **FIX-017: detailImgLabel 이미지 처리 수정** (텍스트→이미지 URL 재처리) | ✅ 완료 | 2026-05-18 |
 | **CONF-001: Vercel 서울 리전 `icn1` 고정** | ✅ 완료 | 2026-05-18 |
-| **FIX-018: 장바구니 체크박스 체크마크 흰색 미표시 수정** | ✅ 완료 | 2026-05-19 |
-| **FIX-018b: Checkbox data-checked → aria-checked 전환 + 조건부 직접 렌더링** | ✅ 완료 | 2026-05-19 |
+| **FIX-018: 장바구니 체크박스 체크마크 흰색 미표시 수정** | ⏪️ 롤백 | 2026-05-19 |
+| **FIX-018b: Checkbox data-checked → aria-checked 전환 시도** | ⏪️ 롤백 (Android 미해결) | 2026-05-19 |
+| **FIX-018c: 장바구니 체크박스 CSS 선택자 완전 제거** (Tailwind v4 CSS 네이티브 중첩 Android 미지원 → JS 조건 className으로 교체) | ✅ 완료 | 2026-05-19 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
