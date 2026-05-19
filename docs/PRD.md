@@ -1,7 +1,12 @@
 # FreshPickAI PRD
 
-> **📅 최종 업데이트**: 2026-05-18
-> **📊 진행 상황**: Sprint 6 진행 중 — Task 055/056/057/059 완료 (F023/F024/F025/F027) + 인앱 알림함 + 핫픽스 3건 + F032 메모리 시스템 보강 + 모바일 성능 최적화 PERF 1~3단계 완료 + LCP 보강 + PWA 설치 배너 UX 개선 + FIX-010 gender·relationship 설계 변경 + 페르소나 컨텍스트 보강 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 기반 분리 + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF-캐시 unstable_cache + DB 쿼리 감소 + FIX-014~016 + PERF 가족보드 Suspense·투표 배치·AI RPC + FIX-017 detailImgLabel 이미지 처리 수정 + CONF-001 Vercel 서울 리전 고정
+> **📅 최종 업데이트**: 2026-05-19
+> **📊 진행 상황**: Sprint 6 진행 중 (4/6 완료) — Task 055~057·059 완료 · Task 058·060 대기 | Phase 0~4.5 + Phase 5 부분 완료
+>
+> **✅ Sprint 6 완료**: F023 FCM 푸시·인앱 알림함 / F024 검색 고도화 / F025 영양 분석 / F027 OCR 메모
+> **🔜 Sprint 6 잔여**: F026 운영자 검수 큐 (Task 058) · F028 멀티 매장 가격 비교 (Task 060)
+> **최근 보완 (2026-05-17~18)**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~017 + PERF 캐시·DB·Suspense·배치쿼리 + CONF-001 Vercel 서울 리전
+> **2026-05-19**: FIX-018 장바구니 체크박스 체크마크 흰색 미표시 수정 (checkbox.tsx text-white 직접 적용)
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---

@@ -4,7 +4,12 @@
 
 ---
 
-## 진행 현황 (2026-05-18 업데이트 → M018 gender·relationship DB 설계 + 페르소나 컨텍스트 보강 + 초대 수락 관계 선택 UX + PreferenceForm gender/familyRole 추가 + HOT-004 RAG 상태 표시 폴링 제거 + FIX-011 ChatBottomPanel 드래그 UX 통합 + MEMO-001 addToMemo 세션 기반 분리 + M019 fp_shopping_memo.session_id + UX-013 핸들바 클릭 토글 + FIX-012 svh 뷰포트 호환성 + FIX-013 채팅 pull-to-refresh 차단 + PERF 캐시 최적화 3종 + DB 쿼리 감소 2종 + FIX-014~016 + PERF 가족보드 Suspense·투표 배치쿼리·AI 추천 RPC + FIX-017 detailImgLabel 이미지 처리 수정 + CONF-001 Vercel 서울 리전)
+## 진행 현황 (2026-05-19 업데이트)
+
+> **현재 스프린트**: Sprint 6 — Phase 5 서비스 성장 + 운영 인프라 (4/6 완료)
+> **다음 작업**: Task 058 운영자 검수 큐 (F026) · Task 060 멀티 매장 가격 비교 (F028)
+>
+> **2026-05-17~18 완료 내역**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~009 (가족·인증) + HOT-001~004 + FIX-010 gender·relationship(M018) + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 분리(M019) + UX-013 핸들바 토글 + FIX-012~016 + PERF 캐시(unstable_cache) + PERF DB 쿼리 감소 + PERF-P01~P03 가족보드 Suspense·배치쿼리·RPC + FIX-017 detailImgLabel + CONF-001 Vercel 서울 리전
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -36,6 +41,7 @@
 | **PERF-P03: getCardIdsFromStoreItems 2쿼리 → 1 RPC** | ✅ 완료 | 2026-05-18 |
 | **FIX-017: detailImgLabel 이미지 처리 수정** (텍스트→이미지 URL 재처리) | ✅ 완료 | 2026-05-18 |
 | **CONF-001: Vercel 서울 리전 `icn1` 고정** | ✅ 완료 | 2026-05-18 |
+| **FIX-018: 장바구니 체크박스 체크마크 흰색 미표시 수정** | ✅ 완료 | 2026-05-19 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -162,6 +168,29 @@
 - **PERF-P03 AI 추천 카드 조회 RPC 전환**: `getCardIdsFromStoreItems()` 내 2단계 순차 쿼리 → `fp_get_card_ids_from_store_items` RPC 단일 호출로 교체
 - **FIX-017 detailImgLabel 이미지 처리 수정**: `detailImgLabel`이 텍스트가 아닌 이미지 URL임을 확인 → `detailImages` 배열에 포함(`[adv1, adv2, adv3, detailImgLabel]`)하여 `<Image>` 렌더링. 별도 `<p>` 텍스트 렌더링 제거
 - **CONF-001 Vercel 서울 리전 고정**: `vercel.json`에 `"regions": ["icn1"]` 추가. 기본 미국 동부(`iad1`) → 서울로 전환하여 국내 사용자 레이턴시 감소
+
+### 장바구니 체크박스 UI 수정 (2026-05-19)
+
+- **FIX-018 체크박스 체크마크 흰색 미표시 수정**: `Checkbox` 컴포넌트 내 `CheckboxPrimitive.Indicator`가 `text-current`를 상속받아 `data-checked:text-white` 외부 클래스가 동작하지 않는 문제 → `CheckIcon`에 직접 `text-white` 클래스 고정. 인디케이터 레이아웃 `grid place-content-center → flex! items-center justify-center`로 교체. `CartItemRow` 에서 중복된 `data-checked:text-white` 제거, `CartPage` 전체선택 체크박스에 명시적 크기 클래스(`h-5 w-5 shrink-0 rounded-sm border-2`) 추가
+
+### Phase 5 Sprint 6 완료 요약 (2026-05-17, 4/6 완료)
+
+| Task | 기능 | 핵심 구현 | 완료일 |
+|------|------|----------|--------|
+| **Task 055** | F023 FCM 푸시 알림 + 인앱 알림함 | firebase-admin·upsertFcmToken·sendPollCreated/MovieNight/Delivery, fp_notifications 테이블·Realtime 배지·useNotificationStore | 2026-05-17 |
+| **Task 056** | F024 검색 고도화 | /api/search pg_trgm+pgvector 병렬 · SearchAutoComplete 200ms 디바운스 · FilterPanel URL params 동기화 · /search 결과 페이지 | 2026-05-17 |
+| **Task 057** | F025 영양 분석 차트 | getWeeklyNutritionSummary 7종 집계 · Recharts BarChart+RadarChart · /profile/nutrition 주차 탐색 | 2026-05-17 |
+| **Task 059** | F027 OCR 장보기 메모 | Claude Haiku 4.5 Vision · OCRCaptureButton 카메라 캡처·미리보기 · /memo 페이지 통합 | 2026-05-17 |
+| **Task 058** | F026 운영자 검수 큐 | — | 🔜 대기 |
+| **Task 060** | F028 멀티 매장 가격 비교 | — | 🔜 대기 |
+
+**실측 성능 (개발 서버 기준 — 2026-05-17 측정)**
+
+| 지표 | 캐시 전 (cold) | 캐시 후 (warm) | 개선율 |
+|------|---------------|---------------|--------|
+| 홈 페이지 로드 (GET /) | 1,422ms | 338ms | **76% ↓** |
+| AI 추천 메타 API | 620ms | 120ms | **80% ↓** |
+| 알림 미읽음 수 조회 | 486ms | 126ms | **74% ↓** |
 
 ---
 
