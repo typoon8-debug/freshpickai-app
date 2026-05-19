@@ -6,7 +6,7 @@
 > **✅ Sprint 6 완료**: F023 FCM 푸시·인앱 알림함 / F024 검색 고도화 / F025 영양 분석 / F027 OCR 메모
 > **🔜 Sprint 6 잔여**: F026 운영자 검수 큐 (Task 058) · F028 멀티 매장 가격 비교 (Task 060)
 > **최근 보완 (2026-05-17~18)**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~017 + PERF 캐시·DB·Suspense·배치쿼리 + CONF-001 Vercel 서울 리전
-> **2026-05-19**: FIX-018 장바구니 체크박스 체크마크 흰색 미표시 수정 (checkbox.tsx text-white 직접 적용)
+> **2026-05-19**: FIX-018 장바구니 체크박스 체크마크 흰색 미표시 수정 + FIX-018b data-checked → aria-checked 전환·조건부 직접 렌더링
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---

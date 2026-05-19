@@ -42,6 +42,7 @@
 | **FIX-017: detailImgLabel 이미지 처리 수정** (텍스트→이미지 URL 재처리) | ✅ 완료 | 2026-05-18 |
 | **CONF-001: Vercel 서울 리전 `icn1` 고정** | ✅ 완료 | 2026-05-18 |
 | **FIX-018: 장바구니 체크박스 체크마크 흰색 미표시 수정** | ✅ 완료 | 2026-05-19 |
+| **FIX-018b: Checkbox data-checked → aria-checked 전환 + 조건부 직접 렌더링** | ✅ 완료 | 2026-05-19 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -172,6 +173,7 @@
 ### 장바구니 체크박스 UI 수정 (2026-05-19)
 
 - **FIX-018 체크박스 체크마크 흰색 미표시 수정**: `Checkbox` 컴포넌트 내 `CheckboxPrimitive.Indicator`가 `text-current`를 상속받아 `data-checked:text-white` 외부 클래스가 동작하지 않는 문제 → `CheckIcon`에 직접 `text-white` 클래스 고정. 인디케이터 레이아웃 `grid place-content-center → flex! items-center justify-center`로 교체. `CartItemRow` 에서 중복된 `data-checked:text-white` 제거, `CartPage` 전체선택 체크박스에 명시적 크기 클래스(`h-5 w-5 shrink-0 rounded-sm border-2`) 추가
+- **FIX-018b 체크박스 상태 반영 방식 전환** (`data-checked` → `aria-checked`): Base UI `data-checked` 어트리뷰트 기반 Tailwind 변형이 선택 배경색을 적용하지 못하는 문제 → `aria-checked:` Tailwind 변형으로 전환. `CheckboxPrimitive.Indicator` 래퍼 제거 → `{checked && <CheckIcon />}` 조건부 직접 렌더링으로 교체. `checked` prop을 Root에 명시적 전달해 `aria-checked` 상태 동기화. `cart-item-row.tsx`·`cart/page.tsx` 클래스 동일 전환
 
 ### Phase 5 Sprint 6 완료 요약 (2026-05-17, 4/6 완료)
 
