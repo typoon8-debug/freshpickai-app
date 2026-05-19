@@ -1,26 +1,41 @@
 "use client";
 
-import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
-
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
 
-function Checkbox({ className, checked, ...props }: CheckboxPrimitive.Root.Props) {
+interface CheckboxProps {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  disabled?: boolean;
+  className?: string;
+  "aria-label"?: string;
+  id?: string;
+}
+
+function Checkbox({ checked, onCheckedChange, disabled, className, ...props }: CheckboxProps) {
   const isChecked = checked === true;
 
   return (
-    <CheckboxPrimitive.Root
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={isChecked}
+      disabled={disabled}
+      onClick={() => onCheckedChange?.(!isChecked)}
       data-slot="checkbox"
-      checked={checked}
+      style={{
+        backgroundColor: isChecked ? "#7c5c4a" : "transparent",
+        borderColor: isChecked ? "#7c5c4a" : undefined,
+      }}
       className={cn(
-        "peer border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 relative flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors outline-none group-has-disabled/field:opacity-50 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-3",
-        isChecked && "border-primary bg-primary",
+        "relative flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        !isChecked && "border-input",
         className
       )}
       {...props}
     >
-      {isChecked && <CheckIcon className="size-3.5 text-white" />}
-    </CheckboxPrimitive.Root>
+      {isChecked && <CheckIcon className="size-3.5 text-white" style={{ color: "#ffffff" }} />}
+    </button>
   );
 }
 

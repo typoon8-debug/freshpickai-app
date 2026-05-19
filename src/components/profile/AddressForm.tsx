@@ -194,9 +194,7 @@ export default function AddressForm({
           <Checkbox
             id="fp_is_default"
             checked={isDefaultValue ?? false}
-            onCheckedChange={(checked: boolean | "indeterminate") =>
-              setValue("is_default", checked === true)
-            }
+            onCheckedChange={(checked: boolean) => setValue("is_default", checked)}
           />
           <Label htmlFor="fp_is_default" className="cursor-pointer text-sm font-normal">
             기본 배송지로 설정
