@@ -147,7 +147,10 @@ export default function CartPage() {
           checked={allSelected}
           onCheckedChange={toggleAll}
           aria-label="전체 선택"
-          className="data-checked:border-mocha-600 data-checked:bg-mocha-600 border-ink-400"
+          className={cn(
+            "h-5 w-5 shrink-0 rounded-sm border-2",
+            allSelected ? "border-mocha-600 bg-mocha-600" : "border-ink-400"
+          )}
         />
         <span className="text-ink-600 flex-1 text-sm">
           전체 선택 ({selectedCount}/{items.length})

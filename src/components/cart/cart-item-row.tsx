@@ -57,7 +57,10 @@ export function CartItemRow({
         checked={checked}
         onCheckedChange={() => onToggleSelect(item.cartItemId)}
         aria-label={checked ? "선택 해제" : "선택"}
-        className="border-ink-400 data-checked:border-mocha-600 data-checked:bg-mocha-600 h-5 w-5 shrink-0 rounded-sm border-2 data-checked:text-white"
+        className={cn(
+          "h-5 w-5 shrink-0 rounded-sm border-2",
+          checked ? "border-mocha-600 bg-mocha-600" : "border-ink-400"
+        )}
       />
 
       {/* 썸네일 또는 이모지 */}
