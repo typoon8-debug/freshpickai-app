@@ -65,16 +65,54 @@ export async function GET(request: NextRequest) {
           user.email?.split("@")[0] ??
           "사용자";
 
+        // customer 테이블 upsert: freshpick-app 기존 계정 재사용 또는 신규 생성
+        // freshpick-app과 freshpickai-app이 동일 customer 테이블을 공유하므로 email 기준 연동
+        let customerId: string | null = null;
+        const email = user.email ?? "";
+
+        if (email) {
+          const { data: existingCustomer } = await admin
+            .from("customer")
+            .select("customer_id")
+            .eq("email", email)
+            .maybeSingle();
+
+          if (existingCustomer) {
+            customerId = existingCustomer.customer_id;
+          } else {
+            const { data: newCustomer } = await admin
+              .from("customer")
+              .insert({
+                email,
+                name: displayName,
+                phone: null,
+                grade: "BRONZE",
+                role: "CUSTOMER",
+                status: "ACTIVE",
+                marketing_optin: false,
+                privacy_consent: false,
+                location_consent: false,
+              })
+              .select("customer_id")
+              .single();
+
+            customerId = newCustomer?.customer_id ?? null;
+          }
+        }
+
         await admin.from("fp_user_profile").insert({
           user_id: user.id,
           display_name: displayName,
           avatar_url: (user.user_metadata?.avatar_url as string | undefined) ?? null,
           family_role: "parent",
           level: 1,
+          ref_customer_id: customerId,
         });
 
-        // 신규 유저 → 온보딩으로 이동
-        return NextResponse.redirect(buildRedirectUrl("/onboarding"));
+        // 신규 유저 → 온보딩 (next 파라미터 유지하여 초대 흐름 복원)
+        const onboardingTarget =
+          nextPath !== "/" ? `/onboarding?next=${encodeURIComponent(nextPath)}` : "/onboarding";
+        return NextResponse.redirect(buildRedirectUrl(onboardingTarget));
       }
 
       // 기존 유저 — 온보딩 완료 여부 확인

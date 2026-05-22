@@ -10,9 +10,10 @@ import type { CardPreview } from "@/app/onboarding/page";
 
 interface OnboardingPageClientProps {
   cardPreviews: CardPreview[];
+  nextUrl?: string;
 }
 
-export function OnboardingPageClient({ cardPreviews }: OnboardingPageClientProps) {
+export function OnboardingPageClient({ cardPreviews, nextUrl = "/" }: OnboardingPageClientProps) {
   const router = useRouter();
   const { completeOnboarding, skipOnboarding } = useAuthStore();
   const [, startTransition] = useTransition();
@@ -26,7 +27,8 @@ export function OnboardingPageClient({ cardPreviews }: OnboardingPageClientProps
         await skipOnboardingAction(); // DB 저장 + 쿠키 설정
         skipOnboarding(); // Zustand 동기화
       }
-      router.push("/");
+      // 초대 링크 등 next 파라미터가 있으면 해당 경로로, 없으면 홈으로
+      router.push(nextUrl);
     });
   };
 

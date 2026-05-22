@@ -10,7 +10,11 @@ export type CardPreview = {
   card_theme: string;
 };
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -45,6 +49,9 @@ export default async function OnboardingPage() {
     .limit(12)
     .order("created_at", { ascending: true });
 
+  const { next } = await searchParams;
+  const nextUrl = next?.startsWith("/") ? next : "/";
+
   return (
     <main className="bg-paper flex min-h-screen items-start justify-center px-6 py-10">
       <div className="max-w-phone w-full">
@@ -54,7 +61,7 @@ export default async function OnboardingPage() {
           </div>
           <span className="font-display text-mocha-900 text-lg tracking-tight">FreshPick</span>
         </div>
-        <OnboardingPageClient cardPreviews={cards ?? []} />
+        <OnboardingPageClient cardPreviews={cards ?? []} nextUrl={nextUrl} />
       </div>
     </main>
   );
