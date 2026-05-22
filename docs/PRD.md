@@ -1,12 +1,13 @@
 # FreshPickAI PRD
 
-> **📅 최종 업데이트**: 2026-05-19
+> **📅 최종 업데이트**: 2026-05-22
 > **📊 진행 상황**: Sprint 6 진행 중 (4/6 완료) — Task 055~057·059 완료 · Task 058·060 대기 | Phase 0~4.5 + Phase 5 부분 완료
 >
 > **✅ Sprint 6 완료**: F023 FCM 푸시·인앱 알림함 / F024 검색 고도화 / F025 영양 분석 / F027 OCR 메모
 > **🔜 Sprint 6 잔여**: F026 운영자 검수 큐 (Task 058) · F028 멀티 매장 가격 비교 (Task 060)
 > **최근 보완 (2026-05-17~18)**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~017 + PERF 캐시·DB·Suspense·배치쿼리 + CONF-001 Vercel 서울 리전
-> **2026-05-19**: FIX-018 장바구니 체크박스 체크마크 흰색 미표시 수정 + FIX-018b data-checked → aria-checked 전환·조건부 직접 렌더링
+> **2026-05-19**: FIX-018 장바구니 체크박스 체크마크 흰색 미표시 수정 + FIX-018c Android CSS 선택자 제거 + FIX-019 @base-ui/react 완전 제거
+> **2026-05-22**: FIX-020 OAuth 가입 customer.phone NOT NULL 완화 + email 기준 customer upsert + ref_customer_id 연동 (M020) · FIX-021 온보딩 next URL 체인 · FIX-022 미들웨어 ?next= 파라미터
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -314,6 +315,43 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
 | ID | 항목 | 내용 | 영향 파일 |
 |----|------|------|----------|
 | **CONF-001** | Vercel 배포 리전 `icn1` (서울) 고정 | `vercel.json`에 `"regions": ["icn1"]` 추가. 국내 사용자 대상 서버리스 함수 레이턴시 감소 (기본 `iad1` 미국 동부 → 서울로 전환) | `vercel.json` |
+
+---
+
+### 16. OAuth 가입 인증 흐름 완성 (2026-05-22)
+
+> OAuth 신규 가입 시 customer 레코드 연동 + 전화번호 제약 완화 + next URL 전파 전 구간 완성
+
+**FIX-020 customer.phone NOT NULL 제약 완화**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **DB-M020** | `customer.phone` NOT NULL 제거 | `phone` 컬럼 `NOT NULL` → nullable, `DEFAULT NULL`. 기존 UNIQUE 제약(`customer_phone_key`) → partial unique index(`customer_phone_unique`, WHERE phone IS NOT NULL AND phone <> '') 교체. NULL·빈문자열은 중복 허용, 실제 전화번호만 고유성 보장 | `supabase/migrations/20260522_020_customer_phone_nullable.sql` |
+| **AUTH-001** | OAuth 가입 시 customer email 기준 upsert | `auth/confirm` OAuth 콜백에서 신규 가입 시 `customer` 테이블에 email로 기존 계정 조회 → 있으면 재사용, 없으면 `phone: null`로 신규 생성. 이후 `fp_user_profile.ref_customer_id` 저장 → 장바구니·주문·메모 FK 정상 동작 보장 | `src/app/auth/confirm/route.ts` |
+
+**FIX-021 온보딩 next URL 체인 보완**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **AUTH-002** | 온보딩 페이지 `next` 파라미터 수신 | `OnboardingPage`에 `searchParams: Promise<{ next?: string }>` prop 추가. `next`가 `/`로 시작하는 상대 경로이면 `nextUrl`로 사용, 그 외 `"/"` 기본값 → `OnboardingPageClient`에 전달 | `src/app/onboarding/page.tsx` |
+| **AUTH-003** | 온보딩 완료/스킵 후 next 경로 이동 | `OnboardingPageClient`에 `nextUrl?: string` prop 추가. 온보딩 완료(`saveOnboarding`) 및 스킵(`skipOnboardingAction`) 후 `router.push(nextUrl)` — 초대 링크 등 원래 목적지 복귀 | `src/components/auth/onboarding-page-client.tsx` |
+
+**FIX-022 미들웨어 ?next= 파라미터 전달**
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **AUTH-004** | 미인증 리다이렉트 `?next=` 포함 | 미인증 요청을 `/login`으로 리다이렉트 시 `pathname + search`를 `?next=` 파라미터로 첨부 (`url.search = ""` 초기화 후 `url.searchParams.set("next", nextParam)`). 로그인 완료 후 원래 접근 경로로 복귀 | `src/lib/supabase/middleware.ts` |
+
+**인증 흐름 next URL 완성 체인 (FIX-008 + FIX-021 + FIX-022 통합)**:
+```
+미인증 접근 (예: /family/invite/[code])
+  → 미들웨어: /login?next=/family/invite/[code]   ← FIX-022 신규
+  → 로그인 페이지: next 파라미터 읽기
+  → OAuth 로그인 → /auth/confirm?next=/family/invite/[code]
+  → /auth/confirm: 신규 가입 → /onboarding?next=/family/invite/[code]
+  → 온보딩 완료/스킵 → router.push("/family/invite/[code]")   ← FIX-021 신규
+  → 기존 유저 → redirect(nextPath)
+```
 
 ---
 

@@ -4,13 +4,14 @@
 
 ---
 
-## 진행 현황 (2026-05-19 업데이트)
+## 진행 현황 (2026-05-22 업데이트)
 
 > **현재 스프린트**: Sprint 6 — Phase 5 서비스 성장 + 운영 인프라 (4/6 완료)
 > **다음 작업**: Task 058 운영자 검수 큐 (F026) · Task 060 멀티 매장 가격 비교 (F028)
 >
 > **2026-05-17~18 완료 내역**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~009 (가족·인증) + HOT-001~004 + FIX-010 gender·relationship(M018) + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 분리(M019) + UX-013 핸들바 토글 + FIX-012~016 + PERF 캐시(unstable_cache) + PERF DB 쿼리 감소 + PERF-P01~P03 가족보드 Suspense·배치쿼리·RPC + FIX-017 detailImgLabel + CONF-001 Vercel 서울 리전
 > **2026-05-19 완료 내역**: FIX-018c 장바구니 체크박스 Android 크로스플랫폼 수정 (Tailwind v4 CSS 네이티브 중첩 → JS 조건 className) · FIX-019 @base-ui/react Checkbox 완전 제거 → 순수 button+inline style 교체 (Android 근본 해결)
+> **2026-05-22 완료 내역**: FIX-020 OAuth 가입 customer.phone NOT NULL 제약 완화 + email 기준 customer upsert + ref_customer_id 저장 (M020 마이그레이션) · FIX-021 온보딩 next URL 체인 보완 · FIX-022 미들웨어 미인증 리다이렉트 ?next= 전달
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -46,6 +47,9 @@
 | **FIX-018b: Checkbox data-checked → aria-checked 전환 시도** | ⏪️ 롤백 (Android 미해결) | 2026-05-19 |
 | **FIX-018c: 장바구니 체크박스 CSS 선택자 완전 제거** (Tailwind v4 CSS 네이티브 중첩 Android 미지원 → JS 조건 className으로 교체) | ✅ 완료 | 2026-05-19 |
 | **FIX-019: Checkbox @base-ui/react 완전 제거** (순수 button + role=checkbox + inline style → Android CSS 파싱 의존성 근본 제거) | ✅ 완료 | 2026-05-19 |
+| **FIX-020: OAuth 가입 customer.phone NOT NULL 완화** (M020 마이그레이션: phone nullable + partial unique index) + auth/confirm email 기준 customer upsert + ref_customer_id 연동 | ✅ 완료 | 2026-05-22 |
+| **FIX-021: 온보딩 next URL 체인 보완** (searchParams next 파라미터 → OnboardingPageClient nextUrl prop → 완료/스킵 후 router.push(nextUrl)) | ✅ 완료 | 2026-05-22 |
+| **FIX-022: 미들웨어 ?next= 파라미터 전달** (미인증 리다이렉트 시 pathname+search를 ?next=로 전달 → 로그인 후 원래 경로 복귀) | ✅ 완료 | 2026-05-22 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -172,6 +176,23 @@
 - **PERF-P03 AI 추천 카드 조회 RPC 전환**: `getCardIdsFromStoreItems()` 내 2단계 순차 쿼리 → `fp_get_card_ids_from_store_items` RPC 단일 호출로 교체
 - **FIX-017 detailImgLabel 이미지 처리 수정**: `detailImgLabel`이 텍스트가 아닌 이미지 URL임을 확인 → `detailImages` 배열에 포함(`[adv1, adv2, adv3, detailImgLabel]`)하여 `<Image>` 렌더링. 별도 `<p>` 텍스트 렌더링 제거
 - **CONF-001 Vercel 서울 리전 고정**: `vercel.json`에 `"regions": ["icn1"]` 추가. 기본 미국 동부(`iad1`) → 서울로 전환하여 국내 사용자 레이턴시 감소
+
+### OAuth 가입 인증 흐름 완성 (2026-05-22)
+
+> OAuth 신규 가입 시 customer 레코드 연동 + 전화번호 제약 완화 + next URL 전파 전 구간 완성
+
+- **FIX-020 customer.phone NOT NULL 제약 완화**: freshpickai-app OAuth 가입 시 전화번호 없이 가입 가능하도록 DB 스키마 변경
+  - `supabase/migrations/20260522_020_customer_phone_nullable.sql` (M020): `customer.phone` NOT NULL 제거 + `SET DEFAULT NULL`. 기존 UNIQUE 제약(`customer_phone_key`) → partial unique index(`customer_phone_unique`, WHERE phone IS NOT NULL AND phone <> '') 교체 — 실제 전화번호만 고유성 보장, NULL·빈문자열 중복 허용
+  - `src/app/auth/confirm/route.ts`: 신규 OAuth 가입 시 `customer` 테이블 email 기준 upsert 로직 추가 (`phone: null`). freshpick-app 기존 계정 재사용 또는 신규 생성 후 `fp_user_profile.ref_customer_id` 저장 — 장바구니·주문·메모 FK 정상 동작 보장
+
+- **FIX-021 온보딩 next URL 체인 보완**: 초대 링크 → OAuth → 온보딩 → 초대 페이지 리다이렉트 전 구간 완성
+  - `src/app/onboarding/page.tsx`: `searchParams` Promise에서 `next` 파라미터 읽기 + 상대 경로 검증 → `OnboardingPageClient`에 `nextUrl` prop 전달
+  - `src/components/auth/onboarding-page-client.tsx`: `nextUrl?: string` prop 추가 + 온보딩 완료/스킵 후 `router.push(nextUrl)` (기존 하드코딩 `"/"` → 초대 흐름 복원)
+
+- **FIX-022 미들웨어 ?next= 파라미터 전달**: 미인증 접근 시 로그인 후 원래 경로로 복귀
+  - `src/lib/supabase/middleware.ts`: 미인증 리다이렉트 시 `pathname + search`를 `?next=`로 포함하여 `/login?next=<원래경로>` 형태로 리다이렉트 (`url.search = ""` 초기화 후 `searchParams.set("next", nextParam)`)
+
+---
 
 ### 장바구니 체크박스 UI 수정 (2026-05-19)
 
