@@ -6,7 +6,9 @@ import { redirect } from "next/navigation";
 
 export async function signInWithKakao(nextUrl?: string) {
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  // origin 헤더 없을 때 NEXT_PUBLIC_SITE_URL 폴백 (Vercel 프록시 환경 대비)
+  const requestHeaders = await headers();
+  const origin = requestHeaders.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
 
   const confirmUrl = new URL(`${origin}/auth/confirm`);
   if (nextUrl?.startsWith("/")) confirmUrl.searchParams.set("next", nextUrl);
