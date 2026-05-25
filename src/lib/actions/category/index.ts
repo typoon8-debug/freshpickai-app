@@ -104,16 +104,19 @@ const _fetchLargeCategories = unstable_cache(
   async (): Promise<LargeCategory[]> => {
     const admin = createAdminClient();
     const { data, error } = await admin
-      .from("tenant_std_large_code")
-      .select("id, code, name, sort_order")
+      .from("platform_category")
+      .select("id, category_code, name, sort_order")
+      .eq("depth", 1)
+      .is("tenant_id", null)
+      .eq("status", "ACTIVE")
       .order("sort_order", { ascending: true });
 
     if (error || !data) return [];
     return data.map((r) => ({
-      id: r.id as string,
-      code: r.code as string,
-      name: r.name as string,
-      sortOrder: r.sort_order as number,
+      id: r.id,
+      code: r.category_code,
+      name: r.name,
+      sortOrder: r.sort_order,
     }));
   },
   ["large-categories"],
@@ -129,22 +132,36 @@ export async function getLargeCategoriesAction(): Promise<LargeCategory[]> {
 export async function getMediumCategoriesByLargeAction(
   largeCode: string
 ): Promise<MediumCategory[]> {
-  const supabase = await createClient();
+  const admin = createAdminClient();
 
-  // tenant_std_medium_code.large_id → tenant_std_large_code.id JOIN
-  const { data, error } = await supabase
-    .from("tenant_std_medium_code")
-    .select("id, code, name, sort_order, tenant_std_large_code!inner(code)")
-    .eq("tenant_std_large_code.code", largeCode)
+  // 대분류 id 조회 (depth=1, tenant_id=NULL)
+  const { data: large } = await admin
+    .from("platform_category")
+    .select("id")
+    .eq("depth", 1)
+    .is("tenant_id", null)
+    .eq("category_code", largeCode)
+    .eq("status", "ACTIVE")
+    .maybeSingle();
+
+  if (!large?.id) return [];
+
+  // 중분류 목록 조회 (depth=2, parent_id=대분류id)
+  const { data, error } = await admin
+    .from("platform_category")
+    .select("id, category_code, name, sort_order")
+    .eq("depth", 2)
+    .eq("parent_id", large.id)
+    .eq("status", "ACTIVE")
     .order("sort_order", { ascending: true });
 
   if (error || !data) return [];
 
-  return (data as Record<string, unknown>[]).map((r) => ({
-    id: r.id as string,
-    code: r.code as string,
-    name: r.name as string,
-    sortOrder: r.sort_order as number,
+  return data.map((r) => ({
+    id: r.id,
+    code: r.category_code,
+    name: r.name,
+    sortOrder: r.sort_order,
   }));
 }
 

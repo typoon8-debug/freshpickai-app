@@ -8,6 +8,42 @@ export type Database = {
   };
   public: {
     Tables: {
+      _migration_baseline: {
+        Row: {
+          common_code_store_type_cnt: number | null;
+          common_code_value_item_cat_cnt: number | null;
+          snapshot_at: string | null;
+          tenant_category_code_cnt: number | null;
+          tenant_item_master_cnt: number | null;
+          tenant_std_large_code_cnt: number | null;
+          tenant_std_medium_code_cnt: number | null;
+          tenant_std_small_code_cnt: number | null;
+          tim_with_platform_cat_cnt: number | null;
+        };
+        Insert: {
+          common_code_store_type_cnt?: number | null;
+          common_code_value_item_cat_cnt?: number | null;
+          snapshot_at?: string | null;
+          tenant_category_code_cnt?: number | null;
+          tenant_item_master_cnt?: number | null;
+          tenant_std_large_code_cnt?: number | null;
+          tenant_std_medium_code_cnt?: number | null;
+          tenant_std_small_code_cnt?: number | null;
+          tim_with_platform_cat_cnt?: number | null;
+        };
+        Update: {
+          common_code_store_type_cnt?: number | null;
+          common_code_value_item_cat_cnt?: number | null;
+          snapshot_at?: string | null;
+          tenant_category_code_cnt?: number | null;
+          tenant_item_master_cnt?: number | null;
+          tenant_std_large_code_cnt?: number | null;
+          tenant_std_medium_code_cnt?: number | null;
+          tenant_std_small_code_cnt?: number | null;
+          tim_with_platform_cat_cnt?: number | null;
+        };
+        Relationships: [];
+      };
       ad_campaign: {
         Row: {
           campaign_id: string;
@@ -824,6 +860,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      category_migration_map: {
+        Row: {
+          id: number;
+          legacy_code: string;
+          legacy_table: string;
+          legacy_tenant: string | null;
+          new_id: string;
+        };
+        Insert: {
+          id?: number;
+          legacy_code: string;
+          legacy_table: string;
+          legacy_tenant?: string | null;
+          new_id: string;
+        };
+        Update: {
+          id?: number;
+          legacy_code?: string;
+          legacy_table?: string;
+          legacy_tenant?: string | null;
+          new_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "category_migration_map_new_id_fkey";
+            columns: ["new_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       ceo_review: {
         Row: {
           ceo_reviewId: string;
@@ -1186,7 +1254,7 @@ export type Database = {
           modified_at: string | null;
           name: string;
           password_hash: string;
-          phone: string;
+          phone: string | null;
           privacy_consent: boolean;
           road_name: string | null;
           role: string;
@@ -1214,7 +1282,7 @@ export type Database = {
           modified_at?: string | null;
           name: string;
           password_hash?: string;
-          phone?: string;
+          phone?: string | null;
           privacy_consent?: boolean;
           road_name?: string | null;
           role?: string;
@@ -1242,7 +1310,7 @@ export type Database = {
           modified_at?: string | null;
           name?: string;
           password_hash?: string;
-          phone?: string;
+          phone?: string | null;
           privacy_consent?: boolean;
           road_name?: string | null;
           role?: string;
@@ -1372,6 +1440,39 @@ export type Database = {
             referencedColumns: ["store_id"];
           },
         ];
+      };
+      doc_feedback: {
+        Row: {
+          comment: string | null;
+          created_at: string;
+          helpful: boolean;
+          id: string;
+          ip_hash: string | null;
+          page_url: string;
+          reason: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          comment?: string | null;
+          created_at?: string;
+          helpful: boolean;
+          id?: string;
+          ip_hash?: string | null;
+          page_url: string;
+          reason?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          comment?: string | null;
+          created_at?: string;
+          helpful?: boolean;
+          id?: string;
+          ip_hash?: string | null;
+          page_url?: string;
+          reason?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
       };
       fp_ad_placement: {
         Row: {
@@ -1958,18 +2059,21 @@ export type Database = {
           group_id: string;
           joined_at: string;
           member_id: string;
+          relationship: string;
           user_id: string;
         };
         Insert: {
           group_id: string;
           joined_at?: string;
           member_id?: string;
+          relationship?: string;
           user_id: string;
         };
         Update: {
           group_id?: string;
           joined_at?: string;
           member_id?: string;
+          relationship?: string;
           user_id?: string;
         };
         Relationships: [
@@ -2666,6 +2770,7 @@ export type Database = {
           family_role: string;
           fcm_token: string | null;
           fcm_updated_at: string | null;
+          gender: string | null;
           level: number;
           modified_at: string;
           onboarded_at: string | null;
@@ -2679,6 +2784,7 @@ export type Database = {
           family_role?: string;
           fcm_token?: string | null;
           fcm_updated_at?: string | null;
+          gender?: string | null;
           level?: number;
           modified_at?: string;
           onboarded_at?: string | null;
@@ -2692,6 +2798,7 @@ export type Database = {
           family_role?: string;
           fcm_token?: string | null;
           fcm_updated_at?: string | null;
+          gender?: string | null;
           level?: number;
           modified_at?: string;
           onboarded_at?: string | null;
@@ -3426,6 +3533,7 @@ export type Database = {
       order: {
         Row: {
           address_id: string | null;
+          alert_confirmed_at: string | null;
           created_at: string;
           customer_id: string;
           delivery_fee: number;
@@ -3456,6 +3564,7 @@ export type Database = {
         };
         Insert: {
           address_id?: string | null;
+          alert_confirmed_at?: string | null;
           created_at?: string;
           customer_id: string;
           delivery_fee?: number;
@@ -3486,6 +3595,7 @@ export type Database = {
         };
         Update: {
           address_id?: string | null;
+          alert_confirmed_at?: string | null;
           created_at?: string;
           customer_id?: string;
           delivery_fee?: number;
@@ -3764,6 +3874,186 @@ export type Database = {
         };
         Relationships: [];
       };
+      picker_setting: {
+        Row: {
+          default_carrier: string | null;
+          notification_sound: boolean;
+          notification_vibration: boolean;
+          refresh_interval_sec: number;
+          seller_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          default_carrier?: string | null;
+          notification_sound?: boolean;
+          notification_vibration?: boolean;
+          refresh_interval_sec?: number;
+          seller_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          default_carrier?: string | null;
+          notification_sound?: boolean;
+          notification_vibration?: boolean;
+          refresh_interval_sec?: number;
+          seller_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "picker_setting_seller_id_fkey";
+            columns: ["seller_id"];
+            isOneToOne: true;
+            referencedRelation: "seller";
+            referencedColumns: ["seller_id"];
+          },
+        ];
+      };
+      picking_batch: {
+        Row: {
+          batch_id: string;
+          completed_at: string | null;
+          created_at: string;
+          order_ids: Json;
+          picker_id: string;
+          status: string;
+          store_id: string;
+        };
+        Insert: {
+          batch_id?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          order_ids?: Json;
+          picker_id: string;
+          status?: string;
+          store_id: string;
+        };
+        Update: {
+          batch_id?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          order_ids?: Json;
+          picker_id?: string;
+          status?: string;
+          store_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "picking_batch_picker_id_fkey";
+            columns: ["picker_id"];
+            isOneToOne: false;
+            referencedRelation: "seller";
+            referencedColumns: ["seller_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_store_id_fkey";
+            columns: ["store_id"];
+            isOneToOne: false;
+            referencedRelation: "store";
+            referencedColumns: ["store_id"];
+          },
+        ];
+      };
+      picking_batch_item: {
+        Row: {
+          batch_id: string;
+          batch_item_id: string;
+          memo: string | null;
+          order_breakdown: Json;
+          picked_qty: number;
+          status: string;
+          store_item_id: string;
+          substitute_store_item_id: string | null;
+          total_qty: number;
+        };
+        Insert: {
+          batch_id: string;
+          batch_item_id?: string;
+          memo?: string | null;
+          order_breakdown?: Json;
+          picked_qty?: number;
+          status?: string;
+          store_item_id: string;
+          substitute_store_item_id?: string | null;
+          total_qty?: number;
+        };
+        Update: {
+          batch_id?: string;
+          batch_item_id?: string;
+          memo?: string | null;
+          order_breakdown?: Json;
+          picked_qty?: number;
+          status?: string;
+          store_item_id?: string;
+          substitute_store_item_id?: string | null;
+          total_qty?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "picking_batch_item_batch_id_fkey";
+            columns: ["batch_id"];
+            isOneToOne: false;
+            referencedRelation: "picking_batch";
+            referencedColumns: ["batch_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "store_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_inventory_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_store_item_id_fkey";
+            columns: ["store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_substitute_store_item_id_fkey";
+            columns: ["substitute_store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "mv_store_item_slim";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_substitute_store_item_id_fkey";
+            columns: ["substitute_store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "store_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_substitute_store_item_id_fkey";
+            columns: ["substitute_store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_inventory_item";
+            referencedColumns: ["store_item_id"];
+          },
+          {
+            foreignKeyName: "picking_batch_item_substitute_store_item_id_fkey";
+            columns: ["substitute_store_item_id"];
+            isOneToOne: false;
+            referencedRelation: "v_store_item";
+            referencedColumns: ["store_item_id"];
+          },
+        ];
+      };
       picking_item: {
         Row: {
           memo: string | null;
@@ -3861,6 +4151,62 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "store";
             referencedColumns: ["store_id"];
+          },
+        ];
+      };
+      platform_category: {
+        Row: {
+          category_code: string;
+          created_at: string;
+          depth: number;
+          icon_url: string | null;
+          id: string;
+          name: string;
+          name_en: string | null;
+          parent_id: string | null;
+          path: unknown;
+          sort_order: number;
+          status: string;
+          tenant_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          category_code: string;
+          created_at?: string;
+          depth: number;
+          icon_url?: string | null;
+          id?: string;
+          name: string;
+          name_en?: string | null;
+          parent_id?: string | null;
+          path: unknown;
+          sort_order?: number;
+          status?: string;
+          tenant_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          category_code?: string;
+          created_at?: string;
+          depth?: number;
+          icon_url?: string | null;
+          id?: string;
+          name?: string;
+          name_en?: string | null;
+          parent_id?: string | null;
+          path?: unknown;
+          sort_order?: number;
+          status?: string;
+          tenant_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "platform_category_parent_id_fkey";
+            columns: ["parent_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -5093,6 +5439,35 @@ export type Database = {
           },
         ];
       };
+      store_item_seq: {
+        Row: {
+          category_key: string;
+          last_seq: number;
+          seq_type: string;
+          store_id: string;
+        };
+        Insert: {
+          category_key?: string;
+          last_seq?: number;
+          seq_type: string;
+          store_id: string;
+        };
+        Update: {
+          category_key?: string;
+          last_seq?: number;
+          seq_type?: string;
+          store_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_item_seq_store_id_fkey";
+            columns: ["store_id"];
+            isOneToOne: false;
+            referencedRelation: "store";
+            referencedColumns: ["store_id"];
+          },
+        ];
+      };
       store_quick_policy: {
         Row: {
           capacity_per_slot: number;
@@ -5272,50 +5647,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      tenant_category_code: {
-        Row: {
-          code: string;
-          created_at: string;
-          description: string | null;
-          icon_url: string | null;
-          id: string;
-          name: string;
-          sort_order: number;
-          status: string;
-          tenant_id: string;
-        };
-        Insert: {
-          code: string;
-          created_at?: string;
-          description?: string | null;
-          icon_url?: string | null;
-          id?: string;
-          name: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id: string;
-        };
-        Update: {
-          code?: string;
-          created_at?: string;
-          description?: string | null;
-          icon_url?: string | null;
-          id?: string;
-          name?: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "tenant_category_code_tenant_id_fkey";
-            columns: ["tenant_id"];
-            isOneToOne: false;
-            referencedRelation: "tenant";
-            referencedColumns: ["tenant_id"];
-          },
-        ];
-      };
       tenant_item_detail: {
         Row: {
           created_at: string;
@@ -5490,78 +5821,77 @@ export type Database = {
       };
       tenant_item_master: {
         Row: {
-          category_code: string | null;
-          category_name: string | null;
           created_at: string;
           default_list_price: number;
           default_sale_price: number;
           item_code: string;
           item_name: string;
+          item_origin: string;
           net_price: number | null;
+          origin_store_id: string | null;
+          platform_category_id: string | null;
           ranking: number;
           ranking_yn: string;
           sale_code: string;
           status: string;
-          std_large_code: string | null;
-          std_large_name: string | null;
-          std_medium_code: string | null;
-          std_medium_name: string | null;
-          std_small_code: string | null;
-          std_small_name: string | null;
           supplier: string | null;
           tenant_id: string;
           tenant_item_id: string;
           updated_at: string;
         };
         Insert: {
-          category_code?: string | null;
-          category_name?: string | null;
           created_at?: string;
           default_list_price?: number;
           default_sale_price?: number;
           item_code: string;
           item_name: string;
+          item_origin?: string;
           net_price?: number | null;
+          origin_store_id?: string | null;
+          platform_category_id?: string | null;
           ranking?: number;
           ranking_yn?: string;
           sale_code: string;
           status?: string;
-          std_large_code?: string | null;
-          std_large_name?: string | null;
-          std_medium_code?: string | null;
-          std_medium_name?: string | null;
-          std_small_code?: string | null;
-          std_small_name?: string | null;
           supplier?: string | null;
           tenant_id: string;
           tenant_item_id?: string;
           updated_at?: string;
         };
         Update: {
-          category_code?: string | null;
-          category_name?: string | null;
           created_at?: string;
           default_list_price?: number;
           default_sale_price?: number;
           item_code?: string;
           item_name?: string;
+          item_origin?: string;
           net_price?: number | null;
+          origin_store_id?: string | null;
+          platform_category_id?: string | null;
           ranking?: number;
           ranking_yn?: string;
           sale_code?: string;
           status?: string;
-          std_large_code?: string | null;
-          std_large_name?: string | null;
-          std_medium_code?: string | null;
-          std_medium_name?: string | null;
-          std_small_code?: string | null;
-          std_small_name?: string | null;
           supplier?: string | null;
           tenant_id?: string;
           tenant_item_id?: string;
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "tenant_item_master_origin_store_id_fkey";
+            columns: ["origin_store_id"];
+            isOneToOne: false;
+            referencedRelation: "store";
+            referencedColumns: ["store_id"];
+          },
+          {
+            foreignKeyName: "tenant_item_master_platform_category_id_fkey";
+            columns: ["platform_category_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "tenant_item_master_tenant_id_fkey";
             columns: ["tenant_id"];
@@ -5579,8 +5909,6 @@ export type Database = {
           apply_status: string;
           apply_type: string | null;
           batch_id: string;
-          category_code: string | null;
-          category_name: string | null;
           category_raw: string | null;
           created_at: string;
           default_list_price: number;
@@ -5610,12 +5938,6 @@ export type Database = {
           shipping_price_type: string | null;
           small_name_raw: string | null;
           status: string;
-          std_large_code: string | null;
-          std_large_name: string | null;
-          std_medium_code: string | null;
-          std_medium_name: string | null;
-          std_small_code: string | null;
-          std_small_name: string | null;
           supplier: string | null;
           tenant_id: string;
           tenant_item_id: string | null;
@@ -5629,8 +5951,6 @@ export type Database = {
           apply_status?: string;
           apply_type?: string | null;
           batch_id: string;
-          category_code?: string | null;
-          category_name?: string | null;
           category_raw?: string | null;
           created_at?: string;
           default_list_price?: number;
@@ -5660,12 +5980,6 @@ export type Database = {
           shipping_price_type?: string | null;
           small_name_raw?: string | null;
           status?: string;
-          std_large_code?: string | null;
-          std_large_name?: string | null;
-          std_medium_code?: string | null;
-          std_medium_name?: string | null;
-          std_small_code?: string | null;
-          std_small_name?: string | null;
           supplier?: string | null;
           tenant_id: string;
           tenant_item_id?: string | null;
@@ -5679,8 +5993,6 @@ export type Database = {
           apply_status?: string;
           apply_type?: string | null;
           batch_id?: string;
-          category_code?: string | null;
-          category_name?: string | null;
           category_raw?: string | null;
           created_at?: string;
           default_list_price?: number;
@@ -5710,12 +6022,6 @@ export type Database = {
           shipping_price_type?: string | null;
           small_name_raw?: string | null;
           status?: string;
-          std_large_code?: string | null;
-          std_large_name?: string | null;
-          std_medium_code?: string | null;
-          std_medium_name?: string | null;
-          std_small_code?: string | null;
-          std_small_name?: string | null;
           supplier?: string | null;
           tenant_id?: string;
           tenant_item_id?: string | null;
@@ -5792,146 +6098,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tenant_item_upload_batch_tenant_id_fkey";
-            columns: ["tenant_id"];
-            isOneToOne: false;
-            referencedRelation: "tenant";
-            referencedColumns: ["tenant_id"];
-          },
-        ];
-      };
-      tenant_std_large_code: {
-        Row: {
-          code: string;
-          created_at: string;
-          icon_url: string | null;
-          id: string;
-          name: string;
-          sort_order: number;
-          status: string;
-          tenant_id: string;
-        };
-        Insert: {
-          code: string;
-          created_at?: string;
-          icon_url?: string | null;
-          id?: string;
-          name: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id: string;
-        };
-        Update: {
-          code?: string;
-          created_at?: string;
-          icon_url?: string | null;
-          id?: string;
-          name?: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "tenant_std_large_code_tenant_id_fkey";
-            columns: ["tenant_id"];
-            isOneToOne: false;
-            referencedRelation: "tenant";
-            referencedColumns: ["tenant_id"];
-          },
-        ];
-      };
-      tenant_std_medium_code: {
-        Row: {
-          code: string;
-          created_at: string;
-          icon_url: string | null;
-          id: string;
-          large_id: string | null;
-          name: string;
-          sort_order: number;
-          status: string;
-          tenant_id: string;
-        };
-        Insert: {
-          code: string;
-          created_at?: string;
-          icon_url?: string | null;
-          id?: string;
-          large_id?: string | null;
-          name: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id: string;
-        };
-        Update: {
-          code?: string;
-          created_at?: string;
-          icon_url?: string | null;
-          id?: string;
-          large_id?: string | null;
-          name?: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "tenant_std_medium_code_large_id_fkey";
-            columns: ["large_id"];
-            isOneToOne: false;
-            referencedRelation: "tenant_std_large_code";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "tenant_std_medium_code_tenant_id_fkey";
-            columns: ["tenant_id"];
-            isOneToOne: false;
-            referencedRelation: "tenant";
-            referencedColumns: ["tenant_id"];
-          },
-        ];
-      };
-      tenant_std_small_code: {
-        Row: {
-          code: string;
-          created_at: string;
-          id: string;
-          medium_id: string | null;
-          name: string;
-          sort_order: number;
-          status: string;
-          tenant_id: string;
-        };
-        Insert: {
-          code: string;
-          created_at?: string;
-          id?: string;
-          medium_id?: string | null;
-          name: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id: string;
-        };
-        Update: {
-          code?: string;
-          created_at?: string;
-          id?: string;
-          medium_id?: string | null;
-          name?: string;
-          sort_order?: number;
-          status?: string;
-          tenant_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "tenant_std_small_code_medium_id_fkey";
-            columns: ["medium_id"];
-            isOneToOne: false;
-            referencedRelation: "tenant_std_medium_code";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "tenant_std_small_code_tenant_id_fkey";
             columns: ["tenant_id"];
             isOneToOne: false;
             referencedRelation: "tenant";
@@ -6195,6 +6361,17 @@ export type Database = {
       };
     };
     Views: {
+      doc_feedback_stats: {
+        Row: {
+          helpful_count: number | null;
+          helpful_pct: number | null;
+          last_feedback_at: string | null;
+          page_url: string | null;
+          total: number | null;
+          unhelpful_count: number | null;
+        };
+        Relationships: [];
+      };
       mv_store_item_slim: {
         Row: {
           ai_ad_copy: string | null;
@@ -6267,6 +6444,7 @@ export type Database = {
           list_price: number | null;
           net_price: number | null;
           on_hand: number | null;
+          platform_category_id: string | null;
           promo_id: string | null;
           promo_name: string | null;
           promo_type: string | null;
@@ -6306,6 +6484,13 @@ export type Database = {
             referencedColumns: ["tenant_item_id"];
           },
           {
+            foreignKeyName: "tenant_item_master_platform_category_id_fkey";
+            columns: ["platform_category_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "tenant_item_master_tenant_id_fkey";
             columns: ["tenant_id"];
             isOneToOne: false;
@@ -6340,8 +6525,12 @@ export type Database = {
           item_thumbnail_big: string | null;
           item_thumbnail_small: string | null;
           list_price: number | null;
+          master_item_name: string | null;
+          master_status: string | null;
+          needs_inventory: boolean | null;
           net_price: number | null;
           on_hand: number | null;
+          platform_category_id: string | null;
           ranking: number | null;
           ranking_yn: string | null;
           reserved: number | null;
@@ -6357,6 +6546,10 @@ export type Database = {
           std_small_name: string | null;
           store_id: string | null;
           store_item_id: string | null;
+          store_item_name: string | null;
+          store_list_price: number | null;
+          store_sale_price: number | null;
+          store_status: string | null;
           supplier: string | null;
           tenant_id: string | null;
           tenant_item_id: string | null;
@@ -6376,6 +6569,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "tenant_item_master";
             referencedColumns: ["tenant_item_id"];
+          },
+          {
+            foreignKeyName: "tenant_item_master_platform_category_id_fkey";
+            columns: ["platform_category_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
           },
           {
             foreignKeyName: "tenant_item_master_tenant_id_fkey";
@@ -6432,6 +6632,10 @@ export type Database = {
       };
     };
     Functions: {
+      calculate_ean13_check_digit: {
+        Args: { p_12digits: string };
+        Returns: string;
+      };
       fn_haversine_m: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number };
         Returns: number;
@@ -6565,7 +6769,21 @@ export type Database = {
       };
       fp_cleanup_expired_cache: { Args: never; Returns: number };
       fp_cleanup_rate_limits: { Args: never; Returns: number };
+      fp_get_batch_poll_results: {
+        Args: { p_poll_ids: string[] };
+        Returns: {
+          option_id: string;
+          poll_id: string;
+          vote_count: number;
+        }[];
+      };
       fp_get_card_detail: { Args: { p_card_id: string }; Returns: Json };
+      fp_get_card_ids_from_store_items: {
+        Args: { p_store_item_ids: string[] };
+        Returns: {
+          card_id: string;
+        }[];
+      };
       fp_get_poll_results: {
         Args: { p_poll_id: string };
         Returns: {
@@ -6696,28 +6914,60 @@ export type Database = {
           store_item_id: string;
         }[];
       };
-      get_missing_ai_items: {
-        Args: {
-          p_category_name?: string;
-          p_keyword?: string;
-          p_limit?: number;
-          p_offset?: number;
-          p_std_large_name?: string;
-          p_std_medium_name?: string;
-          p_std_small_name?: string;
-        };
-        Returns: {
-          category_name: string;
-          item_code: string;
-          item_name: string;
-          sale_code: string;
-          std_large_name: string;
-          std_medium_name: string;
-          std_small_name: string;
-          tenant_item_id: string;
-          total_count: number;
-        }[];
+      generate_store_item_code: {
+        Args: { p_seq: number; p_store_code: string; p_tenant_code: string };
+        Returns: string;
       };
+      generate_store_sale_code: {
+        Args: { p_category_seq: string; p_seq: number; p_store_code: string };
+        Returns: string;
+      };
+      get_missing_ai_items:
+        | {
+            Args: {
+              p_category_name?: string;
+              p_keyword?: string;
+              p_limit?: number;
+              p_offset?: number;
+              p_std_large_name?: string;
+              p_std_medium_name?: string;
+              p_std_small_name?: string;
+            };
+            Returns: {
+              category_name: string;
+              item_code: string;
+              item_name: string;
+              sale_code: string;
+              std_large_name: string;
+              std_medium_name: string;
+              std_small_name: string;
+              tenant_item_id: string;
+              total_count: number;
+            }[];
+          }
+        | {
+            Args: {
+              p_category_name?: string;
+              p_keyword?: string;
+              p_limit?: number;
+              p_offset?: number;
+              p_std_large_name?: string;
+              p_std_medium_name?: string;
+              p_std_small_name?: string;
+              p_tenant_id?: string;
+            };
+            Returns: {
+              category_name: string;
+              item_code: string;
+              item_name: string;
+              sale_code: string;
+              std_large_name: string;
+              std_medium_name: string;
+              std_small_name: string;
+              tenant_item_id: string;
+              total_count: number;
+            }[];
+          };
       get_my_rider_id: { Args: never; Returns: string };
       is_admin: { Args: never; Returns: boolean };
       match_tenant_item_detail_ai: {
@@ -6732,6 +6982,41 @@ export type Database = {
           similarity: number;
           tenant_item_id: string;
         }[];
+      };
+      next_store_item_code: {
+        Args: {
+          p_store_code: string;
+          p_store_id: string;
+          p_tenant_code: string;
+        };
+        Returns: string;
+      };
+      next_store_sale_code: {
+        Args: {
+          p_category_key?: string;
+          p_category_seq: string;
+          p_store_code: string;
+          p_store_id: string;
+        };
+        Returns: string;
+      };
+      register_store_product: {
+        Args: {
+          p_default_list_price?: number;
+          p_default_sale_price?: number;
+          p_item_code: string;
+          p_item_name: string;
+          p_item_origin?: string;
+          p_list_price?: number;
+          p_net_price: number;
+          p_platform_category_id: string;
+          p_sale_code: string;
+          p_sale_price_override?: number;
+          p_store_id: string;
+          p_supplier?: string;
+          p_tenant_id: string;
+        };
+        Returns: Json;
       };
       restore_expired_promotion_prices: { Args: never; Returns: undefined };
       search_items_by_store: {
@@ -6777,6 +7062,7 @@ export type Database = {
           list_price: number | null;
           net_price: number | null;
           on_hand: number | null;
+          platform_category_id: string | null;
           promo_id: string | null;
           promo_name: string | null;
           promo_type: string | null;
@@ -6809,6 +7095,7 @@ export type Database = {
       };
       show_limit: { Args: never; Returns: number };
       show_trgm: { Args: { "": string }; Returns: string[] };
+      text2ltree: { Args: { "": string }; Returns: unknown };
     };
     Enums: {
       assignment_status:
