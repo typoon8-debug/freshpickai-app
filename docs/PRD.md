@@ -1,6 +1,6 @@
 # FreshPickAI PRD
 
-> **📅 최종 업데이트**: 2026-05-22
+> **📅 최종 업데이트**: 2026-05-26
 > **📊 진행 상황**: Sprint 6 진행 중 (4/6 완료) — Task 055~057·059 완료 · Task 058·060 대기 | Phase 0~4.5 + Phase 5 부분 완료
 >
 > **✅ Sprint 6 완료**: F023 FCM 푸시·인앱 알림함 / F024 검색 고도화 / F025 영양 분석 / F027 OCR 메모
@@ -8,6 +8,7 @@
 > **최근 보완 (2026-05-17~18)**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~017 + PERF 캐시·DB·Suspense·배치쿼리 + CONF-001 Vercel 서울 리전
 > **2026-05-19**: FIX-018 장바구니 체크박스 체크마크 흰색 미표시 수정 + FIX-018c Android CSS 선택자 제거 + FIX-019 @base-ui/react 완전 제거
 > **2026-05-22**: FIX-020 OAuth 가입 customer.phone NOT NULL 완화 + email 기준 customer upsert + ref_customer_id 연동 (M020) · FIX-021 온보딩 next URL 체인 · FIX-022 미들웨어 ?next= 파라미터
+> **2026-05-26**: REFACT-CAT Phase 2-4 카테고리 테이블 `platform_category` 단일 테이블로 전환 (tenant_std_large_code·tenant_std_medium_code 대체)
 > **📦 v0.2 완료 상세**: [PRD-freshpickai-v0.2.md](./PRD-freshpickai-v0.2.md)
 
 ---
@@ -351,6 +352,32 @@ card_section → menu_card → card_dish → dish → dish_recipe → dish_recip
   → /auth/confirm: 신규 가입 → /onboarding?next=/family/invite/[code]
   → 온보딩 완료/스킵 → router.push("/family/invite/[code]")   ← FIX-021 신규
   → 기존 유저 → redirect(nextPath)
+```
+
+---
+
+### 17. platform_category 테이블 전환 (REFACT-CAT — 2026-05-26)
+
+> Phase 2-4 카테고리 조회 로직을 sellerbox 공통 `platform_category` 단일 테이블로 통합
+
+| ID | 항목 | 내용 | 영향 파일 |
+|----|------|------|----------|
+| **REFACT-CAT-01** | 대분류 조회 테이블 전환 | `tenant_std_large_code` → `platform_category` (depth=1, tenant_id=NULL, status=ACTIVE). `code` 컬럼 → `category_code`로 변경. `unstable_cache` 1시간 캐시 유지 | `src/lib/actions/category/index.ts` |
+| **REFACT-CAT-02** | 중분류 조회 테이블 전환 | `tenant_std_medium_code` JOIN 방식 → `platform_category` (depth=2, parent_id=대분류id, status=ACTIVE) 2단계 조회로 전환. 첫 번째 쿼리에서 대분류 id 조회 후 중분류 목록 조회 | `src/lib/actions/category/index.ts` |
+| **REFACT-CAT-03** | admin client 통일 | 중분류 조회에서 `createClient()` → `createAdminClient()` 전환. 대분류와 동일하게 admin client 기반 조회로 통일 | `src/lib/actions/category/index.ts` |
+| **REFACT-CAT-04** | 타입 캐스팅 제거 | 모든 반환 객체의 `as string` / `as number` 명시적 타입 캐스팅 제거 — Supabase 타입 추론으로 대체 | `src/lib/actions/category/index.ts` |
+
+**platform_category 테이블 구조**:
+```
+platform_category
+  id          uuid PK
+  category_code  text          -- 카테고리 코드 (구 code)
+  name        text
+  depth       int              -- 1: 대분류, 2: 중분류, 3: 소분류
+  parent_id   uuid NULL        -- depth > 1 인 경우 상위 카테고리 id
+  tenant_id   uuid NULL        -- NULL = 플랫폼 공통, non-null = 테넌트 전용
+  status      text             -- ACTIVE | INACTIVE
+  sort_order  int
 ```
 
 ---

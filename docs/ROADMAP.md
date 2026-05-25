@@ -4,7 +4,7 @@
 
 ---
 
-## 진행 현황 (2026-05-22 업데이트)
+## 진행 현황 (2026-05-26 업데이트)
 
 > **현재 스프린트**: Sprint 6 — Phase 5 서비스 성장 + 운영 인프라 (4/6 완료)
 > **다음 작업**: Task 058 운영자 검수 큐 (F026) · Task 060 멀티 매장 가격 비교 (F028)
@@ -12,6 +12,7 @@
 > **2026-05-17~18 완료 내역**: F032 AI 메모리 보강 + PWA 설치 배너 + FIX-001~009 (가족·인증) + HOT-001~004 + FIX-010 gender·relationship(M018) + FIX-011 ChatBottomPanel 드래그 UX + MEMO-001 addToMemo 세션 분리(M019) + UX-013 핸들바 토글 + FIX-012~016 + PERF 캐시(unstable_cache) + PERF DB 쿼리 감소 + PERF-P01~P03 가족보드 Suspense·배치쿼리·RPC + FIX-017 detailImgLabel + CONF-001 Vercel 서울 리전
 > **2026-05-19 완료 내역**: FIX-018c 장바구니 체크박스 Android 크로스플랫폼 수정 (Tailwind v4 CSS 네이티브 중첩 → JS 조건 className) · FIX-019 @base-ui/react Checkbox 완전 제거 → 순수 button+inline style 교체 (Android 근본 해결)
 > **2026-05-22 완료 내역**: FIX-020 OAuth 가입 customer.phone NOT NULL 제약 완화 + email 기준 customer upsert + ref_customer_id 저장 (M020 마이그레이션) · FIX-021 온보딩 next URL 체인 보완 · FIX-022 미들웨어 미인증 리다이렉트 ?next= 전달
+> **2026-05-26 완료 내역**: REFACT-CAT 카테고리 조회를 `platform_category` 단일 테이블로 전환 (tenant_std_large_code·tenant_std_medium_code 대체 · depth=1/2·parent_id 계층 구조 · admin client 통일 · 타입 캐스팅 제거)
 
 | Phase | 상태 | 완료일 |
 |-------|------|--------|
@@ -50,6 +51,7 @@
 | **FIX-020: OAuth 가입 customer.phone NOT NULL 완화** (M020 마이그레이션: phone nullable + partial unique index) + auth/confirm email 기준 customer upsert + ref_customer_id 연동 | ✅ 완료 | 2026-05-22 |
 | **FIX-021: 온보딩 next URL 체인 보완** (searchParams next 파라미터 → OnboardingPageClient nextUrl prop → 완료/스킵 후 router.push(nextUrl)) | ✅ 완료 | 2026-05-22 |
 | **FIX-022: 미들웨어 ?next= 파라미터 전달** (미인증 리다이렉트 시 pathname+search를 ?next=로 전달 → 로그인 후 원래 경로 복귀) | ✅ 완료 | 2026-05-22 |
+| **REFACT-CAT: 카테고리 테이블 platform_category 전환** (tenant_std_large_code·medium_code → platform_category depth/parent_id 계층 구조, admin client 통일, 타입 캐스팅 제거) | ✅ 완료 | 2026-05-26 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
@@ -191,6 +193,17 @@
 
 - **FIX-022 미들웨어 ?next= 파라미터 전달**: 미인증 접근 시 로그인 후 원래 경로로 복귀
   - `src/lib/supabase/middleware.ts`: 미인증 리다이렉트 시 `pathname + search`를 `?next=`로 포함하여 `/login?next=<원래경로>` 형태로 리다이렉트 (`url.search = ""` 초기화 후 `searchParams.set("next", nextParam)`)
+
+---
+
+### platform_category 테이블 전환 (2026-05-26)
+
+> sellerbox 공통 `platform_category` 단일 테이블로 카테고리 조회 통합 (Phase 2-4 전체 적용)
+
+- **REFACT-CAT-01 대분류 조회 전환**: `tenant_std_large_code` → `platform_category` (depth=1, tenant_id IS NULL, status=ACTIVE). `code` 컬럼 → `category_code`로 변경. `_fetchLargeCategories` `unstable_cache` 1시간 캐시 유지 (`src/lib/actions/category/index.ts`)
+- **REFACT-CAT-02 중분류 조회 전환**: `tenant_std_medium_code` JOIN 방식 폐기 → `platform_category` 2단계 조회. ①대분류 id 조회(depth=1, category_code 일치) → ②중분류 목록 조회(depth=2, parent_id=대분류id, status=ACTIVE) (`src/lib/actions/category/index.ts`)
+- **REFACT-CAT-03 admin client 통일**: 중분류 조회에서 `createClient()` → `createAdminClient()` 전환. 대분류 조회와 동일하게 통일
+- **REFACT-CAT-04 타입 캐스팅 제거**: 반환 객체의 모든 `as string` / `as number` 명시적 캐스팅 제거 — Supabase TypeScript 타입 추론으로 대체
 
 ---
 
