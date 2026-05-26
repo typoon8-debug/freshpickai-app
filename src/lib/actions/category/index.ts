@@ -99,7 +99,7 @@ export async function getUserStoreIdAction(): Promise<string | null> {
   return (customer?.store_id as string | null) ?? null;
 }
 
-// 대분류 목록은 정적 데이터 — admin client로 1시간 캐시
+// 표준 전체 대분류 — admin client로 1시간 캐시 (폴백용)
 const _fetchLargeCategories = unstable_cache(
   async (): Promise<LargeCategory[]> => {
     const admin = createAdminClient();
@@ -123,8 +123,92 @@ const _fetchLargeCategories = unstable_cache(
   { revalidate: 3600, tags: ["large-categories"] }
 );
 
-/** 대분류 목록 */
+// store_category_map → platform_category (depth=1) 조회
+async function _getCategoriesByStoreMap(
+  admin: ReturnType<typeof createAdminClient>,
+  storeId: string
+): Promise<LargeCategory[]> {
+  const { data: mapRows, error: mapErr } = await admin
+    .from("store_category_map")
+    .select("platform_category_id")
+    .eq("store_id", storeId)
+    .eq("status", "ACTIVE");
+
+  if (mapErr || !mapRows?.length) return [];
+
+  const ids = mapRows.map((r) => r.platform_category_id);
+  const { data, error } = await admin
+    .from("platform_category")
+    .select("id, category_code, name, sort_order")
+    .in("id", ids)
+    .eq("depth", 1)
+    .eq("status", "ACTIVE")
+    .order("sort_order", { ascending: true });
+
+  if (error || !data) return [];
+  return data.map((r) => ({
+    id: r.id,
+    code: r.category_code,
+    name: r.name,
+    sortOrder: r.sort_order,
+  }));
+}
+
+// tenant_category_map → platform_category (depth=1) 조회
+async function _getCategoriesByTenantMap(
+  admin: ReturnType<typeof createAdminClient>,
+  tenantId: string
+): Promise<LargeCategory[]> {
+  const { data: mapRows, error: mapErr } = await admin
+    .from("tenant_category_map")
+    .select("platform_category_id")
+    .eq("tenant_id", tenantId)
+    .eq("status", "ACTIVE");
+
+  if (mapErr || !mapRows?.length) return [];
+
+  const ids = mapRows.map((r) => r.platform_category_id);
+  const { data, error } = await admin
+    .from("platform_category")
+    .select("id, category_code, name, sort_order")
+    .in("id", ids)
+    .eq("depth", 1)
+    .eq("status", "ACTIVE")
+    .order("sort_order", { ascending: true });
+
+  if (error || !data) return [];
+  return data.map((r) => ({
+    id: r.id,
+    code: r.category_code,
+    name: r.name,
+    sortOrder: r.sort_order,
+  }));
+}
+
+/** 대분류 목록 — 3단계 폴백 (store_category_map → tenant_category_map → 표준 전체) */
 export async function getLargeCategoriesAction(): Promise<LargeCategory[]> {
+  const admin = createAdminClient();
+
+  // 1순위: 로그인 사용자의 store_id로 store_category_map 조회
+  const storeId = await getUserStoreIdAction();
+  if (storeId) {
+    const byStore = await _getCategoriesByStoreMap(admin, storeId);
+    if (byStore.length) return byStore;
+
+    // 2순위: 해당 store의 tenant_id로 tenant_category_map 조회
+    const { data: storeRow } = await admin
+      .from("store")
+      .select("tenant_id")
+      .eq("store_id", storeId)
+      .maybeSingle();
+
+    if (storeRow?.tenant_id) {
+      const byTenant = await _getCategoriesByTenantMap(admin, storeRow.tenant_id);
+      if (byTenant.length) return byTenant;
+    }
+  }
+
+  // 3순위: 표준 전체 (캐시)
   return _fetchLargeCategories();
 }
 

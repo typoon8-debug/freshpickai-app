@@ -52,6 +52,7 @@
 | **FIX-021: 온보딩 next URL 체인 보완** (searchParams next 파라미터 → OnboardingPageClient nextUrl prop → 완료/스킵 후 router.push(nextUrl)) | ✅ 완료 | 2026-05-22 |
 | **FIX-022: 미들웨어 ?next= 파라미터 전달** (미인증 리다이렉트 시 pathname+search를 ?next=로 전달 → 로그인 후 원래 경로 복귀) | ✅ 완료 | 2026-05-22 |
 | **REFACT-CAT: 카테고리 테이블 platform_category 전환** (tenant_std_large_code·medium_code → platform_category depth/parent_id 계층 구조, admin client 통일, 타입 캐스팅 제거) | ✅ 완료 | 2026-05-26 |
+| **CAT-MAP: 카테고리 연동 v2 (Hotfix CC)** — getLargeCategoriesAction 3단계 폴백 전환 (store_category_map → tenant_category_map → 표준 전체) | ✅ 완료 | 2026-05-26 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)
