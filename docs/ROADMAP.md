@@ -53,6 +53,7 @@
 | **FIX-022: 미들웨어 ?next= 파라미터 전달** (미인증 리다이렉트 시 pathname+search를 ?next=로 전달 → 로그인 후 원래 경로 복귀) | ✅ 완료 | 2026-05-22 |
 | **REFACT-CAT: 카테고리 테이블 platform_category 전환** (tenant_std_large_code·medium_code → platform_category depth/parent_id 계층 구조, admin client 통일, 타입 캐스팅 제거) | ✅ 완료 | 2026-05-26 |
 | **CAT-MAP: 카테고리 연동 v2 (Hotfix CC)** — getLargeCategoriesAction 3단계 폴백 전환 (store_category_map → tenant_category_map → 표준 전체) | ✅ 완료 | 2026-05-26 |
+| **TOSS-001: 토스페이먼츠 타입 시스템 전면 강화** — `TossPaymentResponse` 통합 타입(30+ 필드)·`approvedAt: string \| null`·`cancelTossPayment` 멱등키+refundableAmount+15초 타임아웃·`confirmTossPayment` 신규 export·환경변수 헬퍼(`getTossAuthHeader`) · `TossConfirmResponse`/`TossCancelResponse` 하위 호환 별칭 유지 · `confirm/route.ts`·`actions/orders.ts` `approvedAt ?? undefined` 폴백 적용 (freshpick-app 동기화) | ✅ 완료 | 2026-06-26 |
 | **Phase 6: 서비스 확장** (Task 061~063) | 🔜 Sprint 7+ | — |
 
 > 📦 Phase 0~2 완료 태스크 전체 상세: [`docs/ROADMAP-freshpickai-v0.1.md`](./ROADMAP-freshpickai-v0.1.md)

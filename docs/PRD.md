@@ -544,10 +544,10 @@ platform_category
 
 | 항목 | 내용 |
 |------|------|
-| **역할** | 토스페이먼츠 연동 결제 처리. v0.3a에서 AI 채팅 바로결제 버튼 진입 지원 + 콜백 처리 수정 |
+| **역할** | 토스페이먼츠 연동 결제 처리. v0.3a에서 AI 채팅 바로결제 버튼 진입 지원 + 콜백 처리 수정. TOSS-001에서 타입 시스템 전면 강화 |
 | **진입 경로** | 장바구니 결제 버튼, AI 채팅 INITIATE_PAYMENT 버튼 탭 |
 | **사용자 행동** | 결제 수단 선택 → 결제 진행 → 완료·실패 확인 |
-| **주요 기능** | • 카카오페이·네이버페이·카드·계좌이체 결제 (F005)<br>• 결제 성공/실패/취소 콜백 처리 수정 (BUG-001)<br>• order 상태 전이 (PENDING → PAID → SHIPPING) 로직 검증<br>• AI 채팅 INITIATE_PAYMENT intent → 결제 페이지 딥링크 (F034) |
+| **주요 기능** | • 카카오페이·네이버페이·카드·계좌이체 결제 (F005)<br>• 결제 성공/실패/취소 콜백 처리 수정 (BUG-001)<br>• order 상태 전이 (PENDING → PAID → SHIPPING) 로직 검증<br>• AI 채팅 INITIATE_PAYMENT intent → 결제 페이지 딥링크 (F034)<br>• **TOSS-001**: `TossPaymentResponse` 통합 타입 (`approvedAt: string \| null`, 30+ 필드)·`cancelTossPayment` 멱등키+refundableAmount+15초 타임아웃·`confirmTossPayment` 분리 export (freshpick-app 동기화) |
 | **다음 이동** | 성공 → 주문 완료 페이지. 실패 → 에러 메시지 + 장바구니 복귀 |
 
 ---
