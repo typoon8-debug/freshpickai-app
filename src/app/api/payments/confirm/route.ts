@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
   // Step 1: Toss 결제 승인
   let confirmedPaymentKey: string;
-  let tossApprovedAt: string;
+  let tossApprovedAt: string | null;
   try {
     const tossRes = await confirmTossPayment({ paymentKey, orderId: orderNo, amount });
     confirmedPaymentKey = tossRes.paymentKey;
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       deliveryFee: shipping,
       paymentMethod,
       status: "CAPTURED",
-      approvedAt: tossApprovedAt,
+      approvedAt: tossApprovedAt ?? undefined,
     });
 
     if (stockItems.length > 0) {

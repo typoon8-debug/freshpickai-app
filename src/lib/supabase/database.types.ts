@@ -1,4 +1,4 @@
-﻿export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -5350,6 +5350,48 @@ export type Database = {
           },
         ];
       };
+      store_category_map: {
+        Row: {
+          created_at: string;
+          id: string;
+          platform_category_id: string;
+          sort_order: number;
+          status: string;
+          store_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          platform_category_id: string;
+          sort_order?: number;
+          status?: string;
+          store_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          platform_category_id?: string;
+          sort_order?: number;
+          status?: string;
+          store_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_category_map_platform_category_id_fkey";
+            columns: ["platform_category_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "store_category_map_store_id_fkey";
+            columns: ["store_id"];
+            isOneToOne: false;
+            referencedRelation: "store";
+            referencedColumns: ["store_id"];
+          },
+        ];
+      };
       store_fulfillment: {
         Row: {
           active: boolean;
@@ -5646,6 +5688,48 @@ export type Database = {
           type?: string;
         };
         Relationships: [];
+      };
+      tenant_category_map: {
+        Row: {
+          created_at: string;
+          id: string;
+          platform_category_id: string;
+          status: string;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          platform_category_id: string;
+          status?: string;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          platform_category_id?: string;
+          status?: string;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tenant_category_map_platform_category_id_fkey";
+            columns: ["platform_category_id"];
+            isOneToOne: false;
+            referencedRelation: "platform_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tenant_category_map_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenant";
+            referencedColumns: ["tenant_id"];
+          },
+        ];
       };
       tenant_item_detail: {
         Row: {

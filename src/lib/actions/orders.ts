@@ -192,7 +192,7 @@ export async function confirmAndCreateOrderAction(params: {
 
   // ── Step 1: Toss 서버 결제 승인 ──────────────────────────
   let confirmedPaymentKey: string;
-  let tossApprovedAt: string;
+  let tossApprovedAt: string | null;
   try {
     const tossRes = await confirmTossPayment({ paymentKey, orderId: orderNo, amount });
     confirmedPaymentKey = tossRes.paymentKey;
@@ -274,7 +274,7 @@ export async function confirmAndCreateOrderAction(params: {
       deliveryFee: orderPayload.shipping,
       paymentMethod: orderPayload.paymentMethod,
       status: "CAPTURED",
-      approvedAt: tossApprovedAt,
+      approvedAt: tossApprovedAt ?? undefined,
     });
     if (paymentRes.error) {
       throw Object.assign(new Error(paymentRes.error.message ?? "결제 기록 생성 실패"), {
